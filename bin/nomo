@@ -1,0 +1,22 @@
+#!/usr/bin/perl
+use strict;
+use lib "lib";
+use Plack::Runner;
+
+Plack::Runner->run("--server", "+Nomo::Loader", @ARGV);
+
+__END__
+
+=head1 NAME
+
+nomo - Nomo frontend
+
+=head1 SYNOPSIS
+
+  # TBD
+
+See plackup --help for more options.
+
+=cut
+
+

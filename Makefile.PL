@@ -1,0 +1,16 @@
+use inc::Module::Install;
+name 'Nomo';
+all_from 'lib/Nomo.pm';
+readme_from 'lib/Nomo.pm';
+build_requires 'Test::More';
+use_test_base;
+requires 'Plack';
+requires 'Parallel::Prefork';
+requires 'HTTP::Parser::XS';
+requires 'AnyEvent';
+requires 'Server::Starter';
+test_requires 'Test::Requires';
+auto_include_deps;
+author_tests('xt');
+auto_set_repository;
+WriteAll;
