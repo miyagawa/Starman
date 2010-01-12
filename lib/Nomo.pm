@@ -31,7 +31,7 @@ Nomo is a collection of unique Web servers, that are:
 
 =item High Performance
 
-Heavily uses XS to use C extensions to parse XS headers and use
+Heavily uses XS to use C extensions to parse HTTP headers and use
 sendfile(2) to serve static files if available.
 
 =item Preforking
@@ -40,14 +40,37 @@ Runs servers preforked like most high performance UNIX servers
 do. This means your applications are preloaded to be copy-on-write
 friendly.
 
+It also means your application can be blocking, and load-balancing is
+handled by kernels. No requests piled up behind busy workers.
+
 =item Superdaemon aware
 
 Automatically detect superdaemon such as Server::Starter and
-ControlFreak for hot-deploy and UNIX socket sharing.
+ControlFreak to benefit from features such as hot deploy, graceful
+restarts and sharing UNIX Domain sockets.
+
+=item UNIX only
+
+Optimized for UNIX for the best performance by avoiding weird Win32
+compatible code.
 
 =item PSGI compatible
 
 Can run any PSGI applications and frameworks.
+
+=back
+
+Features that are planned but not implemented are:
+
+=over 4
+
+=item Reaping dead workers
+
+=item Logrotate via signals
+
+=item Dynamic adjustment of Worker processes
+
+=item Perl DSL configuration
 
 =back
 

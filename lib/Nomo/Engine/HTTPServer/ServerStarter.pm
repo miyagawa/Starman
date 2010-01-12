@@ -13,6 +13,12 @@ sub wrap {
         $opts->{port} = $hostport;
     }
 
+    $opts->{server_ready} = sub {
+        my $server = shift;
+        print STDERR ref($server),
+            ": Accepting connections at http://$server->{host}:$server->{port}/ (via Server::Starter socket $fd)\n";
+    } if $opts->{server_ready};
+
     my $server = $cb->(%$opts);
 
     $server->{listen_sock} = IO::Socket::INET->new(

@@ -1,0 +1,64 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+use AnyEvent;
+use Plack::Util;
+use ControlFreak::Proxy::Process;
+use Nomo::Loader;
+
+my $app_psgi = $ARGV[0] || "app.psgi";
+my $app = Plack::Util::load_psgi($app_psgi);
+
+my $cfd = $ENV{_CFK_COMMAND_FD} or die "no command fd";
+my $sfd = $ENV{_CFK_STATUS_FD}  or die "no status fd";
+my $lfd = $ENV{_CFK_LOG_FD}     or die "no log fd";
+
+open my $cfh, "<&=$cfd"
+    or die "Cannot open Command filehandle, is descriptor correct?";
+
+open my $sfh, ">>&=$sfd"
+    or die "Cannot open Status filehandle, is descriptor correct?";
+
+open my $lfh, ">>&=$lfd"
+    or die "Cannot open Status filehandle, is descriptor correct?";
+
+trap_sigs();
+
+my $sockets = ControlFreak::Proxy::Process->sockets_from_env;
+
+my $proxy = ControlFreak::Proxy::Process->new(
+    command_fh  => $cfh,
+    status_fh   => $sfh,
+    log_fh      => $lfh,
+    sockets     => $sockets,
+    svc_coderef => sub {
+        Nomo::Loader->new->run($app),
+    },
+);
+
+$proxy->{app} = $app;
+
+$proxy->log('out', "$0 proxy started");
+$proxy->run;
+
+sub trap_sigs {
+    $SIG{HUP} = $SIG{INT} = $SIG{TERM} = sub {
+        my $sig = shift;
+        if ($proxy) {
+            $proxy->log("err", "Got signal $sig");
+            $proxy->shutdown;
+        }
+        exit 0;
+    };
+    $SIG{__WARN__} = sub {
+        my $warn = shift || "";
+        $proxy->log("err", "warn $warn") if $proxy;
+    };
+    $SIG{__DIE__} = sub {
+        my $reason = shift || "";
+        return if $^S;
+        $proxy->log("err", "die $reason") if $proxy;
+        exit -1;
+    };
+}

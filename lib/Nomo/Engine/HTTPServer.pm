@@ -1,6 +1,7 @@
 package Nomo::Engine::HTTPServer;
 use strict;
 use Plack::Util;
+use HTTP::Parser::XS;
 
 sub new {
     my($class, %opts) = @_;
