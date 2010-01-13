@@ -31,8 +31,7 @@ Nomo is a PSGI perl web server that has unique features such as:
 
 =item High Performance
 
-Heavily uses XS/C extensions to parse HTTP headers and use sendfile(2)
-to serve static files if available.
+Uses XS/C extensions to parse HTTP headers for the best performance.
 
 =item Preforking
 
