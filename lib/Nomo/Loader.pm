@@ -21,7 +21,6 @@ sub new {
         $workers = 1;
         push @wrappers, "ControlFreak";
     } else {
-        push @wrappers, "Prefork" if $workers > 1;
         push @wrappers, "ServerStarter" if $ENV{SERVER_STARTER_PORT};
     }
 

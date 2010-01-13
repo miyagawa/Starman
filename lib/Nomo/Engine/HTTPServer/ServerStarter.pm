@@ -19,7 +19,7 @@ sub wrap {
             ": Accepting connections at http://$server->{host}:$server->{port}/ (via Server::Starter socket $fd)\n";
     } if $opts->{server_ready};
 
-    my $server = $cb->(%$opts);
+    my $server = $cb->($opts);
 
     $server->{listen_sock} = IO::Socket::INET->new(
         Proto => 'tcp',
