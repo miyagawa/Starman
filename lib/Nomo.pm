@@ -75,7 +75,7 @@ Features that are planned but not implemented are:
 
 =item Log rotation via signals
 
-=item Dynamic adjustment of Worker processes
+=item Listening to UNIX domain sockets
 
 =item Perl DSL configuration
 
