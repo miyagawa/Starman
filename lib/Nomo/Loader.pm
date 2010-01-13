@@ -29,7 +29,8 @@ sub new {
         $builder = build { $wrapper_class->wrap(@_) } $builder, \%opts;
     }
 
-    $opts{max_workers} = $workers;
+    $opts{max_workers}     = $workers;
+    $opts{server_software} = "Nomo";
 
     my $server = $builder->(\%opts);
     bless { server => $server }, $class;
