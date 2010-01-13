@@ -7,6 +7,8 @@ use Plack::Util;
 use ControlFreak::Proxy::Process;
 use Nomo::Loader;
 
+$ENV{NOMO_USE_CONTROLFREAK} = 1;
+
 my $app_psgi = $ARGV[0] || "app.psgi";
 my $app = Plack::Util::load_psgi($app_psgi);
 

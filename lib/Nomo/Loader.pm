@@ -17,7 +17,7 @@ sub new {
     my $builder = sub { $server_class->new(%{$_[0]}) };
 
     my @wrappers;
-    if ($ENV{CONTROL_FREAK_ENABLED}) {
+    if ($ENV{NOMO_USE_CONTROLFREAK}) {
         $workers = 1;
         push @wrappers, "ControlFreak";
     } else {
