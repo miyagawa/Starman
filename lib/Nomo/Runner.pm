@@ -25,13 +25,20 @@ sub run {
     Plack::Runner->run(@ARGV);
 }
 
-sub daemonize {
-    require POSIX;
-
+sub _fork_or_die {
     my $pid = fork;
     die "Unable to fork" unless defined $pid;
     exit 0 if $pid;
+}
+
+sub daemonize {
+    require POSIX;
+
+    _fork_or_die;
     POSIX::setsid() or die "Can't detach: $!";
+
+    # Fork again to ensure that daemon never reacquires a control terminal
+    _fork_or_die;
 
     open STDIN, "</dev/null";
     open STDOUT, ">/dev/null";
