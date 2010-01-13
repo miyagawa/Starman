@@ -1,9 +1,9 @@
 #!/usr/bin/perl
 use strict;
 use lib "lib";
-use Plack::Runner;
+use Nomo::Runner;
 
-Plack::Runner->run("--server", "+Nomo::Loader", @ARGV);
+Nomo::Runner->run("--server", "+Nomo::Loader", @ARGV);
 
 __END__
 
