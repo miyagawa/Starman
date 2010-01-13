@@ -25,14 +25,14 @@ Nomo - High performance, starter-aware and preforking PSGI web server
 
 =head1 DESCRIPTION
 
-Nomo is a collection of unique Web servers, that are:
+Nomo is a PSGI perl web server that has unique features such as:
 
 =over 4
 
 =item High Performance
 
-Heavily uses XS to use C extensions to parse HTTP headers and use
-sendfile(2) to serve static files if available.
+Heavily uses XS/C extensions to parse HTTP headers and use sendfile(2)
+to serve static files if available.
 
 =item Preforking
 
@@ -46,8 +46,9 @@ handled by kernels. No requests piled up behind busy workers.
 =item Superdaemon aware
 
 Automatically detect superdaemon such as Server::Starter and
-ControlFreak to benefit from features such as hot deploy, graceful
-restarts and sharing UNIX Domain sockets.
+ControlFreak to benefit from their features such as hot deploy,
+graceful restarts, dynamic worker pool configuration and sharing UNIX
+Domain sockets.
 
 =item UNIX only
 
@@ -58,6 +59,12 @@ compatible code.
 
 Can run any PSGI applications and frameworks.
 
+=item Daemon mode
+
+Can use C<--daemonize> and C<--pid> to become daemon just like normal
+UNIX tools, but can also be used with other supervisor tools such as
+daemontools or supervisord.
+
 =back
 
 Features that are planned but not implemented are:
@@ -66,11 +73,13 @@ Features that are planned but not implemented are:
 
 =item Reaping dead workers
 
-=item Logrotate via signals
+=item Log rotation via signals
 
 =item Dynamic adjustment of Worker processes
 
 =item Perl DSL configuration
+
+=item Per worker hooks
 
 =back
 

@@ -9,10 +9,10 @@ SYNOPSIS
       % server_starter --port 127.0.0.1:80 -- nomo --max-workers 32 app.psgi
 
 DESCRIPTION
-    Nomo is a collection of unique Web servers, that are:
+    Nomo is a PSGI perl web server that has unique features such as:
 
     High Performance
-        Heavily uses XS to use C extensions to parse HTTP headers and use
+        Heavily uses XS/C extensions to parse HTTP headers and use
         sendfile(2) to serve static files if available.
 
     Preforking
@@ -25,18 +25,29 @@ DESCRIPTION
 
     Superdaemon aware
         Automatically detect superdaemon such as Server::Starter and
-        ControlFreak to benefit from features such as hot deploy, graceful
-        restarts and sharing UNIX Domain sockets.
+        ControlFreak to benefit from their features such as hot deploy,
+        graceful restarts, dynamic worker pool configuration and sharing
+        UNIX Domain sockets.
+
+    UNIX only
+        Optimized for UNIX for the best performance by avoiding weird Win32
+        compatible code.
 
     PSGI compatible
         Can run any PSGI applications and frameworks.
 
+    Daemon mode
+        Can use "--daemonize" and "--pid" to become daemon just like normal
+        UNIX tools, but can also be used with other supervisor tools such as
+        daemontools or supervisord.
+
     Features that are planned but not implemented are:
 
     Reaping dead workers
-    Logrotate via signals
+    Log rotation via signals
     Dynamic adjustment of Worker processes
     Perl DSL configuration
+    Per worker hooks
 
 NOMO?
     The name Nomo is taken from the baseball player <Hideo Nomo>, who is a
