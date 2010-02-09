@@ -39,7 +39,7 @@ PERFORMANCE
     ApacheBench concurrenty 10 and Keep-alive on.
 
       -- server: Nomo
-      Requests per second:    5858.96 [#/sec] (mean)
+      Requests per second:    6413.87 [#/sec] (mean)
       -- server: AnyEvent
       Requests per second:    3911.78 [#/sec] (mean)
       -- server: AnyEvent::HTTPD
@@ -56,7 +56,7 @@ PERFORMANCE
       Requests per second:    503.59 [#/sec] (mean)
 
 NOMO?
-    The name Nomo is taken from the baseball player *Hideo Nomo*, who is a
+    The name Nomo is taken from the baseball player <Hideo Nomo>, who is a
     great starter, famous for his forkball and whose nickname is Tornado.
 
 AUTHOR

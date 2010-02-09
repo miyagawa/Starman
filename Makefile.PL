@@ -7,7 +7,7 @@ requires 'Plack', 0.99;
 requires 'Net::Server';
 requires 'Net::Server::SS::Prefork';
 requires 'Data::Dump';
-requires 'HTTP::HeaderParser::XS';
+requires 'HTTP::Parser::XS';
 requires 'HTTP::Status';
 requires 'HTTP::Date';
 requires 'URI::Escape';

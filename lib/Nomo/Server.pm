@@ -5,7 +5,7 @@ use base 'Net::Server::PreFork';
 use Data::Dump qw(dump);
 use Socket;
 use IO::Socket qw(:crlf);
-use HTTP::HeaderParser::XS;
+use HTTP::Parser::XS qw(parse_http_request);
 use HTTP::Status qw(status_message);
 use HTTP::Date qw(time2str);
 use URI::Escape;
@@ -88,37 +88,12 @@ sub process_request {
         # Read until we see all headers
         last if !$self->_read_headers;
 
-        # Parse headers
-        my $h = HTTP::HeaderParser::XS->new( \delete $self->{client}->{headerbuf} );
-
-        if ( !$h ) {
-            # Bad request
-            DEBUG && warn "[$$] Bad request\n";
-            $self->_http_error(400, { SERVER_PROTOCOL => "HTTP/1.0" });
-            last;
-        }
-
-        # Initialize PSGI environment
-        my $uri = $h->request_uri();
-        my ( $path, $query_string ) = split /\?/, $uri, 2;
-
-        my $version = $h->version_number();
-        my $proto   = sprintf( "HTTP/%d.%d", int( $version / 1000 ), $version % 1000 );
-        my $headers = $h->getHeaders();
-
         my $env = {
             REMOTE_ADDR     => $self->{server}->{peeraddr},
             REMOTE_HOST     => $self->{server}->{peerhost} || $self->{server}->{peeraddr},
             SERVER_NAME     => $self->{server}->{sockaddr}, # XXX: needs to be resolved?
             SERVER_PORT     => $self->{server}->{port}->[0],
             SCRIPT_NAME     => '',
-            REQUEST_METHOD  => $h->request_method() || '',
-            PATH_INFO       => URI::Escape::uri_unescape($path),
-            REQUEST_URI     => $uri,
-            QUERY_STRING    => $query_string || '',
-            SERVER_PROTOCOL => $proto,
-            CONTENT_TYPE    => $headers->{'Content-Type'},
-            CONTENT_LENGTH  => $headers->{'Content-Length'},
             'psgi.version'      => [ 1, 1 ],
             'psgi.errors'       => *STDERR,
             'psgi.url_scheme'   => 'http',
@@ -129,15 +104,19 @@ sub process_request {
             'psgi.multiprocess' => Plack::Util::TRUE,
         };
 
-        # Add headers
-        while (my($key, $value) = each %$headers) {
-            next if $key eq 'Content-Length' or $key eq 'Content-Type';
-            $key =~ tr/-/_/;
-            $env->{"HTTP_" . uc($key)} = $value;
+        # Parse headers
+        my $reqlen = parse_http_request(delete $self->{client}->{headerbuf}, $env);
+        if ( $reqlen == -1 ) {
+            # Bad request
+            DEBUG && warn "[$$] Bad request\n";
+            $self->_http_error(400, { SERVER_PROTOCOL => "HTTP/1.0" });
+            last;
         }
 
+        # Initialize PSGI environment
         # Determine whether we will keep the connection open after the request
-        my $connection = $headers->{Connection};
+        my $connection = delete $env->{HTTP_CONNECTION};
+        my $proto = $env->{SERVER_PROTOCOL};
         if ( $proto && $proto eq 'HTTP/1.0' ) {
             if ( $connection && $connection =~ /^keep-alive$/i ) {
                 # Keep-alive only with explicit header in HTTP/1.0
@@ -157,8 +136,8 @@ sub process_request {
             }
 
             # Do we need to send 100 Continue?
-            if ( $headers->{Expect} ) {
-                if ( $headers->{Expect} eq '100-continue' ) {
+            if ( $env->{HTTP_EXPECT} ) {
+                if ( $env->{HTTP_EXPECT} eq '100-continue' ) {
                     syswrite STDOUT, 'HTTP/1.1 100 Continue' . $CRLF . $CRLF;
                     DEBUG && warn "[$$] Sent 100 Continue response\n";
                 }
@@ -169,7 +148,7 @@ sub process_request {
                 }
             }
 
-            unless ($headers->{Host}) {
+            unless ($env->{HTTP_HOST}) {
                 # No host, bad request
                 DEBUG && warn "[$$] Bad request, HTTP/1.1 without Host header\n";
                 $self->_http_error( 400, $env );
@@ -177,7 +156,7 @@ sub process_request {
             }
         }
 
-        $self->_prepare_env($env, $headers);
+        $self->_prepare_env($env);
 
         # Run PSGI apps
         my $res = Plack::Util::run_app($self->{app}, $env);

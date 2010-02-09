@@ -65,7 +65,7 @@ A simple benchmark using C<Hello.psgi> as of Plack git SHA I<82121a>
 with ApacheBench concurrenty 10 and Keep-alive on.
 
   -- server: Nomo
-  Requests per second:    5858.96 [#/sec] (mean)
+  Requests per second:    6413.87 [#/sec] (mean)
   -- server: AnyEvent
   Requests per second:    3911.78 [#/sec] (mean)
   -- server: AnyEvent::HTTPD
