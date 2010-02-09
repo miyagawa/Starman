@@ -1,68 +1,52 @@
 NAME
-    Nomo - High performance, starter-aware and preforking PSGI web server
+    Nomo - High-performance preforking PSGI web server
 
 SYNOPSIS
-      # preforking HTTP server
-      % nomo --max-workers 20 app.psgi
+      # Run app.psgi with the default settings
+      > nomo
 
-      # run with Server::Starter superdaemon
-      % server_starter --port 127.0.0.1:80 -- nomo --max-workers 32 app.psgi
+      # run with Server::Starter
+      > start_server --port 127.0.0.1:80 -- nomo --max-servers 32 myapp.psgi
+
+      # UNIX domain sockets
+      > nomo --listen /tmp/nomo.sock
 
 DESCRIPTION
     Nomo is a PSGI perl web server that has unique features such as:
 
     High Performance
-        Uses XS/C extensions to parse HTTP headers for the best performance.
+        Uses the fast XS/C HTTP header parser
 
     Preforking
         Runs servers preforked like most high performance UNIX servers do.
-        This means your applications are preloaded to be copy-on-write
-        friendly.
-
-        It also means your application can be blocking, and load-balancing
-        is handled by kernels. No requests piled up behind busy workers.
 
     Superdaemon aware
-        Automatically detect superdaemon such as Server::Starter and
-        ControlFreak to benefit from their features such as hot deploy,
-        graceful restarts, dynamic worker pool configuration and sharing
-        UNIX Domain sockets.
+        Supports Server::Starter for hot deploy and graceful restarts.
 
-    UNIX only
-        Optimized for UNIX for the best performance by avoiding weird Win32
-        compatible code.
+    UNIX Domain Socket support
+        Forked children share the UNIX domain socket with the parent process
+        for the best performance when used with the nginx proxy in front.
 
     PSGI compatible
-        Can run any PSGI applications and frameworks.
+        Can run any PSGI applications and frameworks
 
-    Daemon mode
-        Can use "--daemonize" and "--pid" to become daemon just like normal
-        UNIX tools, but can also be used with other supervisor tools such as
-        daemontools or supervisord.
+    HTTP/1.1 support
+        Supports chunked requests and responses, keep-alive and pipeline
+        requests.
 
-    Features that are planned but not implemented are:
+AUTHOR
+    Tatsuhiko Miyagawa <miyagawa@bulknews.net>
 
-    Reaping dead workers
-    Log rotation via signals
-    Listening to UNIX domain sockets
-    Perl DSL configuration
-    Per worker hooks
+    Andy Grundman wrote Catalyst::Engine::HTTP::Prefork, which this module
+    is heavily based on.
 
-NOMO?
-    The name Nomo is taken from the baseball player <Hideo Nomo>, who is a
-    great starter, famous for his forkball and whose nickname is Tornado.
-
-AUTHORS
-    Tatsuhiko Miyagawa
-
-    Kazuho Oku
-
-    Daisuke Maki
+    Kazuho Oku wrote Net::Server::SS::PreFork that makes easy to add
+    Server::Starter support to this software.
 
 LICENSE
     This library is free software; you can redistribute it and/or modify it
     under the same terms as Perl itself.
 
 SEE ALSO
-    Plack HTTP::Server::PSGI::Prefork
+    Plack Catalyst::Engine::HTTP::Prefork Net::Server::Prefork
 
