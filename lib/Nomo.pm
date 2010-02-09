@@ -59,6 +59,33 @@ Supports chunked requests and responses, keep-alive and pipeline requests.
 
 =back
 
+=head1 PERFORMANCE
+
+A simple benchmark using C<Hello.psgi> as of Plack git SHA I<82121a>
+with ApacheBench concurrenty 10 and Keep-alive on.
+
+  -- server: Nomo
+  Requests per second:    5858.96 [#/sec] (mean)
+  -- server: AnyEvent
+  Requests per second:    3911.78 [#/sec] (mean)
+  -- server: AnyEvent::HTTPD
+  Requests per second:    2738.49 [#/sec] (mean)
+  -- server: Standalone
+  Requests per second:    1045.66 [#/sec] (mean)
+  -- server: Standalone (prefork)
+  Requests per second:    2792.99 [#/sec] (mean)
+  -- server: HTTP::Server::Simple
+  Requests per second:    1435.50 [#/sec] (mean)
+  -- server: Coro
+  Requests per second:    2332.00 [#/sec] (mean)
+  -- server: POE
+  Requests per second:    503.59 [#/sec] (mean)
+
+=head1 NOMO?
+
+The name Nomo is taken from the baseball player I<Hideo Nomo>, who is
+a great starter, famous for his forkball and whose nickname is Tornado.
+
 =head1 AUTHOR
 
 Tatsuhiko Miyagawa E<lt>miyagawa@bulknews.netE<gt>
