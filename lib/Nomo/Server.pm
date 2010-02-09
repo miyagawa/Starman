@@ -31,6 +31,11 @@ sub run {
         $extra{setsid} = $extra{background} = 1;
     }
 
+    if ($options->{socket}) {
+        $options->{port} = "$options->{socket}|unix";
+        $options->{host} = 'localhost';
+    }
+
     $self->SUPER::run(
         port                       => $options->{port} || 5000,
         host                       => $options->{host} || '*',
@@ -56,7 +61,7 @@ sub pre_loop_hook {
     $self->{options}{server_ready}->({
         host => $host,
         port => $port,
-        proto => 'http',
+        proto => $port =~ /unix/ ? 'unix' : 'http',
         server_software => 'Nomo',
     }) if $self->{options}{server_ready};
 }
