@@ -12,6 +12,7 @@ use URI::Escape;
 
 use Plack::Util;
 use Plack::Middleware::Dechunk;
+use Plack::Request;
 
 use constant DEBUG        => $ENV{NOMO_DEBUG} || 0;
 use constant CHUNKSIZE    => 64 * 1024;
@@ -295,6 +296,15 @@ sub _prepare_env {
             return $read;
         },
         close => sub { };
+
+    # Yikes, need to buffer the input so keep-alive/pipelining works
+    # if the request is in chunked encoding, we force slurp in the dechunk middleware
+    my $te = $env->{HTTP_TRANSFER_ENCODING};
+    my $chunked = $te && $te =~ /^chunked$/i;
+    if (!$chunked && $env->{CONTENT_LENGTH}) {
+        my $req = Plack::Request->new($env);
+        $req->body_parameters;
+    }
 }
 
 sub _finalize_response {
