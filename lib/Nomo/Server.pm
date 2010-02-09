@@ -40,7 +40,7 @@ sub run {
         port                       => $options->{port} || 5000,
         host                       => $options->{host} || '*',
         serialize                  => 'flock',
-        log_level                  => DEBUG ? 4 : 0,
+        log_level                  => DEBUG ? 4 : 1,
         min_servers                => $options->{min_servers}       || 5,
         min_spare_servers          => $options->{min_spare_servers} || 2,
         max_spare_servers          => $options->{max_spare_servers} || 10,
