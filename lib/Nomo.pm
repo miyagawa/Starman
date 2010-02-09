@@ -83,8 +83,9 @@ with ApacheBench concurrenty 10 and Keep-alive on.
 
 =head1 NOMO?
 
-The name Nomo is taken from the baseball player I<Hideo Nomo>, who is
-a great starter, famous for his forkball and whose nickname is Tornado.
+The name Nomo is taken from the baseball player L<Hideo
+Nomo|http://en.wikipedia.org/wiki/Hideo_Nomo>, who is a great starter,
+famous for his forkball and whose nickname is Tornado.
 
 =head1 AUTHOR
 

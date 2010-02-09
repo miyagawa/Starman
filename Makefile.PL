@@ -11,6 +11,7 @@ requires 'HTTP::HeaderParser::XS';
 requires 'HTTP::Status';
 requires 'HTTP::Date';
 requires 'URI::Escape';
+install_script 'bin/nomo';
 
 recommends 'Server::Starter';
 test_requires 'Test::Requires';
