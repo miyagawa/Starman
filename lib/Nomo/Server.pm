@@ -3,7 +3,7 @@ use strict;
 use base 'Net::Server::PreFork';
 
 use Data::Dump qw(dump);
-use Socket;
+use Socket qw(IPPROTO_TCP TCP_NODELAY);
 use IO::Socket qw(:crlf);
 use HTTP::Parser::XS qw(parse_http_request);
 use HTTP::Status qw(status_message);
@@ -81,6 +81,9 @@ sub post_accept_hook {
 sub process_request {
     my $self = shift;
     my $conn = $self->{server}->{client};
+
+    setsockopt($conn, IPPROTO_TCP, TCP_NODELAY, 1)
+        or die $!;
 
     while ( $self->{client}->{keepalive} ) {
         last if !$conn->connected;
