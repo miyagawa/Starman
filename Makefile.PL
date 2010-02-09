@@ -5,7 +5,7 @@ readme_from 'lib/Nomo.pm';
 build_requires 'Test::More';
 requires 'Plack', 0.99;
 requires 'Net::Server';
-requires 'Net::Server::SS::Prefork';
+requires 'Net::Server::SS::PreFork';
 requires 'Data::Dump';
 requires 'HTTP::Parser::XS';
 requires 'HTTP::Status';
