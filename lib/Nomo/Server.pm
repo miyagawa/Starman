@@ -8,7 +8,6 @@ use IO::Socket qw(:crlf);
 use HTTP::Parser::XS qw(parse_http_request);
 use HTTP::Status qw(status_message);
 use HTTP::Date qw(time2str);
-use URI::Escape;
 
 use Plack::Util;
 use Plack::Middleware::Dechunk;
