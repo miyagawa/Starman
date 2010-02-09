@@ -24,10 +24,10 @@ sub run {
     $self->{options} = $options;
 
     my %extra = ();
-    if ( $options->{pid_file} ) {
-        $extra{pid_file} = $options->{pid_file};
+    if ( $options->{pid} ) {
+        $extra{pid_file} = $options->{pid};
     }
-    if ( $options->{background} ) {
+    if ( $options->{daemonize} ) {
         $extra{setsid} = $extra{background} = 1;
     }
 
@@ -47,6 +47,8 @@ sub run {
         max_servers                => $options->{max_servers}       || 50,
         max_requests               => $options->{max_requests}      || 1000,
         leave_children_open_on_hup => $options->{restart_graceful}  || 0,
+        user                       => $options->{user}              || $>,
+        group                      => $options->{group}             || $),
 
         %extra
     );
