@@ -291,6 +291,7 @@ sub _prepare_env {
 
             if ($length > 0) {
                 $read += sysread STDIN, $_[0], $length, $offset;
+                DEBUG && warn "[$$] Read $read bytes of request body\n";
             }
 
             return $read;
@@ -342,7 +343,6 @@ sub _finalize_response {
     }
 
     if ( ! $headers{Date} ) {
-        time2str(time);
         push @headers, "Date: " . time2str( time() );
     }
 
