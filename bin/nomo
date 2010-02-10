@@ -19,6 +19,42 @@ nomo - Nomo launcher
   nomo --socket /tmp/nomo.sock
   nomo --max-servers 32
 
+=over 4
+
+=item --host
+
+  --host 127.0.0.1
+
+Specifies the address to listen to. Default to C<*>.
+
+=item --port
+
+  --port 8080
+
+Specifies the port to listen to. Defaults to 5000.
+
+=item -S, --socket
+
+  -S /tmp/nomo.sock
+
+Specifies the path to UNIX domain socket to listen.
+
+=item --workers
+
+Specifies the number of worker pool. Defaults to 5.
+
+Nomo by default sets up other spare server configuration based on this
+workers value, making sure there are B<always only> C<N> worker
+processes running. So even if there're no idle workers, Nomo won't
+spawn off spare processes since that's mostly what you want to do by
+fine tuning the memory usage etc. in the production environment.
+
+=item --max-requests
+
+Number of the requests to process per one worker process. Defaults to 1000.
+
+=back
+
 See `plackup -h` for more options.
 
 =head1 SEE ALSO

@@ -38,15 +38,17 @@ sub run {
         $options->{host} = 'localhost';
     }
 
+    my $workers = $options->{workers} || 5;
+
     $self->SUPER::run(
         port                       => $options->{port} || 5000,
         host                       => $options->{host} || '*',
         serialize                  => 'flock',
         log_level                  => DEBUG ? 4 : 1,
-        min_servers                => $options->{min_servers}       || 5,
-        min_spare_servers          => $options->{min_spare_servers} || 2,
-        max_spare_servers          => $options->{max_spare_servers} || 10,
-        max_servers                => $options->{max_servers}       || 50,
+        min_servers                => $options->{min_servers}       || $workers,
+        min_spare_servers          => $options->{min_spare_servers} || $workers - 1,
+        max_spare_servers          => $options->{max_spare_servers} || $workers - 1,
+        max_servers                => $options->{max_servers}       || $workers,
         max_requests               => $options->{max_requests}      || 1000,
         leave_children_open_on_hup => $options->{restart_graceful}  || 0,
         user                       => $options->{user}              || $>,
