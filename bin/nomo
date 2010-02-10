@@ -3,8 +3,11 @@ use strict;
 use lib "lib";
 use Plack::Runner;
 
+my @argv = @ARGV;
+
 my $runner = Plack::Runner->new(server => 'Nomo', env => 'production');
-$runner->parse_options(@ARGV);
+$runner->parse_options(@argv);
+$runner->set_options(argv => \@argv);
 $runner->run;
 
 __END__
