@@ -113,8 +113,10 @@ sub process_request {
     my $self = shift;
     my $conn = $self->{server}->{client};
 
-    setsockopt($conn, IPPROTO_TCP, TCP_NODELAY, 1)
-        or die $!;
+    if ($conn->NS_proto eq 'TCP') {
+        setsockopt($conn, IPPROTO_TCP, TCP_NODELAY, 1)
+            or die $!;
+    }
 
     while ( $self->{client}->{keepalive} ) {
         last if !$conn->connected;
