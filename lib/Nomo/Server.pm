@@ -8,10 +8,10 @@ use IO::Socket qw(:crlf);
 use HTTP::Parser::XS qw(parse_http_request);
 use HTTP::Status qw(status_message);
 use HTTP::Date qw(time2str);
+use Symbol;
 
 use Plack::Util;
-use Plack::Middleware::Dechunk;
-use Plack::Request;
+use Plack::TempBuffer;
 
 use constant DEBUG        => $ENV{NOMO_DEBUG} || 0;
 use constant CHUNKSIZE    => 64 * 1024;
@@ -20,7 +20,7 @@ use constant READ_TIMEOUT => 5;
 sub run {
     my($self, $app, $options) = @_;
 
-    $self->{app} = Plack::Middleware::Dechunk->wrap($app);
+    $self->{app} = $app;
     $self->{options} = $options;
 
     my %extra = ();
@@ -278,37 +278,60 @@ sub _http_error {
 sub _prepare_env {
     my($self, $env) = @_;
 
-    $env->{'psgi.input'} = Plack::Util::inline_object
-        read => sub {
-            my(undef, $length, $offset) = @_;
-            $length = $length > CHUNKSIZE ? CHUNKSIZE : $length;
+    my $get_chunk = sub {
+        if ($self->{client}->{inputbuf}) {
+            return delete $self->{client}->{inputbuf};
+        }
+        sysread STDIN, my($chunk), CHUNKSIZE;
+        return $chunk;
+    };
 
-            # If we have any remaining data in the input buffer, send it back first
-            my $read;
-            if ( my $buflen = length $self->{client}->{inputbuf} ) {
-                $read = $length < $buflen ? $length : $buflen;
-                $_[0] = substr $self->{client}->{inputbuf}, 0, $read;
-                $self->{client}->{inputbuf} = substr $self->{client}->{inputbuf}, $read;
-                $length -= $read;
-                $offset += $read;
+    my $chunked = do { no warnings; lc delete $env->{HTTP_TRANSFER_ENCODING} eq 'chunked' };
+
+    if (my $cl = $env->{CONTENT_LENGTH}) {
+        my $buf = Plack::TempBuffer->new($cl);
+        while ($cl > 0) {
+            if (defined(my $chunk = $get_chunk->())) {
+                $cl -= length $chunk;
+                $buf->print($chunk);
+            }
+        }
+        $env->{'psgix.input.buffered'} = $env->{'psgi.input'} = $buf->rewind;
+    } elsif ($chunked) {
+        my $buf = Plack::TempBuffer->new;
+        my $chunk_buffer = '';
+        my $length;
+
+    DECHUNK:
+        while (1) {
+            my $chunk = $get_chunk->();
+            my $read = length $chunk;
+            $chunk_buffer .= $chunk;
+
+            while ( $chunk_buffer =~ s/^(([0-9a-fA-F]+).*\015\012)// ) {
+                my $trailer   = $1;
+                my $chunk_len = hex $2;
+
+                if ($chunk_len == 0) {
+                    last DECHUNK;
+                } elsif (length $chunk_buffer < $chunk_len) {
+                    $chunk_buffer = $trailer . $chunk_buffer;
+                    last;
+                }
+
+                $buf->print(substr $chunk_buffer, 0, $chunk_len, '');
+                $chunk_buffer =~ s/^\015\012//;
+
+                $length += $chunk_len;
             }
 
-            if ($length > 0) {
-                $read += sysread STDIN, $_[0], $length, $offset;
-                DEBUG && warn "[$$] Read $read bytes of request body\n";
-            }
+            last unless $read && $read > 0;
+        }
 
-            return $read;
-        },
-        close => sub { };
-
-    # Yikes, need to buffer the input so keep-alive/pipelining works
-    # if the request is in chunked encoding, we force slurp in the dechunk middleware
-    my $te = $env->{HTTP_TRANSFER_ENCODING};
-    my $chunked = $te && $te =~ /^chunked$/i;
-    if (!$chunked && $env->{CONTENT_LENGTH}) {
-        my $req = Plack::Request->new($env);
-        $req->body_parameters;
+        $env->{CONTENT_LENGTH} = $length;
+        $env->{'psgix.input.buffered'} = $env->{'psgi.input'} = $buf->rewind;
+    } else {
+        $env->{'psgi.input'} = Symbol::geniosym;
     }
 }
 
