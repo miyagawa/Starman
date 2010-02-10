@@ -72,7 +72,7 @@ sub run {
         max_spare_servers          => $options->{max_spare_servers} || $workers - 1,
         max_servers                => $options->{max_servers}       || $workers,
         max_requests               => $options->{max_requests}      || 1000,
-        leave_children_open_on_hup => $options->{restart_graceful}  || 0,
+        leave_children_open_on_hup => 1,
         user                       => $options->{user}              || $>,
         group                      => $options->{group}             || $),
 

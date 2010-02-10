@@ -38,16 +38,22 @@ Uses the fast XS/C HTTP header parser
 
 =item Preforking
 
-Runs servers preforked like most high performance UNIX servers do.
+Spawns workers preforked like most high performance UNIX servers
+do. Nomo also reaps dead children and automatically restarts the
+worker pool.
+
+=item Signals
+
+Supports C<HUP> for graceful restarts, and C<TTIN>/C<TTOU> to
+dynamically increase or decrease the number of worker processes.
 
 =item Superdaemon aware
 
 Supports L<Server::Starter> for hot deploy and graceful restarts.
 
-=item UNIX Domain Socket support
+=item Multiple interfaces and UNIX Domain Socket support
 
-Forked children share the UNIX domain socket with the parent process
-for the best performance when used with the nginx proxy in front.
+Able to listen on multiple intefaces including UNIX sockets.
 
 =item PSGI compatible
 
