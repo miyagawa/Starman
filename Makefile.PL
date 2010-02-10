@@ -5,14 +5,13 @@ readme_from 'lib/Nomo.pm';
 build_requires 'Test::More';
 requires 'Plack', 0.99;
 requires 'Net::Server';
-requires 'Net::Server::SS::PreFork';
 requires 'Data::Dump';
 requires 'HTTP::Parser::XS';
 requires 'HTTP::Status';
 requires 'HTTP::Date';
 install_script 'bin/nomo';
-
 recommends 'Server::Starter';
+recommends 'Net::Server::SS::PreFork';
 test_requires 'Test::Requires';
 auto_include_deps;
 auto_install;
