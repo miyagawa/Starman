@@ -17,6 +17,8 @@ use constant DEBUG        => $ENV{NOMO_DEBUG} || 0;
 use constant CHUNKSIZE    => 64 * 1024;
 use constant READ_TIMEOUT => 5;
 
+my $null_io = do { open my $io, "<", \""; $io };
+
 sub run {
     my($self, $app, $options) = @_;
 
@@ -107,6 +109,7 @@ sub process_request {
             'psgi.run_once'     => Plack::Util::FALSE,
             'psgi.multithread'  => Plack::Util::FALSE,
             'psgi.multiprocess' => Plack::Util::TRUE,
+            'psgix.input.buffered' => Plack::Util::TRUE,
         };
 
         # Parse headers
@@ -297,7 +300,6 @@ sub _prepare_env {
             $buf->print($chunk);
         }
         $env->{'psgi.input'}           = $buf->rewind;
-        $env->{'psgix.input.buffered'} = Plack::Util::TRUE;
     } elsif ($chunked) {
         my $buf = Plack::TempBuffer->new;
         my $chunk_buffer = '';
@@ -330,9 +332,8 @@ sub _prepare_env {
 
         $env->{CONTENT_LENGTH}         = $length;
         $env->{'psgi.input'}           = $buf->rewind;
-        $env->{'psgix.input.buffered'} = Plack::Util::TRUE;
     } else {
-        $env->{'psgi.input'} = Symbol::geniosym;
+        $env->{'psgi.input'} = $null_io;
     }
 }
 
