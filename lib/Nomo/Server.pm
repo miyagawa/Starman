@@ -299,7 +299,7 @@ sub _prepare_env {
             $cl -= $read;
             $buf->print($chunk);
         }
-        $env->{'psgi.input'}           = $buf->rewind;
+        $env->{'psgi.input'} = $buf->rewind;
     } elsif ($chunked) {
         my $buf = Plack::TempBuffer->new;
         my $chunk_buffer = '';
@@ -330,8 +330,8 @@ sub _prepare_env {
             last unless $read && $read > 0;
         }
 
-        $env->{CONTENT_LENGTH}         = $length;
-        $env->{'psgi.input'}           = $buf->rewind;
+        $env->{CONTENT_LENGTH} = $length;
+        $env->{'psgi.input'}   = $buf->rewind;
     } else {
         $env->{'psgi.input'} = $null_io;
     }
