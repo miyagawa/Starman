@@ -21,15 +21,6 @@ my $null_io = do { open my $io, "<", \""; $io };
 
 use Net::Server::SIG qw(register_sig);
 
-sub loop {
-    my $self = shift;
-    register_sig(
-        TTIN => sub { my $p = $self->{server}; $p->{$_}++ for qw( min_servers max_servers ) },
-        TTOU => sub { my $p = $self->{server}; $p->{$_}-- for qw( min_servers max_servers ) },
-    );
-    $self->SUPER::loop(@_);
-}
-
 sub run {
     my($self, $app, $options) = @_;
 
@@ -92,6 +83,11 @@ sub pre_loop_hook {
         proto => $port =~ /unix/ ? 'unix' : 'http',
         server_software => 'Nomo',
     }) if $self->{options}{server_ready};
+
+    register_sig(
+        TTIN => sub { my $p = $self->{server}; $p->{$_}++ for qw( min_servers max_servers ) },
+        TTOU => sub { my $p = $self->{server}; $p->{$_}-- for qw( min_servers max_servers ) },
+    );
 }
 
 # The below methods run in the child process
