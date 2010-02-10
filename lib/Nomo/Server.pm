@@ -280,10 +280,11 @@ sub _prepare_env {
 
     my $get_chunk = sub {
         if ($self->{client}->{inputbuf}) {
-            return delete $self->{client}->{inputbuf};
+            my $chunk = delete $self->{client}->{inputbuf};
+            return ($chunk, length $chunk);
         }
-        sysread STDIN, my($chunk), CHUNKSIZE;
-        return $chunk;
+        my $read = sysread STDIN, my($chunk), CHUNKSIZE;
+        return ($chunk, $read);
     };
 
     my $chunked = do { no warnings; lc delete $env->{HTTP_TRANSFER_ENCODING} eq 'chunked' };
@@ -291,10 +292,9 @@ sub _prepare_env {
     if (my $cl = $env->{CONTENT_LENGTH}) {
         my $buf = Plack::TempBuffer->new($cl);
         while ($cl > 0) {
-            if (defined(my $chunk = $get_chunk->())) {
-                $cl -= length $chunk;
-                $buf->print($chunk);
-            }
+            my($chunk, $read) = $get_chunk->();
+            $cl -= $read;
+            $buf->print($chunk);
         }
         $env->{'psgix.input.buffered'} = $env->{'psgi.input'} = $buf->rewind;
     } elsif ($chunked) {
@@ -304,8 +304,7 @@ sub _prepare_env {
 
     DECHUNK:
         while (1) {
-            my $chunk = $get_chunk->();
-            my $read = length $chunk;
+            my($chunk, $read) = $get_chunk->();
             $chunk_buffer .= $chunk;
 
             while ( $chunk_buffer =~ s/^(([0-9a-fA-F]+).*\015\012)// ) {
