@@ -296,8 +296,8 @@ sub _prepare_env {
             $cl -= $read;
             $buf->print($chunk);
         }
-        $env->{'psgi.input'} = $buf->rewind;
-        $env->{'psgix.input.buffered'} = 1;
+        $env->{'psgi.input'}           = $buf->rewind;
+        $env->{'psgix.input.buffered'} = Plack::Util::TRUE;
     } elsif ($chunked) {
         my $buf = Plack::TempBuffer->new;
         my $chunk_buffer = '';
@@ -328,9 +328,9 @@ sub _prepare_env {
             last unless $read && $read > 0;
         }
 
-        $env->{CONTENT_LENGTH} = $length;
-        $env->{'psgi.input'} = $buf->rewind;
-        $env->{'psgix.input.buffered'} = 1;
+        $env->{CONTENT_LENGTH}         = $length;
+        $env->{'psgi.input'}           = $buf->rewind;
+        $env->{'psgix.input.buffered'} = Plack::Util::TRUE;
     } else {
         $env->{'psgi.input'} = Symbol::geniosym;
     }
