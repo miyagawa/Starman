@@ -88,9 +88,16 @@ sub pre_loop_hook {
         TTIN => sub { my $p = $self->{server}; $p->{$_}++ for qw( min_servers max_servers ) },
         TTOU => sub { my $p = $self->{server}; $p->{$_}-- for qw( min_servers max_servers ) },
     );
+
+    $0 = "nomo master " . join(" ", @{$self->{options}{argv}});
 }
 
 # The below methods run in the child process
+
+sub child_init_hook {
+    my $self = shift;
+    $0 = "nomo worker " . join(" ", @{$self->{options}{argv}});
+}
 
 sub post_accept_hook {
     my $self = shift;

@@ -55,6 +55,12 @@ Supports L<Server::Starter> for hot deploy and graceful restarts.
 
 Able to listen on multiple intefaces including UNIX sockets.
 
+=item Small memory footprint
+
+Preloading the applications enables copy-on-write friendly memory
+management. Also, the minimum memory usage Nomo requires for the
+master process is 7MB and children (workers) is less than 3.0MB.
+
 =item PSGI compatible
 
 Can run any PSGI applications and frameworks
