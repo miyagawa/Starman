@@ -33,16 +33,27 @@ sub run {
         $extra{setsid} = $extra{background} = 1;
     }
 
-    if ($options->{socket}) {
-        $options->{port} = "$options->{socket}|unix";
-        $options->{host} = 'localhost';
+    my($host, $port, $proto);
+    for my $listen (@{$options->{listen}}) {
+        if ($listen =~ /:/) {
+            my($h, $p) = split /:/, $listen, 2;
+            push @$host, $h || '*';
+            push @$port, $p;
+            push @$proto, 'tcp';
+        } else {
+            push @$host, 'localhost';
+            push @$port, $listen;
+            push @$proto, 'unix';
+        }
     }
 
     my $workers = $options->{workers} || 5;
+    local @ARGV = ();
 
     $self->SUPER::run(
-        port                       => $options->{port} || 5000,
-        host                       => $options->{host} || '*',
+        port                       => $port,
+        host                       => $host,
+        proto                      => $proto,
         serialize                  => 'flock',
         log_level                  => DEBUG ? 4 : 1,
         min_servers                => $options->{min_servers}       || $workers,

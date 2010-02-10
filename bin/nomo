@@ -15,29 +15,47 @@ nomo - Nomo launcher
 
 =head1 SYNOPSIS
 
-  nomo --port 8081
-  nomo --socket /tmp/nomo.sock
-  nomo --max-servers 32
+  nomo --listen :5001 --listen /tmp/nomo.sock
+  nomo --workers 32 --port 8080
 
 =over 4
+
+=item -l, --listen
+
+  --listen HOST:PORT --listen PORT --listen UNIX_SOCKET
+
+Specifies the TCP address, ports and UNIX domain sockets to bind to
+wait for requests. You can repeat as many times as you want and mix
+TCP and UNIX domain sockets.
+
+Defaults to any IP address and port 5000.
 
 =item --host
 
   --host 127.0.0.1
 
-Specifies the address to listen to. Default to C<*>.
+Specifies the address to bind.
+
+This option is for a compatiblity with L<plackup> and you're
+recommended to use C<--listen> instead.
 
 =item --port
 
   --port 8080
 
-Specifies the port to listen to. Defaults to 5000.
+Specifies the port to bind.
+
+This option is for a compatiblity with L<plackup> and you're
+recommended to use C<--listen> instead.
 
 =item -S, --socket
 
   -S /tmp/nomo.sock
 
-Specifies the path to UNIX domain socket to listen.
+Specifies the path to UNIX domain socket to bind.
+
+This option is for a compatiblity with L<plackup> and you're
+recommended to use C<--listen> instead.
 
 =item --workers
 
