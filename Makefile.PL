@@ -3,7 +3,7 @@ name 'Nomo';
 all_from 'lib/Nomo.pm';
 readme_from 'lib/Nomo.pm';
 build_requires 'Test::More';
-requires 'Plack', 0.99;
+requires 'Plack', 0.99_05;
 requires 'Net::Server';
 requires 'Data::Dump';
 requires 'HTTP::Parser::XS';
