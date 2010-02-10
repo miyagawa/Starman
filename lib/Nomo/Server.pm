@@ -19,6 +19,17 @@ use constant READ_TIMEOUT => 5;
 
 my $null_io = do { open my $io, "<", \""; $io };
 
+use Net::Server::SIG qw(register_sig);
+
+sub loop {
+    my $self = shift;
+    register_sig(
+        TTIN => sub { my $p = $self->{server}; $p->{$_}++ for qw( min_servers max_servers ) },
+        TTOU => sub { my $p = $self->{server}; $p->{$_}-- for qw( min_servers max_servers ) },
+    );
+    $self->SUPER::loop(@_);
+}
+
 sub run {
     my($self, $app, $options) = @_;
 
