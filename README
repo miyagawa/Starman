@@ -1,26 +1,26 @@
 NAME
-    Nomo - High-performance preforking PSGI web server
+    HTTP::Server::Starman - High-performance preforking PSGI web server
 
 SYNOPSIS
       # Run app.psgi with the default settings
-      > nomo
+      > starman
 
       # run with Server::Starter
-      > start_server --port 127.0.0.1:80 -- nomo --max-servers 32 myapp.psgi
+      > start_server --port 127.0.0.1:80 -- starman --max-servers 32 myapp.psgi
 
       # UNIX domain sockets
-      > nomo --listen /tmp/nomo.sock
+      > starman --listen /tmp/starman.sock
 
 DESCRIPTION
-    Nomo is a PSGI perl web server that has unique features such as:
+    Starman is a PSGI perl web server that has unique features such as:
 
     High Performance
         Uses the fast XS/C HTTP header parser
 
     Preforking
         Spawns workers preforked like most high performance UNIX servers do.
-        Nomo also reaps dead children and automatically restarts the worker
-        pool.
+        Starman also reaps dead children and automatically restarts the
+        worker pool.
 
     Signals
         Supports "HUP" for graceful restarts, and "TTIN"/"TTOU" to
@@ -34,7 +34,7 @@ DESCRIPTION
 
     Small memory footprint
         Preloading the applications enables copy-on-write friendly memory
-        management. Also, the minimum memory usage Nomo requires for the
+        management. Also, the minimum memory usage Starman requires for the
         master process is 7MB and children (workers) is less than 3.0MB.
 
     PSGI compatible
@@ -48,7 +48,7 @@ PERFORMANCE
     A simple benchmark using "Hello.psgi" as of Plack git SHA *82121a* with
     ApacheBench concurrenty 10 and Keep-alive on.
 
-      -- server: Nomo
+      -- server: Starman
       Requests per second:    6413.87 [#/sec] (mean)
       -- server: AnyEvent
       Requests per second:    3911.78 [#/sec] (mean)
@@ -65,9 +65,9 @@ PERFORMANCE
       -- server: POE
       Requests per second:    503.59 [#/sec] (mean)
 
-NOMO?
-    The name Nomo is taken from the baseball player <Hideo Nomo>, who is a
-    great starter, famous for his forkball and whose nickname is Tornado.
+STARMAN?
+    The name Starman is taken from the song by a Japanese rock band Unicorn.
+    It's also a character from the video game Earthbound.
 
 AUTHOR
     Tatsuhiko Miyagawa <miyagawa@bulknews.net>

@@ -5,7 +5,7 @@ use Plack::Runner;
 
 my @argv = @ARGV;
 
-my $runner = Plack::Runner->new(server => 'Nomo', env => 'production');
+my $runner = Plack::Runner->new(server => 'Starman', env => 'production');
 $runner->parse_options(@argv);
 $runner->set_options(argv => \@argv) if $runner->can('set_options');
 $runner->run;
@@ -14,12 +14,12 @@ __END__
 
 =head1 NAME
 
-nomo - Nomo launcher
+starman - Starman launcher
 
 =head1 SYNOPSIS
 
-  nomo --listen :5001 --listen /tmp/nomo.sock
-  nomo --workers 32 --port 8080
+  starman --listen :5001 --listen /tmp/starman.sock
+  starman --workers 32 --port 8080
 
 =over 4
 
@@ -53,7 +53,7 @@ recommended to use C<--listen> instead.
 
 =item -S, --socket
 
-  -S /tmp/nomo.sock
+  -S /tmp/starman.sock
 
 Specifies the path to UNIX domain socket to bind.
 
@@ -64,9 +64,9 @@ recommended to use C<--listen> instead.
 
 Specifies the number of worker pool. Defaults to 5.
 
-Nomo by default sets up other spare server configuration based on this
+Starman by default sets up other spare server configuration based on this
 workers value, making sure there are B<always only> C<N> worker
-processes running. So even if there're no idle workers, Nomo won't
+processes running. So even if there're no idle workers, Starman won't
 spawn off spare processes since that's mostly what you want to do by
 fine tuning the memory usage etc. in the production environment.
 
@@ -80,6 +80,6 @@ See `plackup -h` for more options.
 
 =head1 SEE ALSO
 
-L<Nomo>
+L<Starman>
 
 =cut

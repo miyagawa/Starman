@@ -1,4 +1,4 @@
-package Nomo::Server;
+package HTTP::Server::Starman::Server;
 use strict;
 use base 'Net::Server::PreFork';
 
@@ -13,7 +13,7 @@ use Symbol;
 use Plack::Util;
 use Plack::TempBuffer;
 
-use constant DEBUG        => $ENV{NOMO_DEBUG} || 0;
+use constant DEBUG        => $ENV{STARMAN_DEBUG} || 0;
 use constant CHUNKSIZE    => 64 * 1024;
 use constant READ_TIMEOUT => 5;
 
@@ -81,7 +81,7 @@ sub pre_loop_hook {
         host => $host,
         port => $port,
         proto => $port =~ /unix/ ? 'unix' : 'http',
-        server_software => 'Nomo',
+        server_software => 'Starman',
     }) if $self->{options}{server_ready};
 
     register_sig(
@@ -89,14 +89,14 @@ sub pre_loop_hook {
         TTOU => sub { $self->{server}->{$_}-- for qw( min_servers max_servers ) },
     );
 
-    $0 = "nomo master " . join(" ", @{$self->{options}{argv} || []});
+    $0 = "starman master " . join(" ", @{$self->{options}{argv} || []});
 }
 
 # The below methods run in the child process
 
 sub child_init_hook {
     my $self = shift;
-    $0 = "nomo worker " . join(" ", @{$self->{options}{argv} || []});
+    $0 = "starman worker " . join(" ", @{$self->{options}{argv} || []});
 }
 
 sub post_accept_hook {

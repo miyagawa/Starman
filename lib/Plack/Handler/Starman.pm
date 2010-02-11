@@ -1,6 +1,6 @@
-package Plack::Handler::Nomo;
+package Plack::Handler::Starman;
 use strict;
-use Nomo::Server;
+use HTTP::Server::Starman::Server;
 
 sub new {
     my $class = shift;
@@ -12,10 +12,10 @@ sub run {
 
     if ($ENV{SERVER_STARTER_PORT}) {
         require Net::Server::SS::PreFork;
-        @Nomo::Server::ISA = qw(Net::Server::SS::PreFork); # Yikes.
+        @HTTP::Server::Starman::Server::ISA = qw(Net::Server::SS::PreFork); # Yikes.
     }
 
-    Nomo::Server->new->run($app, {%$self});
+    HTTP::Server::Starman::Server->new->run($app, {%$self});
 }
 
 1;
@@ -24,11 +24,11 @@ __END__
 
 =head1 NAME
 
-Plack::Handler::Nomo - Plack adapter for Nomo
+Plack::Handler::Starman - Plack adapter for Starman
 
 =head1 SYNOPSIS
 
-  plackup -s Nomo
+  plackup -s Starman
 
 =head1 AUTHOR
 
@@ -36,7 +36,7 @@ Tatsuhiko Miyagawa
 
 =head1 SEE ALSO
 
-L<Nomo>
+L<Starman>
 
 =cut
 
