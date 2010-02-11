@@ -45,8 +45,7 @@ DESCRIPTION
         requests.
 
 PERFORMANCE
-    A simple benchmark using "Hello.psgi" as of Plack git SHA *82121a* with
-    ApacheBench concurrenty 10 and Keep-alive on.
+    Here's a simple benchmark using "Hello.psgi".
 
       -- server: Starman
       Requests per second:    6413.87 [#/sec] (mean)
@@ -65,23 +64,27 @@ PERFORMANCE
       -- server: POE
       Requests per second:    503.59 [#/sec] (mean)
 
+    This benchmark was processed with "ab -c 10 -t 1 -k" on MacBook Pro 13"
+    late 2009 model on Mac OS X 10.6.2 with perl 5.10.0. YMMV.
+
 NAMING
   Starman?
     The name Starman is taken from the song (*Star na Otoko*) by the
     Japanese rock band Unicorn. It's also a power-up from Super Mario
     Brothers and a character from the video game Earthbound.
 
-  Why the cute name instead of being more descriptive namespace? Are you on drugs?
-    Maybe I am on drugs with all those Ruby cute names but I'm sick of
-    naming software like
+  Why the cute name instead of more descriptive namespace? Are you on drugs?
+    I'm sick of naming Perl software like
     HTTP::Server::PSGI::How::Its::Written::With::What::Module and people
-    call it HSSPHIWWWM on IRC, and newbies would ask questinos what they
-    stand for every day. That's crazy.
+    call it HSSPHIWWWM on IRC. It's hard to say on speeches and newbies
+    would ask questions what they stand for every day. That's crazy.
 
-    This module actually includes the longer alias
+    This module actually includes the longer alias and an empty subclass
     HTTP::Server::PSGI::Net::Server::PreFork for those who like to type more
     ::'s. It would actually help you find this software by searching for
     *PSGI Server Prefork* on CPAN, which i believe is a good thing.
+
+    Yes, maybe I'm on drugs. We'll see.
 
 AUTHOR
     Tatsuhiko Miyagawa <miyagawa@bulknews.net>
