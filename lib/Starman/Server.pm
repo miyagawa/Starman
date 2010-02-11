@@ -1,4 +1,4 @@
-package HTTP::Server::Starman::Server;
+package Starman::Server;
 use strict;
 use base 'Net::Server::PreFork';
 

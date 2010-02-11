@@ -1,4 +1,4 @@
-package HTTP::Server::Starman;
+package Starman;
 
 use strict;
 use 5.008_001;
@@ -13,7 +13,7 @@ __END__
 
 =head1 NAME
 
-HTTP::Server::Starman - High-performance preforking PSGI web server
+Starman - High-performance preforking PSGI web server
 
 =head1 SYNOPSIS
 
@@ -93,11 +93,26 @@ with ApacheBench concurrenty 10 and Keep-alive on.
   -- server: POE
   Requests per second:    503.59 [#/sec] (mean)
 
-=head1 STARMAN?
+=head1 NAMING
 
-The name Starman is taken from the song (I<Star na Otoko>) by a
-Japanese rock band Unicorn. It's also a power-up from Super Mario and
-a character from the video game Earthbound.
+=head2 Starman?
+
+The name Starman is taken from the song (I<Star na Otoko>) by the
+Japanese rock band Unicorn. It's also a power-up from Super Mario
+Brothers and a character from the video game Earthbound.
+
+=head2 Why the cute name instead of being more descriptive namespace? Are you on drugs?
+
+Maybe I am on drugs with all those Ruby cute names but I'm sick of
+naming software like
+HTTP::Server::PSGI::How::Its::Written::With::What::Module and people
+call it HSSPHIWWWM on IRC, and newbies would ask questinos what they
+stand for every day. That's crazy.
+
+This module actually includes the longer alias
+L<HTTP::Server::PSGI::Net::Server::PreFork> for those who like to type
+more ::'s. It would actually help you find this software by searching
+for I<PSGI Server Prefork> on CPAN, which i believe is a good thing.
 
 =head1 AUTHOR
 

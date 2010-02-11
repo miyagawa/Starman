@@ -1,7 +1,7 @@
 use inc::Module::Install;
 name 'Starman';
-all_from 'lib/HTTP/Server/Starman.pm';
-readme_from 'lib/HTTP/Server/Starman.pm';
+all_from 'lib/Starman.pm';
+readme_from 'lib/Starman.pm';
 build_requires 'Test::More';
 requires 'Plack', 0.99_05;
 requires 'Net::Server';
@@ -9,6 +9,7 @@ requires 'Data::Dump';
 requires 'HTTP::Parser::XS';
 requires 'HTTP::Status';
 requires 'HTTP::Date';
+requires 'parent';
 install_script 'bin/starman';
 recommends 'Server::Starter';
 recommends 'Net::Server::SS::PreFork';

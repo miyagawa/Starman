@@ -1,6 +1,6 @@
 package Plack::Handler::Starman;
 use strict;
-use HTTP::Server::Starman::Server;
+use Starman::Server;
 
 sub new {
     my $class = shift;
@@ -12,10 +12,10 @@ sub run {
 
     if ($ENV{SERVER_STARTER_PORT}) {
         require Net::Server::SS::PreFork;
-        @HTTP::Server::Starman::Server::ISA = qw(Net::Server::SS::PreFork); # Yikes.
+        @Starman::Server::ISA = qw(Net::Server::SS::PreFork); # Yikes.
     }
 
-    HTTP::Server::Starman::Server->new->run($app, {%$self});
+    Starman::Server->new->run($app, {%$self});
 }
 
 1;
@@ -36,7 +36,7 @@ Tatsuhiko Miyagawa
 
 =head1 SEE ALSO
 
-L<HTTP::Server::Starman>
+L<Starman>
 
 =cut
 
