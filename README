@@ -66,8 +66,9 @@ PERFORMANCE
       Requests per second:    503.59 [#/sec] (mean)
 
 STARMAN?
-    The name Starman is taken from the song by a Japanese rock band Unicorn.
-    It's also a character from the video game Earthbound.
+    The name Starman is taken from the song (*Star na Otoko*) by a Japanese
+    rock band Unicorn. It's also a power-up from Super Mario and a character
+    from the video game Earthbound.
 
 AUTHOR
     Tatsuhiko Miyagawa <miyagawa@bulknews.net>

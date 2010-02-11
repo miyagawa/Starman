@@ -95,8 +95,9 @@ with ApacheBench concurrenty 10 and Keep-alive on.
 
 =head1 STARMAN?
 
-The name Starman is taken from the song by a Japanese rock band
-Unicorn. It's also a character from the video game Earthbound.
+The name Starman is taken from the song (I<Star na Otoko>) by a
+Japanese rock band Unicorn. It's also a power-up from Super Mario and
+a character from the video game Earthbound.
 
 =head1 AUTHOR
 
