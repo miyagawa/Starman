@@ -36,7 +36,7 @@ Tatsuhiko Miyagawa
 
 =head1 SEE ALSO
 
-L<Starman>
+L<HTTP::Server::Starman>
 
 =cut
 
