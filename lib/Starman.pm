@@ -101,12 +101,12 @@ The name Starman is taken from the song (I<Star na Otoko>) by the
 Japanese rock band Unicorn. It's also a power-up from Super Mario
 Brothers and a character from the video game Earthbound.
 
-=head2 Why the cute name instead of being more descriptive namespace? Are you on drugs?
+=head2 Why the cute name instead of more descriptive namespace? Are you on drugs?
 
 Maybe I am on drugs with all those Ruby cute names but I'm sick of
 naming software like
 HTTP::Server::PSGI::How::Its::Written::With::What::Module and people
-call it HSSPHIWWWM on IRC, and newbies would ask questinos what they
+call it HSSPHIWWWM on IRC, and newbies would ask questions what they
 stand for every day. That's crazy.
 
 This module actually includes the longer alias
