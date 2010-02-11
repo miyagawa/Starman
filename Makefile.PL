@@ -1,5 +1,5 @@
 use inc::Module::Install;
-name 'HTTP-Server-Starman';
+name 'Starman';
 all_from 'lib/HTTP/Server/Starman.pm';
 readme_from 'lib/HTTP/Server/Starman.pm';
 build_requires 'Test::More';
