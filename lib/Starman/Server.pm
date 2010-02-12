@@ -138,6 +138,7 @@ sub process_request {
             'psgi.run_once'     => Plack::Util::FALSE,
             'psgi.multithread'  => Plack::Util::FALSE,
             'psgi.multiprocess' => Plack::Util::TRUE,
+            'psgix.io'          => $conn,
             'psgix.input.buffered' => Plack::Util::TRUE,
         };
 
