@@ -66,6 +66,7 @@ sub run {
         leave_children_open_on_hup => 1,
         user                       => $options->{user}              || $>,
         group                      => $options->{group}             || $),
+        listen                     => $options->{backlog}           || 1024,
 
         %extra
     );
