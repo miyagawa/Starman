@@ -18,9 +18,10 @@ inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 inc/Test/Builder/Module.pm
 inc/Test/Requires.pm
-lib/HTTP/Server/Starman.pm
-lib/HTTP/Server/Starman/Server.pm
+lib/HTTP/Server/PSGI/Net/Server/PreFork.pm
 lib/Plack/Handler/Starman.pm
+lib/Starman.pm
+lib/Starman/Server.pm
 Makefile.PL
 MANIFEST			This list of files
 META.yml
