@@ -21,7 +21,7 @@ Starman - High-performance preforking PSGI web server
   > starman
 
   # run with Server::Starter
-  > start_server --port 127.0.0.1:80 -- starman --max-servers 32 myapp.psgi
+  > start_server --port 127.0.0.1:80 -- starman --workers 32 myapp.psgi
 
   # UNIX domain sockets
   > starman --listen /tmp/starman.sock
@@ -100,14 +100,15 @@ This benchmark was processed with C<ab -c 10 -t 1 -k> on MacBook Pro
 =head2 Starman?
 
 The name Starman is taken from the song (I<Star na Otoko>) by the
-Japanese rock band Unicorn. It's also a power-up from Super Mario
-Brothers and a character from the video game Earthbound.
+Japanese rock band Unicorn (yes, Unicorn!). It's also known as a song
+by David Bowie, a power-up from Super Mario Brothers and a character
+from Earthbound, all of which I love.
 
 =head2 Why the cute name instead of more descriptive namespace? Are you on drugs?
 
 I'm sick of naming Perl software like
 HTTP::Server::PSGI::How::Its::Written::With::What::Module and people
-call it HSSPHIWWWM on IRC. It's hard to say on speeches and newbies
+call it HSPHIWWWM on IRC. It's hard to say on speeches and newbies
 would ask questions what they stand for every day. That's crazy.
 
 This module actually includes the longer alias and an empty subclass
