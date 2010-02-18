@@ -75,15 +75,15 @@ Supports chunked requests and responses, keep-alive and pipeline requests.
 
 Here's a simple benchmark using C<Hello.psgi>.
 
-  -- server: Starman
-  Requests per second:    6413.87 [#/sec] (mean)
-  -- server: AnyEvent
+  -- server: Starman (workers=10)
+  Requests per second:    6849.16 [#/sec] (mean)
+  -- server: Twiggy
   Requests per second:    3911.78 [#/sec] (mean)
   -- server: AnyEvent::HTTPD
   Requests per second:    2738.49 [#/sec] (mean)
-  -- server: Standalone
-  Requests per second:    1045.66 [#/sec] (mean)
-  -- server: Standalone (prefork)
+  -- server: HTTP::Server::PSGI
+  Requests per second:    2218.16 [#/sec] (mean)
+  -- server: HTTP::Server::PSGI (workers=10)
   Requests per second:    2792.99 [#/sec] (mean)
   -- server: HTTP::Server::Simple
   Requests per second:    1435.50 [#/sec] (mean)
