@@ -63,11 +63,11 @@ sub run {
         max_spare_servers          => $options->{max_spare_servers} || $workers - 1,
         max_servers                => $options->{max_servers}       || $workers,
         max_requests               => $options->{max_requests}      || 1000,
-        leave_children_open_on_hup => 1,
         user                       => $options->{user}              || $>,
         group                      => $options->{group}             || $),
         listen                     => $options->{backlog}           || 1024,
-
+        leave_children_open_on_hup => 1, # XXX conigurable?
+        no_client_stdout           => 1,
         %extra
     );
 }
@@ -177,7 +177,7 @@ sub process_request {
             # Do we need to send 100 Continue?
             if ( $env->{HTTP_EXPECT} ) {
                 if ( $env->{HTTP_EXPECT} eq '100-continue' ) {
-                    syswrite STDOUT, 'HTTP/1.1 100 Continue' . $CRLF . $CRLF;
+                    syswrite $conn, 'HTTP/1.1 100 Continue' . $CRLF . $CRLF;
                     DEBUG && warn "[$$] Sent 100 Continue response\n";
                 }
                 else {
@@ -256,7 +256,7 @@ sub _read_headers {
             last if $self->{client}->{inputbuf} =~ /$CRLF$CRLF/s;
 
             # If not, read some data
-            my $read = sysread STDIN, my $buf, CHUNKSIZE;
+            my $read = sysread $self->{server}->{client}, my $buf, CHUNKSIZE;
 
             if ( !defined $read || $read == 0 ) {
                 die "Read error: $!\n";
@@ -317,7 +317,7 @@ sub _prepare_env {
             my $chunk = delete $self->{client}->{inputbuf};
             return ($chunk, length $chunk);
         }
-        my $read = sysread STDIN, my($chunk), CHUNKSIZE;
+        my $read = sysread $self->{server}->{client}, my($chunk), CHUNKSIZE;
         return ($chunk, $read);
     };
 
@@ -413,9 +413,11 @@ sub _finalize_response {
         push @headers, 'Connection: close';
     }
 
+    my $conn = $self->{server}->{client};
+
     # Buffer the headers so they are sent with the first write() call
     # This reduces the number of TCP packets we are sending
-    syswrite STDOUT, join( $CRLF, @headers, '' ) . $CRLF;
+    syswrite $conn, join( $CRLF, @headers, '' ) . $CRLF;
 
     if (defined $res->[2]) {
         Plack::Util::foreach($res->[2], sub {
@@ -424,11 +426,11 @@ sub _finalize_response {
                 my $len = length $buffer;
                 $buffer = sprintf( "%x", $len ) . $CRLF . $buffer . $CRLF;
             }
-            syswrite STDOUT, $buffer;
+            syswrite $conn, $buffer;
             DEBUG && warn "[$$] Wrote " . length($buffer) . " bytes\n";
         });
 
-        syswrite STDOUT, "0$CRLF$CRLF" if $chunked;
+        syswrite $conn, "0$CRLF$CRLF" if $chunked;
     } else {
         return Plack::Util::inline_object
             write => sub {
@@ -437,11 +439,11 @@ sub _finalize_response {
                     my $len = length $buffer;
                     $buffer = sprintf( "%x", $len ) . $CRLF . $buffer . $CRLF;
                 }
-                syswrite STDOUT, $buffer;
+                syswrite $conn, $buffer;
                 DEBUG && warn "[$$] Wrote " . length($buffer) . " bytes\n";
             },
             close => sub {
-                syswrite STDOUT, "0$CRLF$CRLF" if $chunked;
+                syswrite $conn, "0$CRLF$CRLF" if $chunked;
             };
     }
 }
