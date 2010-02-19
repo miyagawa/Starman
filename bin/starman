@@ -25,7 +25,7 @@ starman - Starman launcher
 
 =item -l, --listen
 
-  --listen HOST:PORT --listen PORT --listen UNIX_SOCKET
+  --listen HOST:PORT --listen :PORT --listen UNIX_SOCKET
 
 Specifies the TCP address, ports and UNIX domain sockets to bind to
 wait for requests. You can repeat as many times as you want and mix
