@@ -44,6 +44,9 @@ DESCRIPTION
         Supports chunked requests and responses, keep-alive and pipeline
         requests.
 
+    UNIX only
+        This server does not support Win32.
+
 PERFORMANCE
     Here's a simple benchmark using "Hello.psgi".
 
