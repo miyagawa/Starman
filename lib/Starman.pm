@@ -69,6 +69,10 @@ Can run any PSGI applications and frameworks
 
 Supports chunked requests and responses, keep-alive and pipeline requests.
 
+=item UNIX only
+
+This server does not support Win32.
+
 =back
 
 =head1 PERFORMANCE

@@ -1,3 +1,8 @@
+if ($^O eq 'MSWin32') {
+    warn "This distribution doesn't support your platform $^O\n";
+    exit;
+}
+
 use inc::Module::Install;
 name 'Starman';
 all_from 'lib/Starman.pm';
