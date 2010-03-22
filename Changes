@@ -1,5 +1,8 @@
 Revision history for Perl extension Starman
 
+0.1003 Sun Mar 21 21:08:39 PDT 2010
+        - Fixed SERVER_PORT when used with Server::Starter (Reported by ronsavage)
+
 0.1002 Wed Mar 10 12:10:46 JST 2010
         - Officially do not support Win32
 
