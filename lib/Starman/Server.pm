@@ -129,7 +129,7 @@ sub process_request {
             REMOTE_ADDR     => $self->{server}->{peeraddr},
             REMOTE_HOST     => $self->{server}->{peerhost} || $self->{server}->{peeraddr},
             SERVER_NAME     => $self->{server}->{sockaddr}, # XXX: needs to be resolved?
-            SERVER_PORT     => $self->{server}->{port}->[0],
+            SERVER_PORT     => $self->{server}->{sockport},
             SCRIPT_NAME     => '',
             'psgi.version'      => [ 1, 1 ],
             'psgi.errors'       => *STDERR,
