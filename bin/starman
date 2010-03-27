@@ -90,9 +90,10 @@ Number of the requests to process per one worker process. Defaults to 1000.
 
 =item --disable-keepalive
 
-Disable Keep-alive persistent connections. Useful if you run Starman
-behind a frontend proxy that tries to pool connections more than a
-number of backend workers (i.e. Apache mpm_prefork + mod_proxy).
+Disable Keep-alive persistent connections. It is an useful workaround
+if you run Starman behind a broken frontend proxy that tries to pool
+connections more than a number of backend workers (i.e. Apache
+mpm_prefork + mod_proxy).
 
 =back
 
