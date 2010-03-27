@@ -34,6 +34,9 @@ sub run {
     if ( $options->{daemonize} ) {
         $extra{setsid} = $extra{background} = 1;
     }
+    if (! exists $options->{keepalive}) {
+        $options->{keepalive} = 1;
+    }
 
     my($host, $port, $proto);
     for my $listen (@{$options->{listen} || [ "$options->{host}:$options->{port}" ]}) {
@@ -193,6 +196,11 @@ sub process_request {
                 $self->_http_error( 400, $env );
                 last;
             }
+        }
+
+        unless ($self->{options}->{keepalive}) {
+            DEBUG && warn "[$$] keep-alive is disabled. Closing the connection after this request\n";
+            $self->{client}->{keepalive} = 0;
         }
 
         $self->_prepare_env($env);
