@@ -1,5 +1,9 @@
 Revision history for Perl extension Starman
 
+0.1004 Sat Mar 27 19:10:06 PDT 2010
+        - Implemented --disable-keepalive for broken frontend proxy such as mod_proxy + mpm_prefork
+        - Documented --backlog 
+
 0.1003 Sun Mar 21 21:08:39 PDT 2010
         - Fixed SERVER_PORT when used with Server::Starter (Reported by ronsavage)
 
