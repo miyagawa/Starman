@@ -3,11 +3,16 @@ use strict;
 use lib "lib";
 use Plack::Runner;
 
+sub version {
+    require Starman;
+    print "Starman $Starman::VERSION\n";
+}
+
 my @argv = @ARGV;
 
-my $runner = Plack::Runner->new(server => 'Starman', env => 'deployment');
+my $runner = Plack::Runner->new(server => 'Starman', env => 'deployment', version_cb => \&version);
 $runner->parse_options(@argv);
-$runner->set_options(argv => \@argv) if $runner->can('set_options');
+$runner->set_options(argv => \@argv);
 $runner->run;
 
 __END__
