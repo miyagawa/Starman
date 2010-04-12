@@ -335,6 +335,11 @@ sub _prepare_env {
         my $buf = Plack::TempBuffer->new($cl);
         while ($cl > 0) {
             my($chunk, $read) = $get_chunk->();
+
+            if ( !defined $read || $read == 0 ) {
+                die "Read error: $!\n";
+            }
+
             $cl -= $read;
             $buf->print($chunk);
         }
