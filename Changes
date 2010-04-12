@@ -1,5 +1,8 @@
 Revision history for Perl extension Starman
 
+0.1006 Tue Apr 13 00:01:23 CEST 2010
+        - Fixed 100% CPU loop when an unexpected EOF happens (Graham Barr)
+
 0.1005 Sun Mar 28 14:37:03 PDT 2010
         - Implemented starman -v
 
