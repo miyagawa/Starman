@@ -8,7 +8,19 @@ sub version {
     print "Starman $Starman::VERSION\n";
 }
 
+my $preload_app;
+
+require Getopt::Long;
+Getopt::Long::Configure("no_ignore_case", "no_auto_abbrev", "pass_through");
+Getopt::Long::GetOptions(
+    "preload-app"      => \$preload_app,
+);
+
 my @argv = @ARGV;
+if (!$preload_app) {
+    # XXX: warn if @argv contains -r, -R, -L.
+    push @argv, '--loader' => 'Delayed';
+}
 
 my $runner = Plack::Runner->new(server => 'Starman', env => 'deployment', version_cb => \&version);
 $runner->parse_options(@argv);
