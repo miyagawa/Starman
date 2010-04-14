@@ -57,9 +57,10 @@ Able to listen on multiple intefaces including UNIX sockets.
 
 =item Small memory footprint
 
-Preloading the applications enables copy-on-write friendly memory
-management. Also, the minimum memory usage Starman requires for the
-master process is 7MB and children (workers) is less than 3.0MB.
+Preloading the applications with C<--preload-app> command line option
+enables copy-on-write friendly memory management. Also, the minimum
+memory usage Starman requires for the master process is 7MB and
+children (workers) is less than 3.0MB.
 
 =item PSGI compatible
 

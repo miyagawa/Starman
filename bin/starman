@@ -105,6 +105,31 @@ failover (see above).
 
 Number of the requests to process per one worker process. Defaults to 1000.
 
+=item --preload-app
+
+This option lets Starman preload the specified PSGI application in the
+master parent process before preforking children. This allows memory
+savings with copy-on-write memory management. When not set (default),
+forked children loads the application in the initialization hook.
+
+Enabling this option can cause bad things happen when resources like
+sockets or database connections are opened at load time by the master
+process and shared by multiple children.
+
+Since Starman 0.2000, this option defaults to false, and you should
+explicitly set this option to preload the application in the master
+process.
+
+Alternatively, you can use -M command line option (plackup's common
+option) to preload the I<modules> rather than the <application>
+itself.
+
+  starman -MCatalyst -MDBIx::Class myapp.psgi
+
+will load the modules in the master process for memory savings with
+CoW, but the actual loading of C<myapp.psgi> is done per children,
+allowing resource managements such as database connection safer.
+
 =item --disable-keepalive
 
 Disable Keep-alive persistent connections. It is an useful workaround
