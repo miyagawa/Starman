@@ -1,5 +1,9 @@
 Revision history for Perl extension Starman
 
+0.1007 Tue Apr 13 19:45:59 PDT 2010
+        - Fixed a bug where Content-Length less response are sent in Keep-Alive without chunked,
+          choking HTTP/1.0 clients (patspam) #6
+
 0.1006 Tue Apr 13 00:01:23 CEST 2010
         - Fixed 100% CPU loop when an unexpected EOF happens (Graham Barr)
 
