@@ -1,5 +1,10 @@
 Revision history for Perl extension Starman
 
+0.2000 Tue Apr 13 20:22:24 PDT 2010
+        - INCOMPATIBLE: starman executable by default loads the application with Delayed to be safer.
+          Use --preload-app command line option to preload the application in the master process.
+          See `starman --help` for details.
+
 0.1007 Tue Apr 13 19:45:59 PDT 2010
         - Fixed a bug where Content-Length less response are sent in Keep-Alive without chunked,
           choking HTTP/1.0 clients (patspam) #6
