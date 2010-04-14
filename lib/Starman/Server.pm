@@ -100,6 +100,9 @@ sub pre_loop_hook {
 
 sub child_init_hook {
     my $self = shift;
+    if ($self->{options}->{psgi_app_builder}) {
+        $self->{app} = $self->{options}->{psgi_app_builder}->();
+    }
     $0 = "starman worker " . join(" ", @{$self->{options}{argv} || []});
 }
 
