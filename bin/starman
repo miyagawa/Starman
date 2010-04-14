@@ -16,13 +16,14 @@ Getopt::Long::GetOptions(
     "preload-app"      => \$preload_app,
 );
 
-my @argv = @ARGV;
+my @args = (server => 'Starman', env => 'deployment', version_cb => \&version);
 if (!$preload_app) {
-    # XXX: warn if @argv contains -r, -R, -L.
-    push @argv, '--loader' => 'Delayed';
+    push @args, 'loader' => 'Delayed';
 }
 
-my $runner = Plack::Runner->new(server => 'Starman', env => 'deployment', version_cb => \&version);
+my @argv = @ARGV;
+
+my $runner = Plack::Runner->new(@args);
 $runner->parse_options(@argv);
 $runner->set_options(argv => \@argv);
 $runner->run;
