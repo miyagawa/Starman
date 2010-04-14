@@ -413,6 +413,11 @@ sub _finalize_response {
                 $chunked = 1;
             }
         }
+    } else {
+        if ( !$headers{'content-length'} ) {
+            DEBUG && warn "[$$] Disabling keep-alive after sending unknown length body on $protocol\n";
+            $self->{client}->{keepalive} = 0;
+        }
     }
 
     if ( ! $headers{Date} ) {
