@@ -1,5 +1,8 @@
 Revision history for Perl extension Starman
 
+0.2001 Tue Apr 13 21:45:15 PDT 2010
+        - Fixed the way to set the default Delayed loader
+
 0.2000 Tue Apr 13 20:22:24 PDT 2010
         - INCOMPATIBLE: starman executable by default loads the application with Delayed to be safer.
           Use --preload-app command line option to preload the application in the master process.
