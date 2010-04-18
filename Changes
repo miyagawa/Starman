@@ -1,5 +1,8 @@
 Revision history for Perl extension Starman
 
+0.2002 Sat Apr 17 18:44:24 PDT 2010
+        - Switch kyoto.jpg to use baybridge.jpg for testing
+
 0.2001 Tue Apr 13 21:45:15 PDT 2010
         - Fixed the way to set the default Delayed loader
 

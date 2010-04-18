@@ -8,7 +8,7 @@ use Digest::MD5;
 $Plack::Test::Impl = "Server";
 $ENV{PLACK_SERVER} = 'Starman';
 
-my $file = File::ShareDir::dist_dir('Plack') . "/kyoto.jpg";
+my $file = File::ShareDir::dist_dir('Plack') . "/baybridge.jpg";
 
 my $app = sub {
     my $env = shift;
@@ -33,8 +33,8 @@ test_psgi $app, sub {
 
     my $res = $cb->($req);
 
-    is $res->header('X-Content-Length'), 2397701;
-    is Digest::MD5::md5_hex($res->content), '9c6d7249a77204a88be72e9b2fe279e8';
+    is $res->header('X-Content-Length'), 79838;
+    is Digest::MD5::md5_hex($res->content), '983726ae0e4ce5081bef5fb2b7216950';
 };
 
 done_testing;
