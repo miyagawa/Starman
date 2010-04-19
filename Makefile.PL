@@ -8,7 +8,7 @@ name 'Starman';
 all_from 'lib/Starman.pm';
 readme_from 'lib/Starman.pm';
 build_requires 'Test::More';
-requires 'Plack', 0.9930;
+requires 'Plack', 0.9931;
 requires 'Net::Server', 0.91;
 requires 'Data::Dump';
 requires 'HTTP::Parser::XS';
