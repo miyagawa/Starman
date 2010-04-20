@@ -92,8 +92,12 @@ sub pre_loop_hook {
         TTIN => sub { $self->{server}->{$_}++ for qw( min_servers max_servers ) },
         TTOU => sub { $self->{server}->{$_}-- for qw( min_servers max_servers ) },
     );
+}
 
+sub run_parent {
+    my $self = shift;
     $0 = "starman master " . join(" ", @{$self->{options}{argv} || []});
+    $self->SUPER::run_parent(@_);
 }
 
 # The below methods run in the child process
