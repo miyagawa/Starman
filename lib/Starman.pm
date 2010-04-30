@@ -13,7 +13,7 @@ __END__
 
 =head1 NAME
 
-Starman - High-performance preforking PSGI web server
+Starman - High-performance preforking PSGI/Plack web server
 
 =head1 SYNOPSIS
 
