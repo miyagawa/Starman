@@ -1,6 +1,5 @@
 #!/usr/bin/perl
 use strict;
-use lib "lib";
 use Plack::Runner;
 
 sub version {
