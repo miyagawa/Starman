@@ -94,6 +94,17 @@ sub pre_loop_hook {
     );
 }
 
+sub post_process_request_hook {
+    my $self = shift;
+    $self->server_status('C');
+}
+
+sub post_client_connection_hook {
+    my $self = shift;
+
+    $self->server_status('_');
+}
+
 sub run_parent {
     my $self = shift;
     $0 = "starman master " . join(" ", @{$self->{options}{argv} || []});
@@ -109,10 +120,13 @@ sub child_init_hook {
         $self->{app} = $self->{options}->{psgi_app_builder}->();
     }
     $0 = "starman worker " . join(" ", @{$self->{options}{argv} || []});
+    $self->server_status('_');
 }
 
 sub post_accept_hook {
     my $self = shift;
+
+    $self->server_status('R' => '?');
 
     $self->{client} = {
         headerbuf => '',
@@ -247,6 +261,7 @@ sub process_request {
                 }
             }
 
+            $self->server_status('K');
             DEBUG && warn "[$$] Waiting on previous connection for keep-alive request...\n";
 
             my $sel = IO::Select->new($conn);
@@ -391,6 +406,7 @@ sub _prepare_env {
 
 sub _finalize_response {
     my($self, $env, $res) = @_;
+    $self->server_status('W' => $env->{REMOTE_ADDR}, $env->{HTTP_HOST}, $env->{REQUEST_METHOD}, $env->{REQUEST_URI}, $env->{SERVER_PROTOCOL});
 
     my $protocol = $env->{SERVER_PROTOCOL};
     my $status   = $res->[0];
@@ -472,6 +488,22 @@ sub _finalize_response {
                 syswrite $conn, "0$CRLF$CRLF" if $chunked;
             };
     }
+}
+
+# show server-status like apache in ps title
+my @prev_status;
+sub server_status {
+    my ($self, $key, @args) = @_;
+    $ENV{SERVER_STATUS_CLASS} or return;
+
+    if (@args) {
+        @prev_status = @args;
+    } else {
+        @args = @prev_status;
+    }
+
+    my $name = $ENV{SERVER_STATUS_CLASS};
+    $0 = sprintf("server-status[%s] (req=%d) %s ", $name, $self->{server}->{requests}, $key) . join(" ", @args);
 }
 
 1;
