@@ -406,7 +406,7 @@ sub _prepare_env {
 
 sub _finalize_response {
     my($self, $env, $res) = @_;
-    $self->server_status('W' => $env->{REMOTE_ADDR}, $env->{HTTP_HOST}, $env->{REQUEST_METHOD}, $env->{REQUEST_URI}, $env->{SERVER_PROTOCOL});
+    $self->server_status('W' => $env);
 
     my $protocol = $env->{SERVER_PROTOCOL};
     my $status   = $res->[0];
@@ -491,19 +491,21 @@ sub _finalize_response {
 }
 
 # show server-status like apache in ps title
-my @prev_status;
-sub server_status {
-    my ($self, $key, @args) = @_;
-    $ENV{SERVER_STATUS_CLASS} or return;
-
-    if (@args) {
-        @prev_status = @args;
-    } else {
-        @args = @prev_status;
-    }
-
+BEGIN {
     my $name = $ENV{SERVER_STATUS_CLASS};
-    $0 = sprintf("server-status[%s] (req=%d) %s ", $name, $self->{server}->{requests}, $key) . join(" ", @args);
+    if ($name) {
+        my $prev_status = "";
+        *server_status = sub {
+            my ($self, $key, $env) = @_;
+            if ($env) {
+                $prev_status = ref($env) ? join(" ", $env->{REMOTE_ADDR}, $env->{HTTP_HOST}, $env->{REQUEST_METHOD}, $env->{REQUEST_URI}, $env->{SERVER_PROTOCOL}) : $env;
+            }
+
+            $0 = sprintf("server-status[%s] (req=%d) %s %s", $name, $self->{server}->{requests}, $key, $prev_status);
+        }
+    } else {
+        *server_status = sub {}
+    }
 }
 
 1;
