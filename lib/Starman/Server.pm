@@ -144,6 +144,7 @@ sub process_request {
             or die $!;
     }
 
+    $self->{server}->{requests}--; # decrement count on connection
     while ( $self->{client}->{keepalive} ) {
         last if !$conn->connected;
 
@@ -167,6 +168,8 @@ sub process_request {
             'psgix.io'          => $conn,
             'psgix.input.buffered' => Plack::Util::TRUE,
         };
+
+        $self->{server}->{requests}++;
 
         # Parse headers
         my $reqlen = parse_http_request(delete $self->{client}->{headerbuf}, $env);
