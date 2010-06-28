@@ -137,9 +137,23 @@ if you run Starman behind a broken frontend proxy that tries to pool
 connections more than a number of backend workers (i.e. Apache
 mpm_prefork + mod_proxy).
 
+=item --user
+
+To listen on a low-numbered (<1024) port, it will be necessary to start the
+server as root.  Use the C<--user> option to specify a userid or username that
+the server process should switch to after binding to the port.
+
+=item --group
+
+Specify the group id or group name that the server should switch to after
+binding to the port.  This option is usually used with C<--user>.
+
 =back
 
 See `plackup -h` for more options.
+
+Since L<Starman::Server> inherits from L<Net::Server>, you can also refer to
+that module's documentation for additional options.
 
 =head1 SEE ALSO
 
