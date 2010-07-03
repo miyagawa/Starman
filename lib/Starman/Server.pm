@@ -408,7 +408,7 @@ sub _finalize_response {
     }
 
     if ( $protocol eq 'HTTP/1.1' ) {
-        if ( !$headers{'content-length'} ) {
+        if ( !exists $headers{'content-length'} ) {
             if ( $status !~ /^1\d\d|[23]04$/ ) {
                 DEBUG && warn "[$$] Using chunked transfer-encoding to send unknown length body\n";
                 push @headers, 'Transfer-Encoding: chunked';
@@ -422,7 +422,7 @@ sub _finalize_response {
             }
         }
     } else {
-        if ( !$headers{'content-length'} ) {
+        if ( !exists $headers{'content-length'} ) {
             DEBUG && warn "[$$] Disabling keep-alive after sending unknown length body on $protocol\n";
             $self->{client}->{keepalive} = 0;
         }
