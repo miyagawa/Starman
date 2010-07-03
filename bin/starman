@@ -153,9 +153,14 @@ binding to the port.  This option is usually used with C<--user>.
 
 Defaults to the current group id.
 
+=item --pid
+
+Specify the pid file path. Use it with C<-D|--daemonize> option,
+described in C<plackup -h>.
+
 =back
 
-See `plackup -h` for more options.
+See C<plackup -h> for more options.
 
 =head1 SEE ALSO
 
