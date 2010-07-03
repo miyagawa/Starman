@@ -1,5 +1,9 @@
 Revision history for Perl extension Starman
 
+0.2006 Fri Jul  2 17:21:22 PDT 2010
+        - Fixed a bug in chunked response when Content-Length is 0. #8 (chiba)
+        - Documented --pid and --daemonize
+
 0.2005 Fri Jul  2 17:02:16 PDT 2010
         - Don't use lib 'lib'
         - Documentation updates (miyagawa, grantm)
