@@ -1,5 +1,5 @@
 NAME
-    Starman - High-performance preforking PSGI web server
+    Starman - High-performance preforking PSGI/Plack web server
 
 SYNOPSIS
       # Run app.psgi with the default settings
