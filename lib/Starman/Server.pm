@@ -428,7 +428,7 @@ sub _finalize_response {
         }
     }
 
-    if ( ! $headers{Date} ) {
+    if ( ! $headers{date} ) {
         push @headers, "Date: " . time2str( time() );
     }
 
