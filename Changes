@@ -1,5 +1,9 @@
 Revision history for Perl extension Starman
 
+0.2008  Mon Feb 14 17:19:20 PST 2011
+        - Documented that -E is automatically set to 'deployment' RT:61517 (timbunce)
+        - Check the defined-ness of the input buffer to suppress warnings RT:60007
+
 0.2007 Thu Sep 30 14:09:00 PDT 2010
         - Fixed a bug where Date header can be duplicate if the app generates one (spleenjack)
 
