@@ -162,6 +162,8 @@ described in C<plackup -h>.
 
 See C<plackup -h> for more options.
 
+C<starman> command automatically sets the environment (C<-E>) to the value of I<deployment>.
+
 =head1 SEE ALSO
 
 L<Starman>
