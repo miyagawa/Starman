@@ -3,20 +3,26 @@ use LWP::UserAgent;
 use FindBin;
 use Test::More;
 
-my $s = Test::TCP->new(
-    code => sub {
-        my $port = shift;
-        exec "$^X bin/starman --preload-app --port $port --max-requests=1 --workers=1 $FindBin::Bin/rand.psgi";
-    },
-);
+for (1..2) { # preload, non-preload
+    my $preload = $_ == 1 ? "--preload-app" : "";
 
-my $ua = LWP::UserAgent->new;
+    my $s = Test::TCP->new(
+        code => sub {
+            my $port = shift;
+            exec "$^X bin/starman $preload --port $port --max-requests=1 --workers=1 $FindBin::Bin/rand.psgi";
+        },
+    );
 
-my @res;
-for (1..2) {
-    push @res, $ua->get("http://localhost:" . $s->port);
+    my $ua = LWP::UserAgent->new;
+
+    my @res;
+    for (1..2) {
+        push @res, $ua->get("http://localhost:" . $s->port);
+    }
+
+    isnt $res[0]->content, $res[1]->content;
+
+    undef $s;
 }
-
-isnt $res[0]->content, $res[1]->content;
 
 done_testing;

@@ -104,11 +104,11 @@ sub run_parent {
 
 sub child_init_hook {
     my $self = shift;
+    srand();
     if ($self->{options}->{psgi_app_builder}) {
         DEBUG && warn "[$$] Initializing the PSGI app\n";
         $self->{app} = $self->{options}->{psgi_app_builder}->();
     }
-    srand();
     $0 = "starman worker " . join(" ", @{$self->{options}{argv} || []});
 }
 
