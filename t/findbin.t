@@ -10,7 +10,7 @@ my $s = Test::TCP->new(
     },
 );
 
-my $ua = LWP::UserAgent->new;
+my $ua = LWP::UserAgent->new(timeout => 3);
 
 for (1..2) {
     my $res = $ua->get("http://localhost:" . $s->port);
