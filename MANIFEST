@@ -28,6 +28,10 @@ META.yml
 README
 t/00_compile.t
 t/chunked_req.t
+t/findbin.psgi
+t/findbin.t
+t/rand.psgi
+t/rand.t
 t/suite.t
 xt/perlcritic.t
 xt/pod.t
