@@ -1,8 +1,9 @@
 Revision history for Perl extension Starman
 
-0.2008_1
+0.2008_2
         - Requires Plack 0.9971 to support localizing $0 to fix the FindBin issues #7, #15, #18, #19
         - Calls srand() automatically in the child init hook to avoid a fixed random seed #20
+        - Implemented --keepalive-timeout which defaults to 1 (acme)
 
 0.2008  Mon Feb 14 17:19:20 PST 2011
         - Documented that -E is automatically set to 'deployment' RT:61517 (timbunce)
