@@ -37,6 +37,9 @@ sub run {
     if (! exists $options->{keepalive}) {
         $options->{keepalive} = 1;
     }
+    if (! exists $options->{keepalive_timeout}) {
+        $options->{keepalive_timeout} = 1;
+    }
 
     my($host, $port, $proto);
     for my $listen (@{$options->{listen} || [ "$options->{host}:$options->{port}" ]}) {
@@ -251,7 +254,7 @@ sub process_request {
             DEBUG && warn "[$$] Waiting on previous connection for keep-alive request...\n";
 
             my $sel = IO::Select->new($conn);
-            last unless $sel->can_read(1);
+            last unless $sel->can_read($self->{options}->{keepalive_timeout});
         }
     }
 

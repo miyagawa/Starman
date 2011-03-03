@@ -137,6 +137,17 @@ if you run Starman behind a broken frontend proxy that tries to pool
 connections more than a number of backend workers (i.e. Apache
 mpm_prefork + mod_proxy).
 
+=item --keepalive-timeout
+
+The number of seconds Starman will wait for a subsequent request
+before closing the connection if Keep-alive persistent connections
+are enabled. Setting this to a high value may cause performance
+problems in heavily loaded servers. The higher the timeout, the
+more backend workers will be kept occupied waiting on connections
+with idle clients.
+
+Defaults to 1.
+
 =item --user
 
 To listen on a low-numbered (E<lt>1024) port, it will be necessary to
