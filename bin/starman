@@ -171,6 +171,13 @@ described in C<plackup -h>.
 
 =back
 
+=item --log-file
+
+Specify the path to log file or Sys::Syslog. The log file must be writable by
+effective user. See C<--user>. For syslog, L<Sys::Syslog> must be installed.
+
+=back
+
 See C<plackup -h> for more options.
 
 C<starman> command automatically sets the environment (C<-E>) to the value of I<deployment>.
