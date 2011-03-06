@@ -34,6 +34,12 @@ sub run {
     if ( $options->{daemonize} ) {
         $extra{setsid} = $extra{background} = 1;
     }
+    if ( $options->{log_file} ) {
+        $extra{log_file} = $options->{log_file};
+        if ( $options->{log_file} eq 'Sys::Syslog' ) {
+            $extra{syslog_ident} = "starman";
+        }
+    }
     if (! exists $options->{keepalive}) {
         $options->{keepalive} = 1;
     }
