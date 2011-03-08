@@ -171,7 +171,10 @@ described in C<plackup -h>.
 
 =back
 
-See C<plackup -h> for more options.
+Starman passes through other options given to L<Plack::Runner>, the
+common backend that L<plackup> uses, so the most options explained in
+C<plackup -h> such as C<--access-log> or C<--daemonize> works fine in
+starman too.
 
 C<starman> command automatically sets the environment (C<-E>) to the value of I<deployment>.
 
