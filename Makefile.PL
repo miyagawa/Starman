@@ -20,8 +20,6 @@ install_script 'bin/starman';
 recommends 'Server::Starter';
 recommends 'Net::Server::SS::PreFork';
 test_requires 'Test::Requires';
-auto_include_deps;
-auto_install;
 author_tests('xt');
 auto_set_repository;
 WriteAll;
