@@ -1,5 +1,8 @@
 Revision history for Perl extension Starman
 
+0.2010  Mon Mar 28 16:23:23 PDT 2011
+        - Fixed packaging. No changes.
+
 0.2009  Fri Mar 25 19:15:23 PDT 2011
         - Requires Plack 0.9971 to support localizing $0 to fix the FindBin issues #7, #15, #18, #19
         - Calls srand() automatically in the child init hook to avoid a fixed random seed #20

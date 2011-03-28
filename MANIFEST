@@ -1,14 +1,11 @@
 .gitignore
 bin/starman
 Changes
-inc/Module/AutoInstall.pm
 inc/Module/Install.pm
 inc/Module/Install/AuthorTests.pm
-inc/Module/Install/AutoInstall.pm
 inc/Module/Install/Base.pm
 inc/Module/Install/Can.pm
 inc/Module/Install/Fetch.pm
-inc/Module/Install/Include.pm
 inc/Module/Install/Makefile.pm
 inc/Module/Install/Metadata.pm
 inc/Module/Install/ReadmeFromPod.pm
@@ -16,8 +13,6 @@ inc/Module/Install/Repository.pm
 inc/Module/Install/Scripts.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
-inc/Test/Builder/Module.pm
-inc/Test/Requires.pm
 lib/HTTP/Server/PSGI/Net/Server/PreFork.pm
 lib/Plack/Handler/Starman.pm
 lib/Starman.pm
