@@ -38,6 +38,8 @@ starman - Starman launcher
   starman --listen :5001 --listen /tmp/starman.sock
   starman --workers 32 --port 8080
 
+=head1 OPTIONS
+
 =over 4
 
 =item -l, --listen
@@ -176,7 +178,13 @@ common backend that L<plackup> uses, so the most options explained in
 C<plackup -h> such as C<--access-log> or C<--daemonize> works fine in
 starman too.
 
-C<starman> command automatically sets the environment (C<-E>) to the value of I<deployment>.
+C<starman> command automatically sets the environment (C<-E>) to the
+value of I<deployment>.
+
+Setting the environment variable C<STARMAN_DEBUG> to 1 makes the
+Starman server runninng in the debug mode.
+
+=cut
 
 =head1 SEE ALSO
 
