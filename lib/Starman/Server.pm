@@ -454,6 +454,7 @@ sub _finalize_response {
             my $buffer = $_[0];
             if ($chunked) {
                 my $len = length $buffer;
+                return unless $len;
                 $buffer = sprintf( "%x", $len ) . $CRLF . $buffer . $CRLF;
             }
             syswrite $conn, $buffer;
@@ -467,6 +468,7 @@ sub _finalize_response {
                 my $buffer = $_[0];
                 if ($chunked) {
                     my $len = length $buffer;
+                    return unless $len;
                     $buffer = sprintf( "%x", $len ) . $CRLF . $buffer . $CRLF;
                 }
                 syswrite $conn, $buffer;
