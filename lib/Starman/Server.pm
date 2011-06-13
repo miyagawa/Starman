@@ -156,6 +156,7 @@ sub process_request {
             'psgi.multiprocess' => Plack::Util::TRUE,
             'psgix.io'          => $conn,
             'psgix.input.buffered' => Plack::Util::TRUE,
+            'psgix.harakiri.supported' => Plack::Util::TRUE,
         };
 
         # Parse headers
