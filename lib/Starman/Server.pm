@@ -396,6 +396,11 @@ sub _prepare_env {
 sub _finalize_response {
     my($self, $env, $res) = @_;
 
+    if ($env->{'psgix.harakiri'}) {
+        $self->{client}->{keepalive} = 0;
+        $self->{client}->{harakiri} = 1;
+    }
+
     my $protocol = $env->{SERVER_PROTOCOL};
     my $status   = $res->[0];
     my $message  = status_message($status);
@@ -477,6 +482,13 @@ sub _finalize_response {
             close => sub {
                 syswrite $conn, "0$CRLF$CRLF" if $chunked;
             };
+    }
+}
+
+sub post_client_connection_hook {
+    my $self = shift;
+    if ($self->{client}->{harakiri}) {
+        exit;
     }
 }
 
