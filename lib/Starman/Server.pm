@@ -40,6 +40,10 @@ sub run {
     if (! exists $options->{keepalive_timeout}) {
         $options->{keepalive_timeout} = 1;
     }
+    # Making it prettier I guess ? We can always get rid of it if we don't mind $options->{'error-log'}
+    if ($options->{'error-log'}) {
+        $options->{error_log} = 1;
+    }
 
     my($host, $port, $proto);
     for my $listen (@{$options->{listen} || [ "$options->{host}:$options->{port}" ]}) {
@@ -64,6 +68,7 @@ sub run {
         proto                      => $proto,
         serialize                  => 'flock',
         log_level                  => DEBUG ? 4 : 2,
+        log_file                   => $options->{error_log}         || *STDERR,
         min_servers                => $options->{min_servers}       || $workers,
         min_spare_servers          => $options->{min_spare_servers} || $workers - 1,
         max_spare_servers          => $options->{max_spare_servers} || $workers - 1,
@@ -234,7 +239,7 @@ sub process_request {
             if ( $self->{client}->{inputbuf} ) {
                 if ( $self->{client}->{inputbuf} =~ /^(?:GET|HEAD)/ ) {
                     if ( DEBUG ) {
-                        warn "Pipelined GET/HEAD request in input buffer: " 
+                        warn "Pipelined GET/HEAD request in input buffer: "
                             . dump( $self->{client}->{inputbuf} ) . "\n";
                     }
 
