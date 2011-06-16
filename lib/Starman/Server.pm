@@ -161,7 +161,7 @@ sub process_request {
             'psgi.multiprocess' => Plack::Util::TRUE,
             'psgix.io'          => $conn,
             'psgix.input.buffered' => Plack::Util::TRUE,
-            'psgix.harakiri.supported' => Plack::Util::TRUE,
+            'psgix.harakiri' => Plack::Util::TRUE,
         };
 
         # Parse headers
@@ -402,7 +402,7 @@ sub _prepare_env {
 sub _finalize_response {
     my($self, $env, $res) = @_;
 
-    if ($env->{'psgix.harakiri'}) {
+    if ($env->{'psgix.harakiri.commit'}) {
         $self->{client}->{keepalive} = 0;
         $self->{client}->{harakiri} = 1;
     }
