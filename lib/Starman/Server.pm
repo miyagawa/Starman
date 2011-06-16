@@ -68,7 +68,7 @@ sub run {
         proto                      => $proto,
         serialize                  => 'flock',
         log_level                  => DEBUG ? 4 : 2,
-        log_file                   => $options->{error_log}         || *STDERR,
+        ($options->{error_log} ? ( log_file => $options->{error_log} ) : () ),
         min_servers                => $options->{min_servers}       || $workers,
         min_spare_servers          => $options->{min_spare_servers} || $workers - 1,
         max_spare_servers          => $options->{max_spare_servers} || $workers - 1,
