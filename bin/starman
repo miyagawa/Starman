@@ -171,6 +171,11 @@ Defaults to the current group id.
 Specify the pid file path. Use it with C<-D|--daemonize> option,
 described in C<plackup -h>.
 
+=item --error-log
+
+Specify the pathname of a file where the error log should be written.
+This enables you to still have access to the errors when using C<--daemonize>.
+
 =back
 
 Starman passes through other options given to L<Plack::Runner>, the
