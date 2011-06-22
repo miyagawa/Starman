@@ -26,6 +26,7 @@ t/chunked_req.t
 t/chunked_zero_length.t
 t/findbin.psgi
 t/findbin.t
+t/harakiri.t
 t/rand.psgi
 t/rand.t
 t/suite.t

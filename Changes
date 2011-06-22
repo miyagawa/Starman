@@ -1,5 +1,9 @@
 Revision history for Perl extension Starman
 
+0.2012  Wed Jun 22 13:51:59 PDT 2011
+        - Implemented psgix.harakiri mode (audreyt)
+        - Added --error-log option (Paulo E. Castro)
+
 0.2011  Tue May 24 09:41:52 PDT 2011
         - Fix chunked response with 0-length PSGI array elements (chmrr)
 
