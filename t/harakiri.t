@@ -20,7 +20,7 @@ test_psgi
             my $res = $cb->(GET "/");
             $seen_pid{$res->content}++;
         }
-        is keys(%seen_pid), 5, 'In non-harakiri mode, pid is reused';
+        cmp_ok(keys(%seen_pid), '<=', 5, 'In non-harakiri mode, pid is reused');
     };
 
 test_psgi
