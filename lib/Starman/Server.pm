@@ -40,10 +40,6 @@ sub run {
     if (! exists $options->{keepalive_timeout}) {
         $options->{keepalive_timeout} = 1;
     }
-    # Making it prettier I guess ? We can always get rid of it if we don't mind $options->{'error-log'}
-    if ($options->{'error-log'}) {
-        $options->{error_log} = 1;
-    }
 
     my($host, $port, $proto);
     for my $listen (@{$options->{listen} || [ "$options->{host}:$options->{port}" ]}) {
