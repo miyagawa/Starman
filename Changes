@@ -1,5 +1,8 @@
 Revision history for Perl extension Starman
 
+0.2013  Sat Jun 25 11:51:47 PDT 2011
+        - Relaxed the harakiri tests (audreyt)
+
 0.2012  Wed Jun 22 13:51:59 PDT 2011
         - Implemented psgix.harakiri mode (audreyt)
         - Added --error-log option (Paulo E. Castro)
