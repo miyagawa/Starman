@@ -412,7 +412,10 @@ sub _finalize_response {
 
     # Switch on Transfer-Encoding: chunked if we don't know Content-Length.
     my $chunked;
-    while (my($k, $v) = splice @{$res->[1]}, 0, 2) {
+    my $headers = $res->[1];
+    for (my $i = 0; $i < @$headers; $i += 2) {
+        my $k = $headers->[$i];
+        my $v = $headers->[$i + 1];
         next if $k eq 'Connection';
         push @headers, "$k: $v";
         $headers{lc $k} = $v;
