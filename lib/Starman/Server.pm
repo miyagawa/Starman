@@ -44,10 +44,10 @@ sub run {
     my($host, $port, $proto);
     for my $listen (@{$options->{listen} || [ "$options->{host}:$options->{port}" ]}) {
         if ($listen =~ /:/) {
-            my($h, $p) = split /:/, $listen, 2;
+            my($h, $p, $opt) = split /:/, $listen, 3;
             push @$host, $h || '*';
             push @$port, $p;
-            push @$proto, 'tcp';
+            push @$proto, $opt eq 'SSL'?'ssleay':'tcp';
         } else {
             push @$host, 'localhost';
             push @$port, $listen;
@@ -149,7 +149,8 @@ sub process_request {
             SCRIPT_NAME     => '',
             'psgi.version'      => [ 1, 1 ],
             'psgi.errors'       => *STDERR,
-            'psgi.url_scheme'   => 'http',
+            'psgi.url_scheme'   => $self->{'server'}->{'client'}->NS_proto eq
+              'SSLEAY' ? 'https' : 'http',
             'psgi.nonblocking'  => Plack::Util::FALSE,
             'psgi.streaming'    => Plack::Util::TRUE,
             'psgi.run_once'     => Plack::Util::FALSE,
@@ -194,7 +195,11 @@ sub process_request {
             # Do we need to send 100 Continue?
             if ( $env->{HTTP_EXPECT} ) {
                 if ( $env->{HTTP_EXPECT} eq '100-continue' ) {
-                    syswrite $conn, 'HTTP/1.1 100 Continue' . $CRLF . $CRLF;
+                    if ($conn->NS_proto eq 'SSLEAY'){
+                        $conn->print('HTTP/1.1 100 Continue' . $CRLF . $CRLF);
+                    }else{
+                        syswrite $conn, 'HTTP/1.1 100 Continue' . $CRLF . $CRLF;
+                    }
                     DEBUG && warn "[$$] Sent 100 Continue response\n";
                 }
                 else {
@@ -278,7 +283,21 @@ sub _read_headers {
             last if defined $self->{client}->{inputbuf} && $self->{client}->{inputbuf} =~ /$CRLF$CRLF/s;
 
             # If not, read some data
-            my $read = sysread $self->{server}->{client}, my $buf, CHUNKSIZE;
+            my ($read, $buf);
+
+            if ($self->{server}->{client}->NS_proto eq 'SSLEAY'){
+                my $ok;
+                ( $ok, $buf ) =
+                  $self->{server}->{client}
+                  ->read_until( CHUNKSIZE, qr{\n\r?\n} );
+
+                if ($ok == 1) {
+                    $read = length($buf);
+                }
+
+            }else{
+                $read = sysread $self->{server}->{client}, $buf, CHUNKSIZE;
+            }
 
             if ( !defined $read || $read == 0 ) {
                 die "Read error: $!\n";
@@ -339,8 +358,15 @@ sub _prepare_env {
             my $chunk = delete $self->{client}->{inputbuf};
             return ($chunk, length $chunk);
         }
-        my $read = sysread $self->{server}->{client}, my($chunk), CHUNKSIZE;
-        return ($chunk, $read);
+        if ($self->{server}->{client}->NS_proto eq 'SSLEAY'){
+            my ( $ok, $chunk ) =
+              $self->{server}->{client}
+              ->read_until( $env->{CONTENT_LENGTH}, undef, 1 );
+            return ($chunk, length($chunk));
+        }else{
+            my $read = sysread $self->{server}->{client}, my($chunk), CHUNKSIZE;
+            return ($chunk, $read);
+        }
     };
 
     my $chunked = do { no warnings; lc delete $env->{HTTP_TRANSFER_ENCODING} eq 'chunked' };
@@ -457,7 +483,11 @@ sub _finalize_response {
 
     # Buffer the headers so they are sent with the first write() call
     # This reduces the number of TCP packets we are sending
-    syswrite $conn, join( $CRLF, @headers, '' ) . $CRLF;
+    if ($conn->NS_proto eq 'SSLEAY'){
+        $conn->print(join( $CRLF, @headers, '' ) . $CRLF);
+    }else{
+        syswrite $conn, join( $CRLF, @headers, '' ) . $CRLF;
+    }
 
     if (defined $res->[2]) {
         Plack::Util::foreach($res->[2], sub {
@@ -467,11 +497,19 @@ sub _finalize_response {
                 return unless $len;
                 $buffer = sprintf( "%x", $len ) . $CRLF . $buffer . $CRLF;
             }
-            syswrite $conn, $buffer;
+            if ($conn->NS_proto eq 'SSLEAY'){
+                $conn->print($buffer);
+            }else{
+                syswrite $conn, $buffer;
+            }
             DEBUG && warn "[$$] Wrote " . length($buffer) . " bytes\n";
         });
 
-        syswrite $conn, "0$CRLF$CRLF" if $chunked;
+        if ($conn->NS_proto eq 'SSLEAY'){
+            $conn->print("0$CRLF$CRLF") if $chunked;
+        }else{
+            syswrite $conn, "0$CRLF$CRLF" if $chunked;
+        }
     } else {
         return Plack::Util::inline_object
             write => sub {
@@ -481,11 +519,19 @@ sub _finalize_response {
                     return unless $len;
                     $buffer = sprintf( "%x", $len ) . $CRLF . $buffer . $CRLF;
                 }
-                syswrite $conn, $buffer;
+                if ($conn->NS_proto eq 'SSLEAY'){
+                    $conn->print($buffer);
+                }else{
+                    syswrite $conn, $buffer;
+                }
                 DEBUG && warn "[$$] Wrote " . length($buffer) . " bytes\n";
             },
             close => sub {
-                syswrite $conn, "0$CRLF$CRLF" if $chunked;
+                if ($conn->NS_proto eq 'SSLEAY'){
+                    $conn->print("0$CRLF$CRLF") if $chunked;
+                }else{
+                    syswrite $conn, "0$CRLF$CRLF" if $chunked;
+                }
             };
     }
 }
