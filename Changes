@@ -1,5 +1,8 @@
 Revision history for Perl extension Starman
 
+0.2014  Sun Sep 18 12:43:06 PDT 2011
+        - Fixed broken PSGI response headers after the output (cho45)
+
 0.2013  Sat Jun 25 11:51:47 PDT 2011
         - Relaxed the harakiri tests (audreyt)
 
