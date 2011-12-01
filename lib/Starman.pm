@@ -44,7 +44,7 @@ worker pool.
 
 =item Signals
 
-Supports C<HUP> for graceful restarts, and C<TTIN>/C<TTOU> to
+Supports C<HUP> for graceful worker restarts, and C<TTIN>/C<TTOU> to
 dynamically increase or decrease the number of worker processes.
 
 =item Superdaemon aware

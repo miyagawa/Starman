@@ -132,6 +132,10 @@ will load the modules in the master process for memory savings with
 CoW, but the actual loading of C<myapp.psgi> is done per children,
 allowing resource managements such as database connection safer.
 
+If you enable this option, sending C<HUP> signal to the master process
+I<will not> pick up any code changes you make. See L</SIGNALS> for
+details.
+
 =item --disable-keepalive
 
 Disable Keep-alive persistent connections. It is an useful workaround
@@ -190,6 +194,35 @@ Setting the environment variable C<STARMAN_DEBUG> to 1 makes the
 Starman server runninng in the debug mode.
 
 =cut
+
+=head1 SIGNALS
+
+=over 4
+
+=item HUP
+
+Sending HUP signal to the master process will restart all the workers
+gracefully (meaning the currently running requests will shut down once
+the request is complete), and by default, the workers will pick up the
+code changes you make by reloading the application.
+
+If you enable C<--preload-app> option, however, the code will be only
+loaded in the startup process and will not pick up the code changes
+you made. If you want to preload the app I<and> do graceful restarts
+and reloading the code changes, you're recommended to use
+L<Server::Starter>.
+
+=item TTIN, TTOU
+
+Sending TTIN signal to the master process will dynamically increase
+the number of workers, and TTOU signal will decrease it.
+
+=item INT, TERM
+
+Sending INT or TERM signal to the master process will kill all the
+workers immediately and shut down the server.
+
+=back
 
 =head1 SEE ALSO
 
