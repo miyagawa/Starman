@@ -24,9 +24,7 @@ use Net::Server::SIG qw(register_sig);
 # Override Net::Server's HUP handling - just restart all the workers and that's about it
 sub sig_hup {
     my $self = shift;
-    for my $pid (keys %{$self->{server}->{children}}) {
-        kill 1 => $pid;
-    }
+    $self->hup_children;
 }
 
 sub run {
