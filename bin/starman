@@ -201,7 +201,7 @@ Starman server runninng in the debug mode.
 
 =item HUP
 
-Sending HUP signal to the master process will restart all the workers
+Sending C<HUP> signal to the master process will restart all the workers
 gracefully (meaning the currently running requests will shut down once
 the request is complete), and by default, the workers will pick up the
 code changes you make by reloading the application.
@@ -210,17 +210,26 @@ If you enable C<--preload-app> option, however, the code will be only
 loaded in the startup process and will not pick up the code changes
 you made. If you want to preload the app I<and> do graceful restarts
 by reloading the code changes, you're recommended to use
-L<Server::Starter>.
+L<Server::Starter>, configured to send C<QUIT> signal when superdaemon
+received C<HUP>, i.e:
+
+    start_server --port 8080 --signal-on-hup=QUIT -- starman --preload-app myapp.psgi
 
 =item TTIN, TTOU
 
-Sending TTIN signal to the master process will dynamically increase
-the number of workers, and TTOU signal will decrease it.
+Sending C<TTIN> signal to the master process will dynamically increase
+the number of workers, and C<TTOU> signal will decrease it.
 
 =item INT, TERM
 
-Sending INT or TERM signal to the master process will kill all the
-workers immediately and shut down the server.
+Sending C<INT> or C<TERM> signal to the master process will kill all
+the workers immediately and shut down the server.
+
+=item QUIT
+
+Sending C<QUIT> signal to the master process will gracefully shutdown
+the workers (meaning the currently running requests will shut down
+once the request is complete).
 
 =back
 
