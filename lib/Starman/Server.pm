@@ -127,6 +127,7 @@ sub server_close {
 sub run_parent {
     my $self = shift;
     $0 = "starman master " . join(" ", @{$self->{options}{argv} || []});
+    no warnings 'redefine';
     local *Net::Server::PreFork::register_sig = sub {
         my %args = @_;
         delete $args{QUIT};
