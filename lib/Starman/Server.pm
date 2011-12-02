@@ -109,6 +109,7 @@ sub server_close {
     my($self, $quit) = @_;
 
     if ($quit) {
+        $self->log(2, $self->log_time . " Received QUIT. Running a graceful shutdown\n");
         $self->{server}->{$_} = 0 for qw( min_servers max_servers );
         $self->hup_children;
         while (1) {
@@ -117,6 +118,7 @@ sub server_close {
             last if !keys %{$self->{server}{children}};
             sleep 1;
         }
+        $self->log(2, $self->log_time . " Worker processes cleaned up\n");
     }
 
     $self->SUPER::server_close();
