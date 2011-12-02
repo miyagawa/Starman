@@ -209,7 +209,7 @@ code changes you make by reloading the application.
 If you enable C<--preload-app> option, however, the code will be only
 loaded in the startup process and will not pick up the code changes
 you made. If you want to preload the app I<and> do graceful restarts
-and reloading the code changes, you're recommended to use
+by reloading the code changes, you're recommended to use
 L<Server::Starter>.
 
 =item TTIN, TTOU
