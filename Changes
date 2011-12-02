@@ -1,5 +1,11 @@
 Revision history for Perl extension Starman
 
+0.29_90 Thu Dec  1 19:40:52 PST 2011
+        - Changed the way server handles HUP and QUIT signals
+          HUP will just restart all the workers gracefully
+          QUIT will gracefully shutdown workers and the master
+          See `man 1 starman` and look for SIGNALS section.
+
 0.2014  Sun Sep 18 12:43:06 PDT 2011
         - Fixed broken PSGI response headers after the output (cho45)
 

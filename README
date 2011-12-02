@@ -23,8 +23,9 @@ DESCRIPTION
         worker pool.
 
     Signals
-        Supports "HUP" for graceful restarts, and "TTIN"/"TTOU" to
-        dynamically increase or decrease the number of worker processes.
+        Supports "HUP" for graceful worker restarts, and "TTIN"/"TTOU" to
+        dynamically increase or decrease the number of worker processes, as
+        well as "QUIT" to gracefully shutdown the worker processes.
 
     Superdaemon aware
         Supports Server::Starter for hot deploy and graceful restarts.
