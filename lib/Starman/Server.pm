@@ -79,7 +79,7 @@ sub run {
         user                       => $options->{user}              || $>,
         group                      => $options->{group}             || $),
         listen                     => $options->{backlog}           || 1024,
-        leave_children_open_on_hup => 1, # XXX conigurable?
+        check_for_waiting          => 1,
         no_client_stdout           => 1,
         %extra
     );
@@ -101,12 +101,35 @@ sub pre_loop_hook {
     register_sig(
         TTIN => sub { $self->{server}->{$_}++ for qw( min_servers max_servers ) },
         TTOU => sub { $self->{server}->{$_}-- for qw( min_servers max_servers ) },
+        QUIT => sub { $self->server_close(1) },
     );
+}
+
+sub server_close {
+    my($self, $quit) = @_;
+
+    if ($quit) {
+        $self->{server}->{$_} = 0 for qw( min_servers max_servers );
+        $self->hup_children;
+        while (1) {
+            Net::Server::SIG::check_sigs();
+            $self->coordinate_children;
+            last if !keys %{$self->{server}{children}};
+            sleep 1;
+        }
+    }
+
+    $self->SUPER::server_close();
 }
 
 sub run_parent {
     my $self = shift;
     $0 = "starman master " . join(" ", @{$self->{options}{argv} || []});
+    local *Net::Server::PreFork::register_sig = sub {
+        my %args = @_;
+        delete $args{QUIT};
+        Net::Server::SIG::register_sig(%args);
+    };
     $self->SUPER::run_parent(@_);
 }
 
