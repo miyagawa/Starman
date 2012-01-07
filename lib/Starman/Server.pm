@@ -455,7 +455,7 @@ sub _finalize_response {
 
     if ( $protocol eq 'HTTP/1.1' ) {
         if ( !exists $headers{'content-length'} ) {
-            if ( $status !~ /^1\d\d|[23]04$/ ) {
+            if ( $status !~ /^1\d\d|[23]04$/ and $env->{REQUEST_METHOD} ne 'HEAD' ) {
                 DEBUG && warn "[$$] Using chunked transfer-encoding to send unknown length body\n";
                 push @headers, 'Transfer-Encoding: chunked';
                 $chunked = 1;
