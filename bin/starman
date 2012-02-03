@@ -37,6 +37,7 @@ starman - Starman launcher
 
   starman --listen :5001 --listen /tmp/starman.sock
   starman --workers 32 --port 8080
+  starman --min_spare_severs 2 --max_spare_servers 4 --max_servers 10
 
 =head1 OPTIONS
 
@@ -81,17 +82,39 @@ recommended to use C<--listen> instead.
 
 =item --workers
 
-Specifies the number of worker pool. Defaults to 5.
+Specifies the number of worker processes. Defaults to 5.
 
 Starman by default sets up other spare server configuration based on this
 workers value, making sure there are B<always only> C<N> worker
 processes running. So even if there're no idle workers, Starman won't
-spawn off spare processes since that's mostly what you want to do by
-fine tuning the memory usage etc. in the production environment.
+spawn off spare processes, giving you control over the memory usage etc, at the
+expense of either wasting memory with excessive spare workers during quiet
+periods, or struggling during busy periods.  Alternatively, you can use the
+min_spare_servers, max_spare_servers and max_servers options.
+
+=item --min_spare_servers
+
+Specifies the minimum number of spare worker processes to keep alive.  Similar
+to Apache's MinSpareServers directive.
+
+=item --max_spare_servers
+
+Specifies the maximum number of spare worker processes to allow before some are
+killed.  Similar to Apache's MaxSpareServers directive.
+
+=item --max_servers
+
+Specifies the maximum number of worker processes which can exist; during times
+used in conjuction with min/max_spare_servers, you can give Starman the
+flexibility to start more worker processes as required when the number of hits
+warrants it, without worrying about the numebr of workers becoming high enough
+to swap your machine.
+
 
 =item --backlog
 
-Specifies the number of backlog (listen queue size) of listener sockets. Defaults to 1024.
+Specifies the number of backlog (listen queue size) of listener sockets.
+Defaults to 1024.
 
 On production systems, setting a very low value can allow failover on
 frontend proxy (like nginx) to happen more quickly, if you have
