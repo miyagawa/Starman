@@ -104,11 +104,11 @@ killed.  Similar to Apache's MaxSpareServers directive.
 
 =item --max_servers
 
-Specifies the maximum number of worker processes which can exist; during times
-used in conjuction with min/max_spare_servers, you can give Starman the
-flexibility to start more worker processes as required when the number of hits
+Specifies the maximum number of worker processes which can exist; used in 
+conjunction with min/max_spare_servers, you can give Starman the flexibility 
+to start more worker processes as required when the number of requests
 warrants it, without worrying about the numebr of workers becoming high enough
-to swap your machine.
+to swamp your machine.
 
 
 =item --backlog
