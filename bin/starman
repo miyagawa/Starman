@@ -137,7 +137,7 @@ any potential memory leaks.
 This option lets Starman preload the specified PSGI application in the
 master parent process before preforking children. This allows memory
 savings with copy-on-write memory management. When not set (default),
-forked children loads the application in the initialization hook.
+forked children load the application in the initialization hook.
 
 Enabling this option can cause bad things happen when resources like
 sockets or database connections are opened at load time by the master
@@ -155,9 +155,9 @@ itself.
 
 will load the modules in the master process for memory savings with
 CoW, but the actual loading of C<myapp.psgi> is done per children,
-allowing resource managements such as database connection safer.
+making resource management such as database connections safer.
 
-If you enable this option, sending C<HUP> signal to the master process
+If you enable this option, sending a C<HUP> signal to the master process
 I<will not> pick up any code changes you make. See L</SIGNALS> for
 details.
 
@@ -165,15 +165,15 @@ details.
 
 Disable Keep-alive persistent connections. It is an useful workaround
 if you run Starman behind a broken frontend proxy that tries to pool
-connections more than a number of backend workers (i.e. Apache
-mpm_prefork + mod_proxy).
+more connections than the configured number of backend workers (i.e. 
+Apache mpm_prefork + mod_proxy).
 
 =item --keepalive-timeout
 
 The number of seconds Starman will wait for a subsequent request
 before closing the connection if Keep-alive persistent connections
 are enabled. Setting this to a high value may cause performance
-problems in heavily loaded servers. The higher the timeout, the
+problems on heavily loaded servers. The higher the timeout, the
 more backend workers will be kept occupied waiting on connections
 with idle clients.
 
@@ -226,7 +226,7 @@ Starman server runninng in the debug mode.
 
 =item HUP
 
-Sending C<HUP> signal to the master process will restart all the workers
+Sending a C<HUP> signal to the master process will restart all the workers
 gracefully (meaning the currently running requests will shut down once
 the request is complete), and by default, the workers will pick up the
 code changes you make by reloading the application.
@@ -236,23 +236,23 @@ loaded in the startup process and will not pick up the code changes
 you made. If you want to preload the app I<and> do graceful restarts
 by reloading the code changes, you're recommended to use
 L<Server::Starter>, configured to send C<QUIT> signal when superdaemon
-received C<HUP>, i.e:
+receives C<HUP>, i.e:
 
     start_server --port 8080 --signal-on-hup=QUIT -- starman --preload-app myapp.psgi
 
 =item TTIN, TTOU
 
-Sending C<TTIN> signal to the master process will dynamically increase
-the number of workers, and C<TTOU> signal will decrease it.
+Sending a C<TTIN> signal to the master process will dynamically increase
+the number of workers, and a C<TTOU> signal will decrease it.
 
 =item INT, TERM
 
-Sending C<INT> or C<TERM> signal to the master process will kill all
+Sending C<INT> or C<TERM> signals to the master process will kill all
 the workers immediately and shut down the server.
 
 =item QUIT
 
-Sending C<QUIT> signal to the master process will gracefully shutdown
+Sending a C<QUIT> signal to the master process will gracefully shutdown
 the workers (meaning the currently running requests will shut down
 once the request is complete).
 
