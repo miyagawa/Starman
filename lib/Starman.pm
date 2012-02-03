@@ -116,13 +116,13 @@ from Earthbound, all of which I love.
 
 I'm sick of naming Perl software like
 HTTP::Server::PSGI::How::Its::Written::With::What::Module and people
-call it HSPHIWWWM on IRC. It's hard to say on speeches and newbies
-would ask questions what they stand for every day. That's crazy.
+call it HSPHIWWWM on IRC. It's hard to say in speeches and newbies
+would ask what it stood for every day. That's crazy.
 
 This module actually includes the longer alias and an empty subclass
 L<HTTP::Server::PSGI::Net::Server::PreFork> for those who like to type
 more ::'s. It would actually help you find this software by searching
-for I<PSGI Server Prefork> on CPAN, which i believe is a good thing.
+for I<PSGI Server Prefork> on CPAN, which I believe is a good thing.
 
 Yes, maybe I'm on drugs. We'll see.
 
