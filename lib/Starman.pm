@@ -28,7 +28,7 @@ Starman - High-performance preforking PSGI/Plack web server
 
 =head1 DESCRIPTION
 
-Starman is a PSGI perl web server that has unique features such as:
+Starman is a PSGI perl web server which has unique features such as:
 
 =over 4
 
