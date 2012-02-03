@@ -57,27 +57,27 @@ Defaults to any IP address and port 5000.
 
   --host 127.0.0.1
 
-Specifies the address to bind.
+Specifies the local address to bind to.
 
-This option is for a compatiblity with L<plackup> and you're
+This option is for compatibility with L<plackup> and you're
 recommended to use C<--listen> instead.
 
 =item --port
 
   --port 8080
 
-Specifies the port to bind.
+Specifies the local port to listen on.
 
-This option is for a compatiblity with L<plackup> and you're
+This option is for compatibility with L<plackup> and you're
 recommended to use C<--listen> instead.
 
 =item -S, --socket
 
   -S /tmp/starman.sock
 
-Specifies the path to UNIX domain socket to bind.
+Specifies the path to a UNIX domain socket to listen on.
 
-This option is for a compatiblity with L<plackup> and you're
+This option is for compatibility with L<plackup> and you're
 recommended to use C<--listen> instead.
 
 =item --workers
