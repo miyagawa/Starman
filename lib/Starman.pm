@@ -40,7 +40,9 @@ Uses the fast XS/C HTTP header parser
 
 Spawns workers preforked like most high performance UNIX servers
 do. Starman also reaps dead children and automatically restarts the
-worker pool.
+worker pool.  Starman can be configured to automatically start additional worker
+processes when the number of requests warrants it, and kill some off during
+quiet periods, within configurable limits.
 
 =item Signals
 
