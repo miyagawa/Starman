@@ -113,22 +113,24 @@ to swap your machine.
 
 =item --backlog
 
-Specifies the number of backlog (listen queue size) of listener sockets.
-Defaults to 1024.
+Specifies the number of pending connections (listen queue size) of listener 
+sockets.  Defaults to 1024.
 
 On production systems, setting a very low value can allow failover on
-frontend proxy (like nginx) to happen more quickly, if you have
+a frontend proxy (like nginx) to happen more quickly, if you have
 multiple Starman clusters.
 
 If you're doing simple benchmarks and getting connection errors,
 increasing this parameter can help avoid them. You should also
 consider increasing C<net.core.somaxconn>. Note that this is not
-recommended for real production system if you have another cluster to
-failover (see above).
+recommended for real production systems if you have another cluster to
+failover/load balance to (see above).
 
 =item --max-requests
 
-Number of the requests to process per one worker process. Defaults to 1000.
+Maximum requests to handle per worker process before it exits and another
+replaces it. Defaults to 1000.  This is primarily useful to limit the impact of
+any potential memory leaks.
 
 =item --preload-app
 
