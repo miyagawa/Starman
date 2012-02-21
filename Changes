@@ -1,5 +1,8 @@
 Revision history for Perl extension Starman
 
+0.3000  Mon Feb 20 16:31:44 PST 2012
+        - This be a 0.3 release
+
 0.29_90 Thu Dec  1 19:40:52 PST 2011
         - Changed the way server handles HUP and QUIT signals
           HUP will just restart all the workers gracefully
