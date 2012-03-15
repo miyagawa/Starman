@@ -141,6 +141,6 @@ it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-L<Plack> L<Catalyst::Engine::HTTP::Prefork> L<Net::Server::Prefork>
+L<Plack> L<Catalyst::Engine::HTTP::Prefork> L<Net::Server::PreFork>
 
 =cut

@@ -406,7 +406,7 @@ sub _prepare_env {
 
                 if ($chunk_len == 0) {
                     last DECHUNK;
-                } elsif (length $chunk_buffer < $chunk_len) {
+                } elsif (length $chunk_buffer < $chunk_len + 2) {
                     $chunk_buffer = $trailer . $chunk_buffer;
                     last;
                 }
