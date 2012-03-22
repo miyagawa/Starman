@@ -1,5 +1,9 @@
 Revision history for Perl extension Starman
 
+        - Made READ_TIMEOUT configurable, allowing Starman to sit nicely
+          behind balancer keeping backend connections open for a long time
+          (Yann Kerherve)
+
 0.29_90 Thu Dec  1 19:40:52 PST 2011
         - Changed the way server handles HUP and QUIT signals
           HUP will just restart all the workers gracefully

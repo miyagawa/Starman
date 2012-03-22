@@ -13,9 +13,9 @@ use Symbol;
 use Plack::Util;
 use Plack::TempBuffer;
 
-use constant DEBUG        => $ENV{STARMAN_DEBUG} || 0;
-use constant CHUNKSIZE    => 64 * 1024;
-use constant READ_TIMEOUT => 5;
+use constant DEBUG                => $ENV{STARMAN_DEBUG} || 0;
+use constant CHUNKSIZE            => 64 * 1024;
+use constant DEFAULT_READ_TIMEOUT => 5;
 
 my $null_io = do { open my $io, "<", \""; $io };
 
@@ -45,6 +45,17 @@ sub run {
     }
     if (! exists $options->{keepalive_timeout}) {
         $options->{keepalive_timeout} = 1;
+    }
+
+    if (! exists $options->{read_timeout}) {
+        $options->{read_timeout} = DEFAULT_READ_TIMEOUT;
+    }
+    else {
+        my $read_timeout = $options->{read_timeout};
+        if (! $read_timeout or $read_timeout < 0) {
+            warn "invalid --read-timeout=$read_timeout. ignoring\n";
+            $options->{read_timeout} = DEFAULT_READ_TIMEOUT;
+        }
     }
 
     my($host, $port, $proto);
@@ -301,7 +312,7 @@ sub _read_headers {
     eval {
         local $SIG{ALRM} = sub { die "Timed out\n"; };
 
-        alarm( READ_TIMEOUT );
+        alarm( $self->{options}{read_timeout} );
 
         while (1) {
             # Do we have a full header in the buffer?

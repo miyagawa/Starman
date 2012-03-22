@@ -154,6 +154,17 @@ with idle clients.
 
 Defaults to 1.
 
+=item --read-timeout
+
+The number of seconds Starman will wait to read one request headers.
+Setting this to a high value is beneficial if Starman sits behind
+a load balancer pre-opening connections (like Perlbal with connect-ahead
+option set). On the other hand, if you don't have such balancer, it can DOS
+your application if enough slow clients connect at the same time and starve
+your workers.
+
+Defaults to 5.
+
 =item --user
 
 To listen on a low-numbered (E<lt>1024) port, it will be necessary to
