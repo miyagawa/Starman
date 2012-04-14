@@ -442,7 +442,8 @@ sub _finalize_response {
     my(@headers, %headers);
     push @headers, "$protocol $status $message";
 
-    # Switch on Transfer-Encoding: chunked if we don't know Content-Length.
+    # Switch on Transfer-Encoding: chunked if we don't know Content-Length
+    # and Transfer-Encoding: chunked is not already in effect.
     my $chunked;
     my $headers = $res->[1];
     for (my $i = 0; $i < @$headers; $i += 2) {
@@ -456,15 +457,12 @@ sub _finalize_response {
     if ( $protocol eq 'HTTP/1.1' ) {
         if ( !exists $headers{'content-length'} ) {
             if ( $status !~ /^1\d\d|[23]04$/ ) {
-                DEBUG && warn "[$$] Using chunked transfer-encoding to send unknown length body\n";
-                push @headers, 'Transfer-Encoding: chunked';
-                $chunked = 1;
-            }
-        }
-        elsif ( my $te = $headers{'transfer-encoding'} ) {
-            if ( $te eq 'chunked' ) {
-                DEBUG && warn "[$$] Chunked transfer-encoding set for response\n";
-                $chunked = 1;
+                my $te = $headers{'transfer-encoding'};
+                if ( !$te || $te ne 'chunked' ) {
+                    DEBUG && warn "[$$] Using chunked transfer-encoding to send unknown length body\n";
+                    push @headers, 'Transfer-Encoding: chunked';
+                    $chunked = 1;
+                }
             }
         }
     } else {
