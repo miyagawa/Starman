@@ -45,10 +45,13 @@ starman - Starman launcher
 =item -l, --listen
 
   --listen HOST:PORT --listen :PORT --listen UNIX_SOCKET
+  --listen HOST:PORT:SSL
 
 Specifies the TCP address, ports and UNIX domain sockets to bind to
 wait for requests. You can repeat as many times as you want and mix
-TCP and UNIX domain sockets.
+TCP, SSL and UNIX domain sockets.
+:SSL in listen string indicates that https protocol is enabled on
+this port.
 
 Defaults to any IP address and port 5000.
 
@@ -179,6 +182,18 @@ described in C<plackup -h>.
 
 Specify the pathname of a file where the error log should be written.
 This enables you to still have access to the errors when using C<--daemonize>.
+
+=item --ssl-cert-file
+
+Specify the path to SSL certificate file.
+
+=item --ssl-key-file
+
+Specify the path to SSL key file.
+
+=item --enable-ssl
+
+Enable https protocol for all connections.
 
 =back
 
