@@ -175,6 +175,12 @@ sub process_request {
             or die $!;
     }
 
+    # XXX workaround for the lack of syswrite support in any released Net::Server::Proto::SSLEAY
+    #     can be taken out when ::SSLEAY is up to snuff
+    $self->{writer} = $conn->NS_proto eq 'SSLEAY'
+        ? sub { $conn->print($_[0]) }
+        : sub { syswrite $conn, $_[0] };
+
     while ( $self->{client}->{keepalive} ) {
         last if !$conn->connected;
 
@@ -234,7 +240,7 @@ sub process_request {
             # Do we need to send 100 Continue?
             if ( $env->{HTTP_EXPECT} ) {
                 if ( $env->{HTTP_EXPECT} eq '100-continue' ) {
-                    $self->_write('HTTP/1.1 100 Continue' . $CRLF . $CRLF);
+                    $self->{writer}->('HTTP/1.1 100 Continue' . $CRLF . $CRLF);
                     DEBUG && warn "[$$] Sent 100 Continue response\n";
                 }
                 else {
@@ -301,14 +307,6 @@ sub process_request {
     }
 
     DEBUG && warn "[$$] Closing connection\n";
-}
-
-# XXX workaround for the lack of syswrite support in any released Net::Server::Proto::SSLEAY
-#     can be taken out when ::SSLEAY is up to snuff
-sub _write {
-    my $self = shift;
-    my $conn = $self->{server}->{client};
-    return $conn->NS_proto eq 'SSLEAY' ? $conn->print($_[0]) : syswrite $conn, $_[0];
 }
 
 sub _read_headers {
@@ -520,7 +518,7 @@ sub _finalize_response {
 
     # Buffer the headers so they are sent with the first write() call
     # This reduces the number of TCP packets we are sending
-    $self->_write(join( $CRLF, @headers, '' ) . $CRLF);
+    $self->{writer}->(join( $CRLF, @headers, '' ) . $CRLF);
 
     if (defined $res->[2]) {
         Plack::Util::foreach($res->[2], sub {
@@ -530,11 +528,11 @@ sub _finalize_response {
                 return unless $len;
                 $buffer = sprintf( "%x", $len ) . $CRLF . $buffer . $CRLF;
             }
-            $self->_write($buffer);
+            $self->{writer}->($buffer);
             DEBUG && warn "[$$] Wrote " . length($buffer) . " bytes\n";
         });
 
-        $self->_write("0$CRLF$CRLF") if $chunked;
+        $self->{writer}->("0$CRLF$CRLF") if $chunked;
     } else {
         return Plack::Util::inline_object
             write => sub {
@@ -544,11 +542,11 @@ sub _finalize_response {
                     return unless $len;
                     $buffer = sprintf( "%x", $len ) . $CRLF . $buffer . $CRLF;
                 }
-                $self->_write($buffer);
+                $self->{writer}->($buffer);
                 DEBUG && warn "[$$] Wrote " . length($buffer) . " bytes\n";
             },
             close => sub {
-                $self->_write("0$CRLF$CRLF") if $chunked;
+                $self->{writer}->("0$CRLF$CRLF") if $chunked;
             };
     }
 }
