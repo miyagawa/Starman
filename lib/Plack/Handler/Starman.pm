@@ -30,6 +30,13 @@ Plack::Handler::Starman - Plack adapter for Starman
 
   plackup -s Starman
 
+=head1 DESCRIPTION
+
+This handler exists for the C<plackup> compatibility. Essentially,
+C<plackup -s Starman> is equivalent to C<starman --preload-app>,
+because the C<starman> executable delay loads the application by
+default. See L<starman> for more details.
+
 =head1 AUTHOR
 
 Tatsuhiko Miyagawa

@@ -233,6 +233,16 @@ once the request is complete).
 
 =back
 
+=head1 DIFFERENCES WITH PLACKUP
+
+C<starman> executable is basically the equivalent of using C<plackup>
+with C<Starman> server handler i.e. C<plackup -s Starman>, except that
+C<starman> delay loads the application with the Delayed loader by
+default, which can be disabled with C<--preload-app>.
+
+We recommend you to use C<starman> unless there's a reason to stick to
+C<plackup> for compatiblity.
+
 =head1 SEE ALSO
 
 L<Starman>
