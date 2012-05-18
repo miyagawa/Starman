@@ -187,9 +187,6 @@ common backend that L<plackup> uses, so the most options explained in
 C<plackup -h> such as C<--access-log> or C<--daemonize> works fine in
 starman too.
 
-C<starman> command automatically sets the environment (C<-E>) to the
-value of I<deployment>.
-
 Setting the environment variable C<STARMAN_DEBUG> to 1 makes the
 Starman server runninng in the debug mode.
 
@@ -240,7 +237,10 @@ with C<Starman> server handler i.e. C<plackup -s Starman>, except that
 C<starman> delay loads the application with the Delayed loader by
 default, which can be disabled with C<--preload-app>.
 
-We recommend you to use C<starman> unless there's a reason to stick to
+C<starman> command also automatically sets the environment (C<-E>) to
+the value of I<deployment>.
+
+You're recommended to use C<starman> unless there's a reason to stick to
 C<plackup> for compatiblity.
 
 =head1 SEE ALSO
