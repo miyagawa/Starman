@@ -1,5 +1,10 @@
 Revision history for Perl extension Starman
 
+0.3001  Mon Jun 25 10:57:20 PDT 2012
+        - Fix SERVER_NAME and SERVER_PORT not exist on UNIX socket mode #24
+        - Improved documentation
+        - Ensure that chunk buffer contains terminating HTTP newline (Peter Makholm)
+
 0.3000  Mon Feb 20 16:31:44 PST 2012
         - This be a 0.3 release
 

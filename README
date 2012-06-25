@@ -106,5 +106,5 @@ LICENSE
     under the same terms as Perl itself.
 
 SEE ALSO
-    Plack Catalyst::Engine::HTTP::Prefork Net::Server::Prefork
+    Plack Catalyst::Engine::HTTP::Prefork Net::Server::PreFork
 
