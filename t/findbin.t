@@ -6,7 +6,7 @@ use Test::More;
 my $s = Test::TCP->new(
     code => sub {
         my $port = shift;
-        exec "$^X bin/starman --port $port --max-requests=1 --workers=1 $FindBin::Bin/findbin.psgi";
+        exec "$^X bin/starman --port $port --max-requests=1 --workers=1 '$FindBin::Bin/findbin.psgi'";
     },
 );
 
