@@ -154,6 +154,12 @@ sub child_init_hook {
     $0 = "starman worker " . join(" ", @{$self->{options}{argv} || []});
 }
 
+sub child_finish_hook {
+    my $self = shift;
+    my $prop = $self->{'server'};
+    $self->log(4, "Child leaving ($prop->{'max_requests'})");
+}
+
 sub post_accept_hook {
     my $self = shift;
 
