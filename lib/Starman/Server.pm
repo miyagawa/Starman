@@ -141,6 +141,12 @@ sub run_parent {
 sub child_init_hook {
     my $self = shift;
     srand();
+
+    my $max_requests = $self->{server}->{max_requests};
+    if ( my $min_requests = $self->{options}->{min_requests} ) {
+        $self->{server}->{max_requests} = $max_requests - int(($max_requests - $min_requests + 1) * rand);
+    }
+
     if ($self->{options}->{psgi_app_builder}) {
         DEBUG && warn "[$$] Initializing the PSGI app\n";
         $self->{app} = $self->{options}->{psgi_app_builder}->();
