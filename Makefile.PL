@@ -17,7 +17,7 @@ requires 'HTTP::Date';
 requires 'parent';
 requires 'Test::TCP', 1.11;
 install_script 'bin/starman';
-recommends 'Server::Starter';
+recommends 'Server::Starter', 0.12;
 recommends 'Net::Server::SS::PreFork';
 test_requires 'Test::Requires';
 author_tests('xt');

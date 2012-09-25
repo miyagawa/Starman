@@ -212,6 +212,13 @@ received C<HUP>, i.e:
 
     start_server --port 8080 --signal-on-hup=QUIT -- starman --preload-app myapp.psgi
 
+You will then send the HUP signal to C<start_server> process to
+gracefully reload the starman cluster (master and workers).
+
+With Server::Starter 0.12 or later, you should also be able to set
+C<--signal-on-term> to QUIT so that you can safely shutdown Starman
+first and then stop the C<start_server> daemon process as well.
+
 =item TTIN, TTOU
 
 Sending C<TTIN> signal to the master process will dynamically increase
