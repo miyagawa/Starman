@@ -4,12 +4,12 @@ use FindBin;
 use Test::More;
 
 for (1..2) { # preload, non-preload
-    my $preload = $_ == 1 ? "--preload-app" : "";
+    my @preload = $_ == 1 ? ("--preload-app") : ();
 
     my $s = Test::TCP->new(
         code => sub {
             my $port = shift;
-            exec "$^X bin/starman $preload --port $port --max-requests=1 --workers=1 '$FindBin::Bin/rand.psgi'";
+            exec $^X, "bin/starman", @preload, "--port", $port, "--max-requests=1", "--workers=1", "t/rand.psgi";
         },
     );
 
