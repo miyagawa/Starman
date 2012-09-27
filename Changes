@@ -1,5 +1,8 @@
 Revision history for Perl extension Starman
 
+0.3003  Thu Sep 27 09:39:56 JST 2012
+        - Fixed the test hang in some environments, introduced in 0.3002 [RT:79865]
+
 0.3002  Tue Sep 25 15:26:43 JST 2012
         - Added a documentation for --signal-on-term for Server::Starter 0.12 (kazuho, ether)
         - Set REMOTE_PORT PSGI environment variable #50 (dex4er)
