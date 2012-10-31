@@ -47,13 +47,21 @@ sub run {
         $options->{keepalive_timeout} = 1;
     }
 
+    if ( exists $options->{ssl_cert_file} ) {
+        push @{$options->{argv}}, '--SSL_cert_file', $options->{ssl_cert_file};
+    }
+
+    if ( exists $options->{ssl_key_file} ) {
+        push @{$options->{argv}}, '--SSL_key_file', $options->{ssl_key_file};
+    }
+
     my($host, $port, $proto);
     for my $listen (@{$options->{listen} || [ "$options->{host}:$options->{port}" ]}) {
         if ($listen =~ /:/) {
-            my($h, $p) = split /:/, $listen, 2;
+            my($h, $p, $opt) = split /:/, $listen, 3;
             push @$host, $h || '*';
             push @$port, $p;
-            push @$proto, 'tcp';
+            push @$proto, ($options->{ssl} || 'ssl' eq lc $opt) ? 'ssleay' : 'tcp';
         } else {
             push @$host, 'localhost';
             push @$port, $listen;
@@ -182,7 +190,7 @@ sub process_request {
             SCRIPT_NAME     => '',
             'psgi.version'      => [ 1, 1 ],
             'psgi.errors'       => *STDERR,
-            'psgi.url_scheme'   => 'http',
+            'psgi.url_scheme'   => ($conn->NS_proto eq 'SSLEAY' ? 'https' : 'http'),
             'psgi.nonblocking'  => Plack::Util::FALSE,
             'psgi.streaming'    => Plack::Util::TRUE,
             'psgi.run_once'     => Plack::Util::FALSE,
