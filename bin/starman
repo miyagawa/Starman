@@ -37,6 +37,7 @@ starman - Starman launcher
 
   starman --listen :5001 --listen /tmp/starman.sock
   starman --workers 32 --port 8080
+  starman --min_spare_severs 2 --max_spare_servers 4 --max_servers 10
 
 =head1 OPTIONS
 
@@ -56,63 +57,87 @@ Defaults to any IP address and port 5000.
 
   --host 127.0.0.1
 
-Specifies the address to bind.
+Specifies the local address to bind to.
 
-This option is for a compatiblity with L<plackup> and you're
+This option is for compatibility with L<plackup> and you're
 recommended to use C<--listen> instead.
 
 =item --port
 
   --port 8080
 
-Specifies the port to bind.
+Specifies the local port to listen on.
 
-This option is for a compatiblity with L<plackup> and you're
+This option is for compatibility with L<plackup> and you're
 recommended to use C<--listen> instead.
 
 =item -S, --socket
 
   -S /tmp/starman.sock
 
-Specifies the path to UNIX domain socket to bind.
+Specifies the path to a UNIX domain socket to listen on.
 
-This option is for a compatiblity with L<plackup> and you're
+This option is for compatibility with L<plackup> and you're
 recommended to use C<--listen> instead.
 
 =item --workers
 
-Specifies the number of worker pool. Defaults to 5.
+Specifies the number of worker processes. Defaults to 5.
 
 Starman by default sets up other spare server configuration based on this
 workers value, making sure there are B<always only> C<N> worker
 processes running. So even if there're no idle workers, Starman won't
-spawn off spare processes since that's mostly what you want to do by
-fine tuning the memory usage etc. in the production environment.
+spawn off spare processes, giving you control over the memory usage etc, at the
+expense of either wasting memory with excessive spare workers during quiet
+periods, or struggling during busy periods.  Alternatively, you can use the
+min_spare_servers, max_spare_servers and max_servers options.
+
+=item --min_spare_servers
+
+Specifies the minimum number of spare worker processes to keep alive.  Similar
+to Apache's MinSpareServers directive.
+
+=item --max_spare_servers
+
+Specifies the maximum number of spare worker processes to allow before some are
+killed.  Similar to Apache's MaxSpareServers directive.
+
+=item --max_servers
+
+Specifies the maximum number of worker processes which can exist; used in 
+conjunction with min/max_spare_servers, you can give Starman the flexibility 
+to start more worker processes as required when the number of requests
+warrants it, without worrying about the numebr of workers becoming high enough
+to swamp your machine.
+
 
 =item --backlog
 
-Specifies the number of backlog (listen queue size) of listener sockets. Defaults to 1024.
+Specifies the number of pending connections (listen queue size) of listener 
+sockets.  Defaults to 1024.
 
 On production systems, setting a very low value can allow failover on
-frontend proxy (like nginx) to happen more quickly, if you have
+a frontend proxy (like nginx) to happen more quickly, if you have
 multiple Starman clusters.
 
 If you're doing simple benchmarks and getting connection errors,
 increasing this parameter can help avoid them. You should also
 consider increasing C<net.core.somaxconn>. Note that this is not
-recommended for real production system if you have another cluster to
-failover (see above).
+recommended for real production systems if you have another cluster to
+failover/load balance to (see above).
 
 =item --max-requests
 
-Number of the requests to process per one worker process. Defaults to 1000.
+Maximum requests to handle per worker process before it exits and another
+replaces it. Defaults to 1000.  This is primarily useful to limit the impact of
+any potential memory leaks.
 
 =item --preload-app
 
 This option lets Starman preload the specified PSGI application in the
 master parent process before preforking children. This allows memory
 savings with copy-on-write memory management. When not set (default),
-forked children loads the application in the initialization hook.
+forked children load the application in the initialization hook.
 
 Enabling this option can cause bad things happen when resources like
 sockets or database connections are opened at load time by the master
@@ -130,9 +155,9 @@ itself.
 
 will load the modules in the master process for memory savings with
 CoW, but the actual loading of C<myapp.psgi> is done per children,
-allowing resource managements such as database connection safer.
+making resource management such as database connections safer.
 
-If you enable this option, sending C<HUP> signal to the master process
+If you enable this option, sending a C<HUP> signal to the master process
 I<will not> pick up any code changes you make. See L</SIGNALS> for
 details.
 
@@ -140,15 +165,15 @@ details.
 
 Disable Keep-alive persistent connections. It is an useful workaround
 if you run Starman behind a broken frontend proxy that tries to pool
-connections more than a number of backend workers (i.e. Apache
-mpm_prefork + mod_proxy).
+more connections than the configured number of backend workers (i.e. 
+Apache mpm_prefork + mod_proxy).
 
 =item --keepalive-timeout
 
 The number of seconds Starman will wait for a subsequent request
 before closing the connection if Keep-alive persistent connections
 are enabled. Setting this to a high value may cause performance
-problems in heavily loaded servers. The higher the timeout, the
+problems on heavily loaded servers. The higher the timeout, the
 more backend workers will be kept occupied waiting on connections
 with idle clients.
 
@@ -198,7 +223,7 @@ Starman server runninng in the debug mode.
 
 =item HUP
 
-Sending C<HUP> signal to the master process will restart all the workers
+Sending a C<HUP> signal to the master process will restart all the workers
 gracefully (meaning the currently running requests will shut down once
 the request is complete), and by default, the workers will pick up the
 code changes you make by reloading the application.
@@ -208,7 +233,7 @@ loaded in the startup process and will not pick up the code changes
 you made. If you want to preload the app I<and> do graceful restarts
 by reloading the code changes, you're recommended to use
 L<Server::Starter>, configured to send C<QUIT> signal when superdaemon
-received C<HUP>, i.e:
+receives C<HUP>, i.e:
 
     start_server --port 8080 --signal-on-hup=QUIT -- starman --preload-app myapp.psgi
 
@@ -221,17 +246,17 @@ first and then stop the C<start_server> daemon process as well.
 
 =item TTIN, TTOU
 
-Sending C<TTIN> signal to the master process will dynamically increase
-the number of workers, and C<TTOU> signal will decrease it.
+Sending a C<TTIN> signal to the master process will dynamically increase
+the number of workers, and a C<TTOU> signal will decrease it.
 
 =item INT, TERM
 
-Sending C<INT> or C<TERM> signal to the master process will kill all
+Sending C<INT> or C<TERM> signals to the master process will kill all
 the workers immediately and shut down the server.
 
 =item QUIT
 
-Sending C<QUIT> signal to the master process will gracefully shutdown
+Sending a C<QUIT> signal to the master process will gracefully shutdown
 the workers (meaning the currently running requests will shut down
 once the request is complete).
 

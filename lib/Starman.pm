@@ -28,7 +28,7 @@ Starman - High-performance preforking PSGI/Plack web server
 
 =head1 DESCRIPTION
 
-Starman is a PSGI perl web server that has unique features such as:
+Starman is a PSGI perl web server which has unique features such as:
 
 =over 4
 
@@ -40,7 +40,9 @@ Uses the fast XS/C HTTP header parser
 
 Spawns workers preforked like most high performance UNIX servers
 do. Starman also reaps dead children and automatically restarts the
-worker pool.
+worker pool.  Starman can be configured to automatically start additional worker
+processes when the number of requests warrants it, and kill some off during
+quiet periods, within configurable limits.
 
 =item Signals
 
@@ -114,13 +116,13 @@ from Earthbound, all of which I love.
 
 I'm sick of naming Perl software like
 HTTP::Server::PSGI::How::Its::Written::With::What::Module and people
-call it HSPHIWWWM on IRC. It's hard to say on speeches and newbies
-would ask questions what they stand for every day. That's crazy.
+call it HSPHIWWWM on IRC. It's hard to say in speeches and newbies
+would ask what it stood for every day. That's crazy.
 
 This module actually includes the longer alias and an empty subclass
 L<HTTP::Server::PSGI::Net::Server::PreFork> for those who like to type
 more ::'s. It would actually help you find this software by searching
-for I<PSGI Server Prefork> on CPAN, which i believe is a good thing.
+for I<PSGI Server Prefork> on CPAN, which I believe is a good thing.
 
 Yes, maybe I'm on drugs. We'll see.
 
