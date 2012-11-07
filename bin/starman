@@ -210,7 +210,8 @@ by reloading the code changes, you're recommended to use
 L<Server::Starter>, configured to send C<QUIT> signal when superdaemon
 received C<HUP>, i.e:
 
-    start_server --port 8080 --signal-on-hup=QUIT -- starman --preload-app myapp.psgi
+    start_server --interval 5 --port 8080 --signal-on-hup=QUIT -- \
+      starman --preload-app myapp.psgi
 
 You will then send the HUP signal to C<start_server> process to
 gracefully reload the starman cluster (master and workers).
