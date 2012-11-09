@@ -1,5 +1,5 @@
 if ($^O eq 'MSWin32') {
-    warn "This distribution doesn't support your platform $^O\n";
+    print STDERR "OS unsupported: $^O\n";
     exit;
 }
 
