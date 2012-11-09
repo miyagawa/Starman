@@ -1,5 +1,9 @@
 Revision history for Perl extension Starman
 
+0.3004  Thu Nov  8 19:40:45 PST 2012
+        - Added --interval option to the sample start_server command
+        - Makefile.PL fix
+
 0.3003  Thu Sep 27 09:39:56 JST 2012
         - Fixed the test hang in some environments, introduced in 0.3002 [RT:79865]
 
