@@ -24,6 +24,16 @@ my @argv = @ARGV;
 
 my $runner = Plack::Runner->new(@args);
 $runner->parse_options(@argv);
+
+if ($runner->{loader} eq 'Restarter') {
+    warn <<WARN;
+!!
+!! Using restarter with -r or -R options is known to cause issues with process supervisor
+!! such as start_server, and it is STRONGLY discouraged to use with Starman. You have been warned.
+!!
+WARN
+}
+
 $runner->set_options(argv => \@argv);
 $runner->run;
 
