@@ -1,5 +1,8 @@
 Revision history for Perl extension Starman
 
+0.3005  Wed Nov 14 19:46:31 PST 2012
+        - Added a warning in runtime/documentation to NOT use -r/-R with Starman
+
 0.3004  Thu Nov  8 19:40:45 PST 2012
         - Added --interval option to the sample start_server command
         - Makefile.PL fix
