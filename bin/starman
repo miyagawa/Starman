@@ -246,6 +246,12 @@ Sending C<QUIT> signal to the master process will gracefully shutdown
 the workers (meaning the currently running requests will shut down
 once the request is complete).
 
+=item TERM
+
+Sending C<TERM> signal to the master process will also gracefully shutdown
+the workers (meaning the currently running requests will shut down
+once the request is complete).
+
 =back
 
 =head1 RELOADING THE APPLICATION
