@@ -62,7 +62,7 @@ sub run {
     }
 
     my $workers = $options->{workers} || 5;
-    local @ARGV = (@{$options->{argv} || []});
+    local @ARGV = ();
 
     $self->SUPER::run(
         port                       => $port,
