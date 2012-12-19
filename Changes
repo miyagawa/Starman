@@ -1,5 +1,8 @@
 Revision history for Perl extension Starman
 
+0.3006  Wed Dec 19 09:55:05 JST 2012
+        - Clear out @ARGV, rather than restoring it, to avoid messing with Net::Server internals
+
 0.3005  Wed Nov 14 19:46:31 PST 2012
         - Added a warning in runtime/documentation to NOT use -r/-R with Starman
 
