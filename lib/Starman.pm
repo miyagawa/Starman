@@ -26,6 +26,8 @@ Starman - High-performance preforking PSGI/Plack web server
   # UNIX domain sockets
   > starman --listen /tmp/starman.sock
 
+Read more options and configurations by running `perldoc starman` (lower-case s).
+
 =head1 DESCRIPTION
 
 Starman is a PSGI perl web server that has unique features such as:
