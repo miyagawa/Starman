@@ -101,7 +101,8 @@ sub pre_loop_hook {
     register_sig(
         TTIN => sub { $self->{server}->{$_}++ for qw( min_servers max_servers ) },
         TTOU => sub { $self->{server}->{$_}-- for qw( min_servers max_servers ) },
-        QUIT => sub { $self->server_close(1) },
+        TERM => sub { $self->server_close('TERM') },
+        QUIT => sub { $self->server_close('QUIT') },
     );
 }
 
@@ -109,7 +110,7 @@ sub server_close {
     my($self, $quit) = @_;
 
     if ($quit) {
-        $self->log(2, $self->log_time . " Received QUIT. Running a graceful shutdown\n");
+        $self->log(2, $self->log_time . " Received $quit. Running a graceful shutdown\n");
         $self->{server}->{$_} = 0 for qw( min_servers max_servers );
         $self->hup_children;
         while (1) {
