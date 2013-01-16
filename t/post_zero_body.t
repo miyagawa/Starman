@@ -9,8 +9,6 @@ use LWP::UserAgent;
 $Plack::Test::Impl = "Server";
 $ENV{PLACK_SERVER} = 'Starman';
 
-my $file = File::ShareDir::dist_dir('Plack') . "/baybridge.jpg";
-
 my $app = sub {
     my $env = shift;
     my $body;
