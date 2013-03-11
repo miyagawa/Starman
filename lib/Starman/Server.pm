@@ -62,7 +62,7 @@ sub run {
     }
 
     my $workers = $options->{workers} || 5;
-    local @ARGV = (@{$options->{argv} || []});
+    local @ARGV = ();
 
     $self->SUPER::run(
         port                       => $port,
@@ -188,6 +188,7 @@ sub process_request {
         my $env = {
             REMOTE_ADDR     => $self->{server}->{peeraddr},
             REMOTE_HOST     => $self->{server}->{peerhost} || $self->{server}->{peeraddr},
+            REMOTE_PORT     => $self->{server}->{peerport} || 0,
             SERVER_NAME     => $self->{server}->{sockaddr} || 0, # XXX: needs to be resolved?
             SERVER_PORT     => $self->{server}->{sockport} || 0,
             SCRIPT_NAME     => '',

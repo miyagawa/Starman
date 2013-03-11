@@ -2,7 +2,7 @@ package Starman;
 
 use strict;
 use 5.008_001;
-our $VERSION = '0.3001';
+our $VERSION = '0.3006';
 
 1;
 __END__
@@ -25,6 +25,8 @@ Starman - High-performance preforking PSGI/Plack web server
 
   # UNIX domain sockets
   > starman --listen /tmp/starman.sock
+
+Read more options and configurations by running `perldoc starman` (lower-case s).
 
 =head1 DESCRIPTION
 
