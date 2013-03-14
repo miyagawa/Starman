@@ -254,7 +254,7 @@ You're recommended to use signals (see above) to reload the
 application, and are strongly discouraged to use C<-r> or C<-R>
 (reloading flag) from plackup. These options will make a separate
 directory watcher process, and makes your life difficult if you want to
-combine with other process daemon tools such as Server::Strater.
+combine with other process daemon tools such as L<Server::Starter>.
 
 =head1 DIFFERENCES WITH PLACKUP
 
