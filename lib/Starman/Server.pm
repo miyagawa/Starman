@@ -308,7 +308,7 @@ sub _read_headers {
             # Do we have a full header in the buffer?
             # This is before sysread so we don't read if we have a pipelined request
             # waiting in the buffer
-            last if defined $self->{client}->{inputbuf} && $self->{client}->{inputbuf} =~ /$CRLF$CRLF/s;
+            last if defined $self->{client}->{inputbuf} && $self->{client}->{inputbuf} =~ /$CR?$LF$CR?$LF/s;
 
             # If not, read some data
             my $read = sysread $self->{server}->{client}, my $buf, CHUNKSIZE;
@@ -343,7 +343,7 @@ sub _read_headers {
     $self->{client}->{headerbuf} = $self->{client}->{inputbuf};
 
     # Save any left-over data, possibly body data or pipelined requests
-    $self->{client}->{inputbuf} =~ s/.*?$CRLF$CRLF//s;
+    $self->{client}->{inputbuf} =~ s/.*?$CR?$LF$CR?$LF//s;
 
     return 1;
 }
