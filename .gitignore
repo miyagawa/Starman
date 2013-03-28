@@ -2,3 +2,4 @@
 MYMETA.*
 !META.json
 /Starman-*
+/.build
