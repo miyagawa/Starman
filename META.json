@@ -14,14 +14,38 @@
    },
    "name" : "Starman",
    "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Module::Build" : "0.3601"
+         }
+      },
       "configure" : {
          "requires" : {
-            "Module::Build::Tiny" : "0.013"
+            "Module::Build" : "0.3601"
          }
       },
       "develop" : {
          "requires" : {
             "Test::Pod" : "1.41"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "Data::Dump" : "0",
+            "HTTP::Date" : "0",
+            "HTTP::Parser::XS" : "0",
+            "HTTP::Status" : "0",
+            "Net::Server" : "0.91",
+            "Plack" : "0.9971",
+            "Test::TCP" : "1.11",
+            "parent" : "0",
+            "perl" : "5.008001"
+         }
+      },
+      "test" : {
+         "requires" : {
+            "Test::More" : "0",
+            "Test::Requires" : "0"
          }
       }
    },
