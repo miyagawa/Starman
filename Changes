@@ -2,6 +2,10 @@ Revision history for Perl extension Starman
 
 {{$NEXT}}
 
+0.3007  2013-03-28 12:55:45 PDT
+        - Accept HTTP requests with LF termination per HTTP spec recommendation (oschwald) #56
+        - Documentation fix (oalders)
+
 0.3006  Wed Dec 19 09:55:05 JST 2012
         - Clear out @ARGV, rather than restoring it, to avoid messing with Net::Server internals
 

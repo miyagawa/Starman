@@ -19,7 +19,7 @@ my %module_build_args = (
     "Tatsuhiko Miyagawa <miyagawa\@bulknews.net>"
   ],
   "dist_name" => "Starman",
-  "dist_version" => "0.3006",
+  "dist_version" => "0.3007",
   "license" => "perl",
   "module_name" => "Starman",
   "recommends" => {},
