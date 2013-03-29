@@ -9,7 +9,7 @@ for (1..2) { # preload, non-preload
     my $s = Test::TCP->new(
         code => sub {
             my $port = shift;
-            exec $^X, "bin/starman", @preload, "--port", $port, "--max-requests=1", "--workers=1", "t/rand.psgi";
+            exec $^X, "script/starman", @preload, "--port", $port, "--max-requests=1", "--workers=1", "t/rand.psgi";
         },
     );
 
