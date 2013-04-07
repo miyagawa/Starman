@@ -4,7 +4,7 @@
       "Tatsuhiko Miyagawa <miyagawa@bulknews.net>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Milla version v0.9.1, Dist::Zilla version 4.300031, CPAN::Meta::Converter version 2.130870",
+   "generated_by" : "Dist::Milla version v1.0.0, Dist::Zilla version 4.300033, CPAN::Meta::Converter version 2.130880",
    "license" : [
       "perl_5"
    ],
@@ -13,15 +13,20 @@
       "version" : "2"
    },
    "name" : "Starman",
+   "no_index" : {
+      "directory" : [
+         "t",
+         "xt",
+         "inc",
+         "share",
+         "eg",
+         "examples"
+      ]
+   },
    "prereqs" : {
-      "build" : {
-         "requires" : {
-            "Module::Build" : "0.3601"
-         }
-      },
       "configure" : {
          "requires" : {
-            "Module::Build" : "0.3601"
+            "Module::Build::Tiny" : "0.014"
          }
       },
       "develop" : {
@@ -61,6 +66,24 @@
          "web" : "https://github.com/miyagawa/Starman"
       }
    },
-   "version" : "0.3007"
+   "version" : "0.3008",
+   "x_contributors" : [
+      "Alex Vandiver <alex@chmrr.net>",
+      "Audrey Tang <audrey.tang@socialtext.com>",
+      "Audrey Tang <audreyt@audreyt.org>",
+      "Chia-liang Kao <clkao@clkao.org>",
+      "Graham Barr <gbarr@pobox.com>",
+      "Grant McLean <grant@catalyst.net.nz>",
+      "Gregory Oschwald <goschwald@maxmind.com>",
+      "Leon Brocard <acme@astray.com>",
+      "Olaf Alders <olaf@wundersolutions.com>",
+      "Paulo E. Castro <pauloedgarcastro@gmail.com>",
+      "Perlover <perlover@perlover.com>",
+      "Peter Makholm <peter@makholm.net>",
+      "Piotr Roszatycki <piotr.roszatycki@gmail.com>",
+      "Tatsuhiko Miyagawa <miyagawa@gmail.com>",
+      "cho45 <cho45@lowreal.net>",
+      "spleenjack <spleenjack@gmail.com>"
+   ]
 }
 
