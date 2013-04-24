@@ -4,7 +4,7 @@
       "Tatsuhiko Miyagawa <miyagawa@bulknews.net>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Milla version v1.0.0, Dist::Zilla version 4.300033, CPAN::Meta::Converter version 2.130880",
+   "generated_by" : "Dist::Milla version v1.0.2, Dist::Zilla version 4.300034, CPAN::Meta::Converter version 2.130880",
    "license" : [
       "perl_5"
    ],
@@ -26,7 +26,7 @@
    "prereqs" : {
       "configure" : {
          "requires" : {
-            "Module::Build::Tiny" : "0.014"
+            "ExtUtils::MakeMaker" : "6.30"
          }
       },
       "develop" : {
