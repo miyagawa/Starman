@@ -2,6 +2,10 @@ Revision history for Perl extension Starman
 
 {{$NEXT}}
 
+0.3011  2013-04-24 17:39:31 PDT
+        - Disabled flock serialization when it's unnecessary. This will improve the performance
+          when you have many Starman worker processes on Linux systems (kazeburo) #69
+
 0.3010  2013-04-24 07:04:02 PDT
         - Switch back to Module::Build::Tiny with fixed #!perl shebang
 
