@@ -68,7 +68,7 @@ Defaults to any IP address and port 5000.
 
 Specifies the address to bind.
 
-This option is for a compatiblity with L<plackup> and you're
+This option is for a compatibility with L<plackup> and you're
 recommended to use C<--listen> instead.
 
 =item --port
@@ -77,7 +77,7 @@ recommended to use C<--listen> instead.
 
 Specifies the port to bind.
 
-This option is for a compatiblity with L<plackup> and you're
+This option is for a compatibility with L<plackup> and you're
 recommended to use C<--listen> instead.
 
 =item -S, --socket
@@ -86,7 +86,7 @@ recommended to use C<--listen> instead.
 
 Specifies the path to UNIX domain socket to bind.
 
-This option is for a compatiblity with L<plackup> and you're
+This option is for a compatibility with L<plackup> and you're
 recommended to use C<--listen> instead.
 
 =item --workers
@@ -198,7 +198,7 @@ C<plackup -h> such as C<--access-log> or C<--daemonize> works fine in
 starman too.
 
 Setting the environment variable C<STARMAN_DEBUG> to 1 makes the
-Starman server runninng in the debug mode.
+Starman server running in the debug mode.
 
 =cut
 
@@ -267,7 +267,7 @@ C<starman> command also automatically sets the environment (C<-E>) to
 the value of I<deployment>.
 
 You're recommended to use C<starman> unless there's a reason to stick to
-C<plackup> for compatiblity.
+C<plackup> for compatibility.
 
 =head1 SEE ALSO
 
