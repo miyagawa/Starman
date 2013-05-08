@@ -56,7 +56,7 @@ Supports L<Server::Starter> for hot deploy and graceful restarts.
 
 =item Multiple interfaces and UNIX Domain Socket support
 
-Able to listen on multiple intefaces including UNIX sockets.
+Able to listen on multiple interfaces including UNIX sockets.
 
 =item Small memory footprint
 
