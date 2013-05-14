@@ -2,6 +2,17 @@ Revision history for Perl extension Starman
 
 {{$NEXT}}
 
+0.3011  2013-04-24 17:39:31 PDT
+        - Disabled flock serialization when it's unnecessary. This will improve the performance
+          when you have many Starman worker processes on Linux systems (kazeburo) #69
+
+0.3010  2013-04-24 07:04:02 PDT
+        - Switch back to Module::Build::Tiny with fixed #!perl shebang
+
+0.3009  2013-04-23 17:34:57 PDT
+        - Switch to MakeMaker because of shebang bug
+          https://github.com/Leont/module-build-tiny/issues/3
+
 0.3008  2013-04-06 22:04:53 PDT
         - switch to Module::Build::Tiny with Milla. Might not install bat correctly but we don't
           support Win32 anyway.

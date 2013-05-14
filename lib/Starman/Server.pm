@@ -68,7 +68,7 @@ sub run {
         port                       => $port,
         host                       => $host,
         proto                      => $proto,
-        serialize                  => 'flock',
+        serialize                  => ( $^O =~ m!(linux|darwin|bsd|cygwin)$! ) ? 'none' : 'flock',
         log_level                  => DEBUG ? 4 : 2,
         ($options->{error_log} ? ( log_file => $options->{error_log} ) : () ),
         min_servers                => $options->{min_servers}       || $workers,
