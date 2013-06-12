@@ -4,7 +4,7 @@
       "Tatsuhiko Miyagawa <miyagawa@bulknews.net>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Milla version v1.0.2, Dist::Zilla version 4.300034, CPAN::Meta::Converter version 2.130880",
+   "generated_by" : "Dist::Milla version v1.0.2, Dist::Zilla version 4.300034, CPAN::Meta::Converter version 2.131560",
    "license" : [
       "perl_5"
    ],
@@ -26,7 +26,7 @@
    "prereqs" : {
       "configure" : {
          "requires" : {
-            "Module::Build::Tiny" : "0.018"
+            "Module::Build::Tiny" : "0.023"
          }
       },
       "develop" : {
@@ -49,6 +49,7 @@
       },
       "test" : {
          "requires" : {
+            "LWP::UserAgent" : "0",
             "Test::More" : "0",
             "Test::Requires" : "0"
          }
@@ -66,11 +67,12 @@
          "web" : "https://github.com/miyagawa/Starman"
       }
    },
-   "version" : "0.3011",
+   "version" : "0.3012",
    "x_contributors" : [
       "Alex Vandiver <alex@chmrr.net>",
       "Audrey Tang <audreyt@audreyt.org>",
       "Chia-liang Kao <clkao@clkao.org>",
+      "David Steinbrunner <dsteinbrunner@pobox.com>",
       "Graham Barr <gbarr@pobox.com>",
       "Grant McLean <grant@catalyst.net.nz>",
       "Gregory Oschwald <goschwald@maxmind.com>",
