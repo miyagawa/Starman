@@ -2,6 +2,9 @@ Revision history for Perl extension Starman
 
 {{$NEXT}}
 
+0.3013  2013-06-12 22:52:54 PDT
+        - Fix writer tests for Plack update
+
 0.3012  2013-06-12 12:31:11 PDT
         - typo fixes
         - Fix dependencies for LWP::UserAgent
