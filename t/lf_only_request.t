@@ -29,7 +29,8 @@ my $app = sub {
     return sub {
         my $response = shift;
         my $writer = $response->( [ 200, [ 'Content-Type', 'text/plain' ] ] );
-        }
+        $writer->close;
+    }
 };
 
 test_psgi $app, sub {
