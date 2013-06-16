@@ -42,7 +42,7 @@
             "HTTP::Status" : "0",
             "Net::Server" : "0.91",
             "Plack" : "0.9971",
-            "Test::TCP" : "1.11",
+            "Test::TCP" : "2.00",
             "parent" : "0",
             "perl" : "5.008001"
          }
@@ -67,7 +67,7 @@
          "web" : "https://github.com/miyagawa/Starman"
       }
    },
-   "version" : "0.3013",
+   "version" : "0.3014",
    "x_contributors" : [
       "Alex Vandiver <alex@chmrr.net>",
       "Audrey Tang <audreyt@audreyt.org>",
