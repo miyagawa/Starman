@@ -46,6 +46,9 @@ sub run {
     if (! exists $options->{keepalive_timeout}) {
         $options->{keepalive_timeout} = 1;
     }
+    if ( $options->{limit_request_body} ) {
+        $extra{limit_request_body} = $options->{limit_request_body};
+    }
 
     my($host, $port, $proto);
     for my $listen (@{$options->{listen} || [ "$options->{host}:$options->{port}" ]}) {
@@ -248,6 +251,14 @@ sub process_request {
         unless ($self->{options}->{keepalive}) {
             DEBUG && warn "[$$] keep-alive is disabled. Closing the connection after this request\n";
             $self->{client}->{keepalive} = 0;
+        }
+
+        if ( $self->{options}->{limit_request_body} && $env->{CONTENT_LENGTH} ){
+            if ( $env->{CONTENT_LENGTH} > $self->{options}->{limit_request_body} ){
+                DEBUG && warn "[$$] Content-Length exceeds limit-request-body. Closing connection\n";
+                $self->_http_error( 413, $env );
+                last;
+            }
         }
 
         $self->_prepare_env($env);
