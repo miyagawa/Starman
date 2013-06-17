@@ -190,6 +190,14 @@ described in C<plackup -h>.
 Specify the pathname of a file where the error log should be written.
 This enables you to still have access to the errors when using C<--daemonize>.
 
+=item --limit-request-body
+
+Specify the maximum number of bytes that are allowed in a request body.
+If, for example, you  wish to limit the size of the uploaded file to 100K, 
+you might use the following option
+
+    --limit-request-body 102400
+
 =back
 
 Starman passes through other options given to L<Plack::Runner>, the
