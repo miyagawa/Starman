@@ -46,6 +46,12 @@ sub run {
     if ( DEBUG ) {
         $extra{log_level} = 4;
     }
+    if ( $options->{ssl_cert} ) {
+        $extra{SSL_cert_file} = $options->{ssl_cert};
+    }
+    if ( $options->{ssl_key} ) {
+        $extra{SSL_key_file} = $options->{ssl_key};
+    }
     if (! exists $options->{keepalive}) {
         $options->{keepalive} = 1;
     }
@@ -57,9 +63,10 @@ sub run {
     for my $listen (@{$options->{listen} || [ "$options->{host}:$options->{port}" ]}) {
         my %listen;
         if ($listen =~ /:/) {
-            my($h, $p) = split /:/, $listen, 2;
+            my($h, $p, $opt) = split /:/, $listen, 3;
             $listen{host} = $h if $h;
             $listen{port} = $p;
+            $listen{proto} = 'ssl' if 'ssl' eq lc $opt;
         } else {
             %listen = (
                 host  => 'localhost',
@@ -76,7 +83,7 @@ sub run {
     $self->SUPER::run(
         port                => \@port,
         host                => '*',   # default host
-        proto               => 'tcp', # default proto
+        proto               => $options->{ssl} ? 'ssl' : 'tcp', # default proto
         serialize           => ( $^O =~ m!(linux|darwin|bsd|cygwin)$! ) ? 'none' : 'flock',
         min_servers         => $options->{min_servers}       || $workers,
         min_spare_servers   => $options->{min_spare_servers} || $workers - 1,
@@ -189,7 +196,7 @@ sub process_request {
             SCRIPT_NAME     => '',
             'psgi.version'      => [ 1, 1 ],
             'psgi.errors'       => *STDERR,
-            'psgi.url_scheme'   => 'http',
+            'psgi.url_scheme'   => ($conn->NS_proto eq 'SSL' ? 'https' : 'http'),
             'psgi.nonblocking'  => Plack::Util::FALSE,
             'psgi.streaming'    => Plack::Util::TRUE,
             'psgi.run_once'     => Plack::Util::FALSE,
