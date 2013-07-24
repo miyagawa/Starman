@@ -53,27 +53,30 @@ sub run {
         $options->{keepalive_timeout} = 1;
     }
 
-    my($host, $port, $proto);
+    my @port;
     for my $listen (@{$options->{listen} || [ "$options->{host}:$options->{port}" ]}) {
+        my %listen;
         if ($listen =~ /:/) {
             my($h, $p) = split /:/, $listen, 2;
-            push @$host, $h || '*';
-            push @$port, $p;
-            push @$proto, 'tcp';
+            $listen{host} = $h if $h;
+            $listen{port} = $p;
         } else {
-            push @$host, 'localhost';
-            push @$port, $listen;
-            push @$proto, 'unix';
+            %listen = (
+                host  => 'localhost',
+                port  => $listen,
+                proto => 'unix',
+            );
         }
+        push @port, \%listen;
     }
 
     my $workers = $options->{workers} || 5;
     local @ARGV = ();
 
     $self->SUPER::run(
-        port                => $port,
-        host                => $host,
-        proto               => $proto,
+        port                => \@port,
+        host                => '*',   # default host
+        proto               => 'tcp', # default proto
         serialize           => ( $^O =~ m!(linux|darwin|bsd|cygwin)$! ) ? 'none' : 'flock',
         min_servers         => $options->{min_servers}       || $workers,
         min_spare_servers   => $options->{min_spare_servers} || $workers - 1,
