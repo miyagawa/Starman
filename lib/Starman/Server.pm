@@ -43,6 +43,9 @@ sub run {
     if ( $options->{error_log} ) {
         $extra{log_file} = $options->{error_log};
     }
+    if ( DEBUG ) {
+        $extra{log_level} = 4;
+    }
     if (! exists $options->{keepalive}) {
         $options->{keepalive} = 1;
     }
@@ -72,7 +75,6 @@ sub run {
         host                => $host,
         proto               => $proto,
         serialize           => ( $^O =~ m!(linux|darwin|bsd|cygwin)$! ) ? 'none' : 'flock',
-        log_level           => DEBUG ? 4 : 2,
         min_servers         => $options->{min_servers}       || $workers,
         min_spare_servers   => $options->{min_spare_servers} || $workers - 1,
         max_spare_servers   => $options->{max_spare_servers} || $workers - 1,
