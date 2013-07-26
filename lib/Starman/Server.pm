@@ -40,6 +40,9 @@ sub run {
     if ( $options->{daemonize} ) {
         $extra{setsid} = $extra{background} = 1;
     }
+    if ( $options->{error_log} ) {
+        $extra{log_file} = $options->{error_log};
+    }
     if (! exists $options->{keepalive}) {
         $options->{keepalive} = 1;
     }
@@ -65,22 +68,21 @@ sub run {
     local @ARGV = ();
 
     $self->SUPER::run(
-        port                       => $port,
-        host                       => $host,
-        proto                      => $proto,
-        serialize                  => ( $^O =~ m!(linux|darwin|bsd|cygwin)$! ) ? 'none' : 'flock',
-        log_level                  => DEBUG ? 4 : 2,
-        ($options->{error_log} ? ( log_file => $options->{error_log} ) : () ),
-        min_servers                => $options->{min_servers}       || $workers,
-        min_spare_servers          => $options->{min_spare_servers} || $workers - 1,
-        max_spare_servers          => $options->{max_spare_servers} || $workers - 1,
-        max_servers                => $options->{max_servers}       || $workers,
-        max_requests               => $options->{max_requests}      || 1000,
-        user                       => $options->{user}              || $>,
-        group                      => $options->{group}             || $),
-        listen                     => $options->{backlog}           || 1024,
-        check_for_waiting          => 1,
-        no_client_stdout           => 1,
+        port                => $port,
+        host                => $host,
+        proto               => $proto,
+        serialize           => ( $^O =~ m!(linux|darwin|bsd|cygwin)$! ) ? 'none' : 'flock',
+        log_level           => DEBUG ? 4 : 2,
+        min_servers         => $options->{min_servers}       || $workers,
+        min_spare_servers   => $options->{min_spare_servers} || $workers - 1,
+        max_spare_servers   => $options->{max_spare_servers} || $workers - 1,
+        max_servers         => $options->{max_servers}       || $workers,
+        max_requests        => $options->{max_requests}      || 1000,
+        user                => $options->{user}              || $>,
+        group               => $options->{group}             || $),
+        listen              => $options->{backlog}           || 1024,
+        check_for_waiting   => 1,
+        no_client_stdout    => 1,
         %extra
     );
 }
