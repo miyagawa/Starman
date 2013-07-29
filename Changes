@@ -1,7 +1,9 @@
 Revision history for Perl extension Starman
 
 {{$NEXT}}
-        - support SSL
+
+0.4000  2013-07-28 23:53:55 PDT
+        - support SSL (aristotle)
 
 0.3014  2013-06-16 01:07:52 PDT
         - bump Test::TCP dep, not really necessary but avoid 1.27 bug
