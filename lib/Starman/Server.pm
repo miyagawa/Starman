@@ -40,6 +40,18 @@ sub run {
     if ( $options->{daemonize} ) {
         $extra{setsid} = $extra{background} = 1;
     }
+    if ( $options->{error_log} ) {
+        $extra{log_file} = $options->{error_log};
+    }
+    if ( DEBUG ) {
+        $extra{log_level} = 4;
+    }
+    if ( $options->{ssl_cert} ) {
+        $extra{SSL_cert_file} = $options->{ssl_cert};
+    }
+    if ( $options->{ssl_key} ) {
+        $extra{SSL_key_file} = $options->{ssl_key};
+    }
     if (! exists $options->{keepalive}) {
         $options->{keepalive} = 1;
     }
@@ -47,40 +59,42 @@ sub run {
         $options->{keepalive_timeout} = 1;
     }
 
-    my($host, $port, $proto);
+    my @port;
     for my $listen (@{$options->{listen} || [ "$options->{host}:$options->{port}" ]}) {
+        my %listen;
         if ($listen =~ /:/) {
-            my($h, $p) = split /:/, $listen, 2;
-            push @$host, $h || '*';
-            push @$port, $p;
-            push @$proto, 'tcp';
+            my($h, $p, $opt) = split /:/, $listen, 3;
+            $listen{host} = $h if $h;
+            $listen{port} = $p;
+            $listen{proto} = 'ssl' if 'ssl' eq lc $opt;
         } else {
-            push @$host, 'localhost';
-            push @$port, $listen;
-            push @$proto, 'unix';
+            %listen = (
+                host  => 'localhost',
+                port  => $listen,
+                proto => 'unix',
+            );
         }
+        push @port, \%listen;
     }
 
     my $workers = $options->{workers} || 5;
     local @ARGV = ();
 
     $self->SUPER::run(
-        port                       => $port,
-        host                       => $host,
-        proto                      => $proto,
-        serialize                  => ( $^O =~ m!(linux|darwin|bsd|cygwin)$! ) ? 'none' : 'flock',
-        log_level                  => DEBUG ? 4 : 2,
-        ($options->{error_log} ? ( log_file => $options->{error_log} ) : () ),
-        min_servers                => $options->{min_servers}       || $workers,
-        min_spare_servers          => $options->{min_spare_servers} || $workers - 1,
-        max_spare_servers          => $options->{max_spare_servers} || $workers - 1,
-        max_servers                => $options->{max_servers}       || $workers,
-        max_requests               => $options->{max_requests}      || 1000,
-        user                       => $options->{user}              || $>,
-        group                      => $options->{group}             || $),
-        listen                     => $options->{backlog}           || 1024,
-        check_for_waiting          => 1,
-        no_client_stdout           => 1,
+        port                => \@port,
+        host                => '*',   # default host
+        proto               => $options->{ssl} ? 'ssl' : 'tcp', # default proto
+        serialize           => ( $^O =~ m!(linux|darwin|bsd|cygwin)$! ) ? 'none' : 'flock',
+        min_servers         => $options->{min_servers}       || $workers,
+        min_spare_servers   => $options->{min_spare_servers} || $workers - 1,
+        max_spare_servers   => $options->{max_spare_servers} || $workers - 1,
+        max_servers         => $options->{max_servers}       || $workers,
+        max_requests        => $options->{max_requests}      || 1000,
+        user                => $options->{user}              || $>,
+        group               => $options->{group}             || $),
+        listen              => $options->{backlog}           || 1024,
+        check_for_waiting   => 1,
+        no_client_stdout    => 1,
         %extra
     );
 }
@@ -182,7 +196,7 @@ sub process_request {
             SCRIPT_NAME     => '',
             'psgi.version'      => [ 1, 1 ],
             'psgi.errors'       => *STDERR,
-            'psgi.url_scheme'   => 'http',
+            'psgi.url_scheme'   => ($conn->NS_proto eq 'SSL' ? 'https' : 'http'),
             'psgi.nonblocking'  => Plack::Util::FALSE,
             'psgi.streaming'    => Plack::Util::TRUE,
             'psgi.run_once'     => Plack::Util::FALSE,
