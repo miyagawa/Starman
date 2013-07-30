@@ -2,6 +2,9 @@ Revision history for Perl extension Starman
 
 {{$NEXT}}
 
+0.4001  2013-07-29 23:14:10 PDT
+        - Skip ssl tests if LWP doesn't support HTTPS
+
 0.4000  2013-07-28 23:53:55 PDT
         - support SSL (aristotle)
 
