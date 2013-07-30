@@ -1,5 +1,6 @@
 use strict;
 use Test::More;
+use Test::Requires 'LWP::Protocol::https';
 use Test::TCP;
 use LWP::UserAgent;
 use FindBin '$Bin';
