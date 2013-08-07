@@ -235,9 +235,9 @@ first and then stop the C<start_server> daemon process as well.
 Sending C<TTIN> signal to the master process will dynamically increase
 the number of workers, and C<TTOU> signal will decrease it.
 
-=item INT, TERM
+=item INT
 
-Sending C<INT> or C<TERM> signal to the master process will kill all
+Sending C<INT> signal to the master process will kill all
 the workers immediately and shut down the server.
 
 =item QUIT
