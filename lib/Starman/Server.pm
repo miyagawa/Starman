@@ -102,13 +102,15 @@ sub run {
 sub pre_loop_hook {
     my $self = shift;
 
-    my $host = $self->{server}->{host}->[0];
     my $port = $self->{server}->{port}->[0];
+    my $proto = $port->{proto} eq 'ssleay' ? 'https' :
+                $port->{proto} eq 'unix'   ? 'unix'  :
+                                             'http';
 
     $self->{options}{server_ready}->({
-        host => $host,
-        port => $port,
-        proto => $port =~ /unix/ ? 'unix' : 'http',
+        host => $port->{host},
+        port => $port->{port},
+        proto => $proto,
         server_software => 'Starman',
     }) if $self->{options}{server_ready};
 
