@@ -2,6 +2,9 @@ Revision history for Perl extension Starman
 
 {{$NEXT}}
 
+0.4002  2013-08-08 14:20:45 PDT
+        - Fix banner message for host/port broken in 0.4 (siracusa)
+
 0.4001  2013-07-29 23:14:10 PDT
         - Skip ssl tests if LWP doesn't support HTTPS
 

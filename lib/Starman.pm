@@ -2,7 +2,7 @@ package Starman;
 
 use strict;
 use 5.008_001;
-our $VERSION = '0.4001';
+our $VERSION = '0.4002';
 
 1;
 __END__
