@@ -103,9 +103,9 @@ sub pre_loop_hook {
     my $self = shift;
 
     my $port = $self->{server}->{port}->[0];
-    my $proto = $port->{proto} eq 'ssleay' ? 'https' :
-                $port->{proto} eq 'unix'   ? 'unix'  :
-                                             'http';
+    my $proto = $port->{proto} eq 'ssl'  ? 'https' :
+                $port->{proto} eq 'unix' ? 'unix'  :
+                                           'http';
 
     $self->{options}{server_ready}->({
         host => $port->{host},
