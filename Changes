@@ -2,6 +2,9 @@ Revision history for Perl extension Starman
 
 {{$NEXT}}
 
+0.4004  2013-08-12 11:41:13 PDT
+        - Note that SSL support is experimental
+
 0.4003  2013-08-08 14:32:24 PDT
         - Fix ssl condition for banner
 
