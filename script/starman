@@ -60,8 +60,10 @@ starman - Starman launcher
 Specifies the TCP address, ports and UNIX domain sockets to bind to
 wait for requests. You can repeat as many times as you want and mix
 TCP and UNIX domain sockets.
+
 For TCP sockets you can append C<:ssl> after the port to specify that
-connections on that port should use SSL.
+connections on that port should use SSL. Note that the SSL support is
+experimental and hasn't been widely tested.
 
 Defaults to any IP address and port 5000.
 
@@ -203,7 +205,7 @@ Specify the path to SSL key file.
 
 =item --enable-ssl
 
-Enable SSL on I<all> TCP sockets.
+Enable SSL on I<all> TCP sockets. This is an experimental feature.
 
 =back
 
