@@ -157,11 +157,23 @@ sub run_parent {
 sub child_init_hook {
     my $self = shift;
     srand();
+
+    my $max_requests = $self->{server}->{max_requests};
+    if ( my $min_requests = $self->{options}->{min_requests} ) {
+        $self->{server}->{max_requests} = $max_requests - int(($max_requests - $min_requests + 1) * rand);
+    }
+
     if ($self->{options}->{psgi_app_builder}) {
         DEBUG && warn "[$$] Initializing the PSGI app\n";
         $self->{app} = $self->{options}->{psgi_app_builder}->();
     }
     $0 = "starman worker " . join(" ", @{$self->{options}{argv} || []});
+}
+
+sub child_finish_hook {
+    my $self = shift;
+    my $prop = $self->{'server'};
+    $self->log(4, "Child leaving ($prop->{'max_requests'})");
 }
 
 sub post_accept_hook {
@@ -516,7 +528,11 @@ sub _finalize_response {
                 return unless $len;
                 $buffer = sprintf( "%x", $len ) . $CRLF . $buffer . $CRLF;
             }
-            syswrite $conn, $buffer;
+            while ( length $buffer ) {
+                my $len = syswrite $conn, $buffer;
+                die "write error: $!" if ! defined $len;
+                substr( $buffer, 0, $len, '');
+            }
             DEBUG && warn "[$$] Wrote " . length($buffer) . " bytes\n";
         });
 
@@ -530,7 +546,11 @@ sub _finalize_response {
                     return unless $len;
                     $buffer = sprintf( "%x", $len ) . $CRLF . $buffer . $CRLF;
                 }
-                syswrite $conn, $buffer;
+                while ( length $buffer ) {
+                    my $len = syswrite $conn, $buffer;
+                    die "write error: $!" if ! defined $len;
+                    substr( $buffer, 0, $len, '');
+                }
                 DEBUG && warn "[$$] Wrote " . length($buffer) . " bytes\n";
             },
             close => sub {

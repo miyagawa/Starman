@@ -122,6 +122,11 @@ failover (see above).
 
 Number of the requests to process per one worker process. Defaults to 1000.
 
+=item --min-requests
+
+if set, randomizes the number of requests handled by a single worker 
+process between the value and that supplied by --max-requests (default: none)
+
 =item --preload-app
 
 This option lets Starman preload the specified PSGI application in the
