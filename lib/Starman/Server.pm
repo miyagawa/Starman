@@ -8,6 +8,7 @@ use IO::Socket qw(:crlf);
 use HTTP::Parser::XS qw(parse_http_request);
 use HTTP::Status qw(status_message);
 use HTTP::Date qw(time2str);
+use POSIX qw(EINTR);
 use Symbol;
 
 use Plack::Util;
@@ -243,7 +244,7 @@ sub process_request {
             # Do we need to send 100 Continue?
             if ( $env->{HTTP_EXPECT} ) {
                 if ( $env->{HTTP_EXPECT} eq '100-continue' ) {
-                    syswrite $conn, 'HTTP/1.1 100 Continue' . $CRLF . $CRLF;
+                    _syswrite($conn, \('HTTP/1.1 100 Continue' . $CRLF . $CRLF));
                     DEBUG && warn "[$$] Sent 100 Continue response\n";
                 }
                 else {
@@ -506,7 +507,7 @@ sub _finalize_response {
 
     # Buffer the headers so they are sent with the first write() call
     # This reduces the number of TCP packets we are sending
-    syswrite $conn, join( $CRLF, @headers, '' ) . $CRLF;
+    _syswrite($conn, \(join( $CRLF, @headers, '' ) . $CRLF));
 
     if (defined $res->[2]) {
         Plack::Util::foreach($res->[2], sub {
@@ -516,15 +517,9 @@ sub _finalize_response {
                 return unless $len;
                 $buffer = sprintf( "%x", $len ) . $CRLF . $buffer . $CRLF;
             }
-            while ( length $buffer ) {
-                my $len = syswrite $conn, $buffer;
-                die "write error: $!" if ! defined $len;
-                substr( $buffer, 0, $len, '');
-            }
-            DEBUG && warn "[$$] Wrote " . length($buffer) . " bytes\n";
+            _syswrite($conn, \$buffer);
         });
-
-        syswrite $conn, "0$CRLF$CRLF" if $chunked;
+        _syswrite($conn, \"0$CRLF$CRLF") if $chunked;
     } else {
         return Plack::Util::inline_object
             write => sub {
@@ -534,16 +529,27 @@ sub _finalize_response {
                     return unless $len;
                     $buffer = sprintf( "%x", $len ) . $CRLF . $buffer . $CRLF;
                 }
-                while ( length $buffer ) {
-                    my $len = syswrite $conn, $buffer;
-                    die "write error: $!" if ! defined $len;
-                    substr( $buffer, 0, $len, '');
-                }
-                DEBUG && warn "[$$] Wrote " . length($buffer) . " bytes\n";
+                _syswrite($conn, \$buffer);
             },
             close => sub {
-                syswrite $conn, "0$CRLF$CRLF" if $chunked;
+                _syswrite($conn, \"0$CRLF$CRLF") if $chunked;
             };
+    }
+}
+
+sub _syswrite {
+    my ($conn, $buffer_ref) = @_;
+
+    while (length $$buffer_ref) {
+        my $len = syswrite($conn, $$buffer_ref);
+
+        if (defined $len) {
+            substr($$buffer_ref, 0, $len, '');
+            DEBUG && warn "[$$] Wrote $len byte", ($len == 1 ? '' : 's'), "\n";
+        }
+        elsif ($! != EINTR) {
+            die "write error: $!";
+        }
     }
 }
 
