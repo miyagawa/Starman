@@ -516,7 +516,11 @@ sub _finalize_response {
                 return unless $len;
                 $buffer = sprintf( "%x", $len ) . $CRLF . $buffer . $CRLF;
             }
-            syswrite $conn, $buffer;
+            while ( length $buffer ) {
+                my $len = syswrite $conn, $buffer;
+                die "write error: $!" if ! defined $len;
+                substr( $buffer, 0, $len, '');
+            }
             DEBUG && warn "[$$] Wrote " . length($buffer) . " bytes\n";
         });
 
@@ -530,7 +534,11 @@ sub _finalize_response {
                     return unless $len;
                     $buffer = sprintf( "%x", $len ) . $CRLF . $buffer . $CRLF;
                 }
-                syswrite $conn, $buffer;
+                while ( length $buffer ) {
+                    my $len = syswrite $conn, $buffer;
+                    die "write error: $!" if ! defined $len;
+                    substr( $buffer, 0, $len, '');
+                }
                 DEBUG && warn "[$$] Wrote " . length($buffer) . " bytes\n";
             },
             close => sub {
