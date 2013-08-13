@@ -2,6 +2,31 @@ Revision history for Perl extension Starman
 
 {{$NEXT}}
 
+0.4004  2013-08-12 11:41:13 PDT
+        - Note that SSL support is experimental
+
+0.4003  2013-08-08 14:32:24 PDT
+        - Fix ssl condition for banner
+
+0.4002  2013-08-08 14:20:45 PDT
+        - Fix banner message for host/port broken in 0.4 (siracusa)
+
+0.4001  2013-07-29 23:14:10 PDT
+        - Skip ssl tests if LWP doesn't support HTTPS
+
+0.4000  2013-07-28 23:53:55 PDT
+        - support SSL (aristotle)
+
+0.3014  2013-06-16 01:07:52 PDT
+        - bump Test::TCP dep, not really necessary but avoid 1.27 bug
+
+0.3013  2013-06-12 22:52:54 PDT
+        - Fix writer tests for Plack update
+
+0.3012  2013-06-12 12:31:11 PDT
+        - typo fixes
+        - Fix dependencies for LWP::UserAgent
+
 0.3011  2013-04-24 17:39:31 PDT
         - Disabled flock serialization when it's unnecessary. This will improve the performance
           when you have many Starman worker processes on Linux systems (kazeburo) #69
