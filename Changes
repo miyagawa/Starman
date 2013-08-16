@@ -2,6 +2,9 @@ Revision history for Perl extension Starman
 
 {{$NEXT}}
 
+0.4006  2013-08-16 12:43:19 PDT
+        - Same as 0.4005, non-devel
+
 0.4005  2013-08-13 22:12:11 PDT
         - Fix SSL implementation bug where body longer than 16K doesn't get written correctly #78 (kazeburo, siracusa) 
 

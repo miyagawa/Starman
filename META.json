@@ -55,7 +55,7 @@
          }
       }
    },
-   "release_status" : "testing",
+   "release_status" : "stable",
    "resources" : {
       "bugtracker" : {
          "web" : "https://github.com/miyagawa/Starman/issues"
@@ -67,7 +67,7 @@
          "web" : "https://github.com/miyagawa/Starman"
       }
    },
-   "version" : "0.4005",
+   "version" : "0.4006",
    "x_contributors" : [
       "Alex Vandiver <alex@chmrr.net>",
       "Aristotle Pagaltzis <pagaltzis@gmx.de>",
