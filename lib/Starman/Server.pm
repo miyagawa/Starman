@@ -8,7 +8,7 @@ use IO::Socket qw(:crlf);
 use HTTP::Parser::XS qw(parse_http_request);
 use HTTP::Status qw(status_message);
 use HTTP::Date qw(time2str);
-use POSIX qw(EINTR);
+use POSIX qw(EINTR EPIPE);
 use Symbol;
 
 use Plack::Util;
@@ -543,13 +543,15 @@ sub _syswrite {
     while (length $$buffer_ref) {
         my $len = syswrite($conn, $$buffer_ref);
 
-        if (defined $len) {
-            substr($$buffer_ref, 0, $len, '');
-            DEBUG && warn "[$$] Wrote $len byte", ($len == 1 ? '' : 's'), "\n";
-        }
-        elsif ($! != EINTR) {
+        if (not defined $len) {
+            return if $! == EPIPE;
+            redo if $! == EINTR;
             die "write error: $!";
         }
+
+        substr($$buffer_ref, 0, $len, '');
+
+        DEBUG && warn "[$$] Wrote $len byte", ($len == 1 ? '' : 's'), "\n";
     }
 }
 
