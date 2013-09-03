@@ -540,8 +540,11 @@ sub _finalize_response {
 sub _syswrite {
     my ($conn, $buffer_ref) = @_;
 
-    while (length $$buffer_ref) {
-        my $len = syswrite($conn, $$buffer_ref);
+    my $amount = length $$buffer_ref;
+    my $offset = 0;
+
+    while ($amount > 0) {
+        my $len = syswrite($conn, $$buffer_ref, $amount, $offset);
 
         if (not defined $len) {
             return if $! == EPIPE;
@@ -549,7 +552,8 @@ sub _syswrite {
             die "write error: $!";
         }
 
-        substr($$buffer_ref, 0, $len, '');
+        $amount -= $len;
+        $offset += $len;
 
         DEBUG && warn "[$$] Wrote $len byte", ($len == 1 ? '' : 's'), "\n";
     }
