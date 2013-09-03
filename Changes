@@ -2,6 +2,9 @@ Revision history for Perl extension Starman
 
 {{$NEXT}}
 
+0.4007  2013-09-02 17:11:38 PDT
+        - Handle EPIPE and stops writing to the socket #84 (ap)
+
 0.4006  2013-08-16 12:43:19 PDT
         - Same as 0.4005, non-devel
 

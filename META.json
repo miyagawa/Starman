@@ -4,7 +4,7 @@
       "Tatsuhiko Miyagawa <miyagawa@bulknews.net>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Milla version v1.0.3, Dist::Zilla version 4.300035, CPAN::Meta::Converter version 2.132140",
+   "generated_by" : "Dist::Milla version v1.0.4, Dist::Zilla version 4.300037, CPAN::Meta::Converter version 2.132140",
    "license" : [
       "perl_5"
    ],
@@ -26,7 +26,7 @@
    "prereqs" : {
       "configure" : {
          "requires" : {
-            "Module::Build::Tiny" : "0.025"
+            "Module::Build::Tiny" : "0.026"
          }
       },
       "develop" : {
@@ -55,7 +55,7 @@
          }
       }
    },
-   "release_status" : "stable",
+   "release_status" : "testing",
    "resources" : {
       "bugtracker" : {
          "web" : "https://github.com/miyagawa/Starman/issues"
@@ -67,7 +67,7 @@
          "web" : "https://github.com/miyagawa/Starman"
       }
    },
-   "version" : "0.4006",
+   "version" : "0.4007",
    "x_contributors" : [
       "Alex Vandiver <alex@chmrr.net>",
       "Aristotle Pagaltzis <pagaltzis@gmx.de>",
