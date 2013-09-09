@@ -2,6 +2,9 @@ Revision history for Perl extension Starman
 
 {{$NEXT}}
 
+0.4008  2013-09-08 21:09:22 PDT
+        - Make response write loop a zero-copy (ap)
+
 0.4007  2013-09-02 17:11:38 PDT
         - Handle EPIPE and stops writing to the socket #84 (ap)
 
