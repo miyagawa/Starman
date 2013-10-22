@@ -34,7 +34,6 @@ sub run {
     $self->{app} = $app;
     $self->{options} = $options;
 
-    # my %extra = ();
     if ( $options->{pid} ) {
         $self->{extra}->{pid_file} = $options->{pid};
     }
