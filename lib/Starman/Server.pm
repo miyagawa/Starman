@@ -34,24 +34,24 @@ sub run {
     $self->{app} = $app;
     $self->{options} = $options;
 
-    my %extra = ();
+    # my %extra = ();
     if ( $options->{pid} ) {
-        $extra{pid_file} = $options->{pid};
+        $self->{extra}->{pid_file} = $options->{pid};
     }
     if ( $options->{daemonize} ) {
-        $extra{setsid} = $extra{background} = 1;
+        $self->{extra}->{setsid} = $self->{extra}->{background} = 1;
     }
     if ( $options->{error_log} ) {
-        $extra{log_file} = $options->{error_log};
+        $self->{extra}->{log_file} = $options->{error_log};
     }
     if ( DEBUG ) {
-        $extra{log_level} = 4;
+        $self->{extra}->{log_level} = 4;
     }
     if ( $options->{ssl_cert} ) {
-        $extra{SSL_cert_file} = $options->{ssl_cert};
+        $self->{extra}->{SSL_cert_file} = $options->{ssl_cert};
     }
     if ( $options->{ssl_key} ) {
-        $extra{SSL_key_file} = $options->{ssl_key};
+        $self->{extra}->{SSL_key_file} = $options->{ssl_key};
     }
     if (! exists $options->{keepalive}) {
         $options->{keepalive} = 1;
@@ -96,7 +96,7 @@ sub run {
         listen              => $options->{backlog}           || 1024,
         check_for_waiting   => 1,
         no_client_stdout    => 1,
-        %extra
+        %{$self->{extra}}
     );
 }
 
