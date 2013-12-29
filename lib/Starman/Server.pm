@@ -475,7 +475,10 @@ sub _finalize_response {
         if ( !exists $headers{'content-length'} ) {
             if ( $status !~ /^1\d\d|[23]04$/ && $env->{REQUEST_METHOD} ne 'HEAD' ) {
                 DEBUG && warn "[$$] Using chunked transfer-encoding to send unknown length body\n";
-                push @headers, 'Transfer-Encoding: chunked';
+                # Only push where 'chunked' encoding is not already present
+                push @headers, 'Transfer-Encoding: chunked'
+                  unless (( exists $headers{'transfer-encoding'}) 
+                    && ( $headers{'transfer-encoding'} =~ /chunked/ ));
                 $chunked = 1;
             }
         }
