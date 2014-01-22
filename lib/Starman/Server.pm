@@ -59,6 +59,9 @@ sub run {
     if (! exists $options->{keepalive_timeout}) {
         $options->{keepalive_timeout} = 1;
     }
+    if ( $options->{child_communication} ) {
+        $extra{child_communication} = 1;
+    }
 
     my @port;
     for my $listen (@{$options->{listen} || [ "$options->{host}:$options->{port}" ]}) {
