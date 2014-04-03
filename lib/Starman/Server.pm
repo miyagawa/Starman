@@ -59,6 +59,9 @@ sub run {
     if (! exists $options->{keepalive_timeout}) {
         $options->{keepalive_timeout} = 1;
     }
+    if (! exists $options->{proctitle}) {
+        $options->{proctitle} = 1;
+    }
 
     my @port;
     for my $listen (@{$options->{listen} || [ "$options->{host}:$options->{port}" ]}) {
@@ -143,7 +146,8 @@ sub server_close {
 
 sub run_parent {
     my $self = shift;
-    $0 = "starman master " . join(" ", @{$self->{options}{argv} || []});
+    $0 = "starman master " . join(" ", @{$self->{options}{argv} || []})
+        if $self->{options}{proctitle};
     no warnings 'redefine';
     local *Net::Server::PreFork::register_sig = sub {
         my %args = @_;
@@ -162,7 +166,9 @@ sub child_init_hook {
         DEBUG && warn "[$$] Initializing the PSGI app\n";
         $self->{app} = $self->{options}->{psgi_app_builder}->();
     }
-    $0 = "starman worker " . join(" ", @{$self->{options}{argv} || []});
+    $0 = "starman worker " . join(" ", @{$self->{options}{argv} || []})
+        if $self->{options}{proctitle};
+
 }
 
 sub post_accept_hook {
