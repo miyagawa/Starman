@@ -207,6 +207,11 @@ Specify the path to SSL key file.
 
 Enable SSL on I<all> TCP sockets. This is an experimental feature.
 
+=item --disable-proctitle
+
+Disable the behavior to set proctitle to "starman (master)" and
+"starman (worker)" respectively on master and workers.
+
 =back
 
 Starman passes through other options given to L<Plack::Runner>, the
