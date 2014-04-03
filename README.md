@@ -37,7 +37,7 @@ Starman is a PSGI perl web server that has unique features such as:
 
 - Superdaemon aware
 
-    Supports [Server::Starter](http://search.cpan.org/perldoc?Server::Starter) for hot deploy and graceful restarts.
+    Supports [Server::Starter](https://metacpan.org/pod/Server::Starter) for hot deploy and graceful restarts.
 
 - Multiple interfaces and UNIX Domain Socket support
 
@@ -103,7 +103,7 @@ call it HSPHIWWWM on IRC. It's hard to say on speeches and newbies
 would ask questions what they stand for every day. That's crazy.
 
 This module actually includes the longer alias and an empty subclass
-[HTTP::Server::PSGI::Net::Server::PreFork](http://search.cpan.org/perldoc?HTTP::Server::PSGI::Net::Server::PreFork) for those who like to type
+[HTTP::Server::PSGI::Net::Server::PreFork](https://metacpan.org/pod/HTTP::Server::PSGI::Net::Server::PreFork) for those who like to type
 more ::'s. It would actually help you find this software by searching
 for _PSGI Server Prefork_ on CPAN, which i believe is a good thing.
 
@@ -113,11 +113,15 @@ Yes, maybe I'm on drugs. We'll see.
 
 Tatsuhiko Miyagawa <miyagawa@bulknews.net>
 
-Andy Grundman wrote [Catalyst::Engine::HTTP::Prefork](http://search.cpan.org/perldoc?Catalyst::Engine::HTTP::Prefork), which this module
+Andy Grundman wrote [Catalyst::Engine::HTTP::Prefork](https://metacpan.org/pod/Catalyst::Engine::HTTP::Prefork), which this module
 is heavily based on.
 
-Kazuho Oku wrote [Net::Server::SS::PreFork](http://search.cpan.org/perldoc?Net::Server::SS::PreFork) that makes it easy to add
-[Server::Starter](http://search.cpan.org/perldoc?Server::Starter) support to this software.
+Kazuho Oku wrote [Net::Server::SS::PreFork](https://metacpan.org/pod/Net::Server::SS::PreFork) that makes it easy to add
+[Server::Starter](https://metacpan.org/pod/Server::Starter) support to this software.
+
+# COPYRIGHT
+
+Tatsuhiko Miyagawa, 2010-
 
 # LICENSE
 
@@ -126,4 +130,4 @@ it under the same terms as Perl itself.
 
 # SEE ALSO
 
-[Plack](http://search.cpan.org/perldoc?Plack) [Catalyst::Engine::HTTP::Prefork](http://search.cpan.org/perldoc?Catalyst::Engine::HTTP::Prefork) [Net::Server::PreFork](http://search.cpan.org/perldoc?Net::Server::PreFork)
+[Plack](https://metacpan.org/pod/Plack) [Catalyst::Engine::HTTP::Prefork](https://metacpan.org/pod/Catalyst::Engine::HTTP::Prefork) [Net::Server::PreFork](https://metacpan.org/pod/Net::Server::PreFork)

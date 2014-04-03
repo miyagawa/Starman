@@ -2,6 +2,10 @@ Revision history for Perl extension Starman
 
 {{$NEXT}}
 
+0.4009  2014-04-03 14:39:27 PDT
+        - Do not send chunked body for HEAD requests #87 (therigu)
+        - Added --disable-proctitle option to disable the proctitle change #97
+
 0.4008  2013-09-08 21:09:22 PDT
         - Make response write loop a zero-copy (ap)
 
