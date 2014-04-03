@@ -136,6 +136,11 @@ is heavily based on.
 Kazuho Oku wrote L<Net::Server::SS::PreFork> that makes it easy to add
 L<Server::Starter> support to this software.
 
+
+=head1 COPYRIGHT
+
+Tatsuhiko Miyagawa, 2010-
+
 =head1 LICENSE
 
 This library is free software; you can redistribute it and/or modify
