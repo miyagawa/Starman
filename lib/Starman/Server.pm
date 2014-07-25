@@ -249,7 +249,7 @@ sub process_request {
 
             # Do we need to send 100 Continue?
             if ( $env->{HTTP_EXPECT} ) {
-                if ( $env->{HTTP_EXPECT} eq '100-continue' ) {
+                if ( lc $env->{HTTP_EXPECT} eq '100-continue' ) {
                     _syswrite($conn, \('HTTP/1.1 100 Continue' . $CRLF . $CRLF));
                     DEBUG && warn "[$$] Sent 100 Continue response\n";
                 }
