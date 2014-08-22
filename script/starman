@@ -169,6 +169,17 @@ with idle clients.
 
 Defaults to 1.
 
+=item --read-timeout
+
+The number of seconds Starman will wait for a request on a new connection
+before closing it. Setting this to a high value may cause performance
+problems in heavily loaded servers. The higher the timeout, the
+more backend workers will be kept occupied waiting on connections
+with idle clients. You may need this if your proxy / load balancer likes to
+keep a pool of open connections while waiting for clients (eg. Amazon ELB).
+
+Defaults to 5.
+
 =item --user
 
 To listen on a low-numbered (E<lt>1024) port, it will be necessary to
