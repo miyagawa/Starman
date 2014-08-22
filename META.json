@@ -4,7 +4,7 @@
       "Tatsuhiko Miyagawa <miyagawa@bulknews.net>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Milla version v1.0.4, Dist::Zilla version 5.015, CPAN::Meta::Converter version 2.140640",
+   "generated_by" : "Dist::Milla version v1.0.5, Dist::Zilla version 5.020, CPAN::Meta::Converter version 2.142060",
    "license" : [
       "perl_5"
    ],
@@ -26,7 +26,7 @@
    "prereqs" : {
       "configure" : {
          "requires" : {
-            "Module::Build::Tiny" : "0.035"
+            "Module::Build::Tiny" : "0.037"
          }
       },
       "develop" : {
@@ -67,7 +67,7 @@
          "web" : "https://github.com/miyagawa/Starman"
       }
    },
-   "version" : "0.4009",
+   "version" : "0.4010",
    "x_contributors" : [
       "Adam Guthrie <adam.guthrie@dvlgames.com>",
       "Alex Vandiver <alex@chmrr.net>",
@@ -86,6 +86,7 @@
       "Perlover <perlover@perlover.com>",
       "Peter Makholm <peter@makholm.net>",
       "Piotr Roszatycki <piotr.roszatycki@gmail.com>",
+      "Slobodan Mišković <slobodan@miskovic.ca>",
       "cho45 <cho45@lowreal.net>",
       "spleenjack <spleenjack@gmail.com>"
    ]

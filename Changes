@@ -2,6 +2,10 @@ Revision history for Perl extension Starman
 
 {{$NEXT}}
 
+0.4010  2014-08-22 09:37:22 PDT
+        - Support --read-timeout #103 (slobo)
+        - Handle Expect header case insensitively #101 (oschwald)
+
 0.4009  2014-04-03 14:39:27 PDT
         - Do not send chunked body for HEAD requests #87 (therigu)
         - Added --disable-proctitle option to disable the proctitle change #97
