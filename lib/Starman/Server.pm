@@ -183,6 +183,19 @@ sub post_accept_hook {
     };
 }
 
+sub dispatch_request {
+    my ($self, $env) = @_;
+
+    # Run PSGI apps
+    my $res = Plack::Util::run_app($self->{app}, $env);
+
+    if (ref $res eq 'CODE') {
+        $res->(sub { $self->_finalize_response($env, $_[0]) });
+    } else {
+        $self->_finalize_response($env, $res);
+    }
+}
+
 sub process_request {
     my $self = shift;
     my $conn = $self->{server}->{client};
@@ -277,14 +290,7 @@ sub process_request {
 
         $self->_prepare_env($env);
 
-        # Run PSGI apps
-        my $res = Plack::Util::run_app($self->{app}, $env);
-
-        if (ref $res eq 'CODE') {
-            $res->(sub { $self->_finalize_response($env, $_[0]) });
-        } else {
-            $self->_finalize_response($env, $res);
-        }
+        $self->dispatch_request($env);
 
         DEBUG && warn "[$$] Request done\n";
 
