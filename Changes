@@ -2,6 +2,9 @@ Revision history for Perl extension Starman
 
 {{$NEXT}}
 
+0.4011  2014-11-11 08:07:43 PST
+        - Move the app dispatch into a method #107
+
 0.4010  2014-08-22 09:37:22 PDT
         - Support --read-timeout #103 (slobo)
         - Handle Expect header case insensitively #101 (oschwald)
