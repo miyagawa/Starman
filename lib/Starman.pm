@@ -103,6 +103,14 @@ Here's a simple benchmark using C<Hello.psgi>.
 This benchmark was processed with C<ab -c 10 -t 1 -k> on MacBook Pro
 13" late 2009 model on Mac OS X 10.6.2 with perl 5.10.0. YMMV.
 
+=head1 NOTES
+
+Because Starman runs as a preforking model, it is not recommended to
+serve the requests directly from the internet, especially when slow
+requesting clients are taken into consideration. It is suggested to
+put Starman workers behind the frontend servers such as nginx, and use
+HTTP proxy with TCP or UNIX sockets.
+
 =head1 AUTHOR
 
 Tatsuhiko Miyagawa E<lt>miyagawa@bulknews.netE<gt>
