@@ -103,29 +103,6 @@ Here's a simple benchmark using C<Hello.psgi>.
 This benchmark was processed with C<ab -c 10 -t 1 -k> on MacBook Pro
 13" late 2009 model on Mac OS X 10.6.2 with perl 5.10.0. YMMV.
 
-=head1 NAMING
-
-=head2 Starman?
-
-The name Starman is taken from the song (I<Star na Otoko>) by the
-Japanese rock band Unicorn (yes, Unicorn!). It's also known as a song
-by David Bowie, a power-up from Super Mario Brothers and a character
-from Earthbound, all of which I love.
-
-=head2 Why the cute name instead of more descriptive namespace? Are you on drugs?
-
-I'm sick of naming Perl software like
-HTTP::Server::PSGI::How::Its::Written::With::What::Module and people
-call it HSPHIWWWM on IRC. It's hard to say on speeches and newbies
-would ask questions what they stand for every day. That's crazy.
-
-This module actually includes the longer alias and an empty subclass
-L<HTTP::Server::PSGI::Net::Server::PreFork> for those who like to type
-more ::'s. It would actually help you find this software by searching
-for I<PSGI Server Prefork> on CPAN, which i believe is a good thing.
-
-Yes, maybe I'm on drugs. We'll see.
-
 =head1 AUTHOR
 
 Tatsuhiko Miyagawa E<lt>miyagawa@bulknews.netE<gt>
