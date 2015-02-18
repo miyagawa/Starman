@@ -34,7 +34,8 @@ sub run {
     $self->{options} = $options;
 
     my %extra = ();
-    if(defined($options->{net_server_args})) {
+
+    if ($options->{net_server_args}) {
         %extra = %{ $options->{net_server_args} };
     }
 
