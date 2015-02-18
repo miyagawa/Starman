@@ -15,6 +15,13 @@ sub run {
         @Starman::Server::ISA = qw(Net::Server::SS::PreFork); # Yikes.
     }
 
+    # parse Net::Server args that we want to go down the chain
+    foreach my $opt ( keys %$self ) {
+        next unless $opt =~ /^net_server_(\w++)/;
+        my $nsopt = $1;
+        $self->{net_server_args}->{$nsopt} = $self->{$opt};
+    }
+
     Starman::Server->new->run($app, {%$self});
 }
 
