@@ -34,6 +34,14 @@ sub run {
     $self->{options} = $options;
 
     my %extra = ();
+
+    # grab any parameters intended for Net::Server
+    foreach my $opt ( keys %$options ) {
+        next unless $opt =~ /^net_server_(\w++)/;
+        my $nsopt = $1;
+        $extra{$nsopt} = $options->{$opt};
+    }
+
     if ( $options->{pid} ) {
         $extra{pid_file} = $options->{pid};
     }
