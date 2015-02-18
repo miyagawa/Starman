@@ -34,12 +34,8 @@ sub run {
     $self->{options} = $options;
 
     my %extra = ();
-
-    # grab any parameters intended for Net::Server
-    foreach my $opt ( keys %$options ) {
-        next unless $opt =~ /^net_server_(\w++)/;
-        my $nsopt = $1;
-        $extra{$nsopt} = $options->{$opt};
+    if(defined($options->{net_server_args})) {
+        %extra = %{ $options->{net_server_args} };
     }
 
     if ( $options->{pid} ) {
