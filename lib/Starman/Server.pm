@@ -19,6 +19,7 @@ use constant CHUNKSIZE    => 64 * 1024;
 
 my $null_io = do { open my $io, "<", \""; $io };
 
+use Net::Server::Proto;
 use Net::Server::SIG qw(register_sig);
 
 # Override Net::Server's HUP handling - just restart all the workers and that's about it
@@ -70,23 +71,8 @@ sub run {
         $options->{proctitle} = 1;
     }
 
-    my @port;
-    for my $listen (@{$options->{listen} || [ "$options->{host}:$options->{port}" ]}) {
-        my %listen;
-        if ($listen =~ /:/) {
-            my($h, $p, $opt) = split /:/, $listen, 3;
-            $listen{host} = $h if $h;
-            $listen{port} = $p;
-            $listen{proto} = 'ssl' if 'ssl' eq lc $opt;
-        } else {
-            %listen = (
-                host  => 'localhost',
-                port  => $listen,
-                proto => 'unix',
-            );
-        }
-        push @port, \%listen;
-    }
+    my @port = map { Net::Server::Proto->parse_info( $_, '*', $options->{'ssl'} ? 'ssl' : 'tcp', '*', $self ) }
+        @{$options->{listen} || [ "$options->{host}:$options->{port}" ]};
 
     my $workers = $options->{workers} || 5;
     local @ARGV = ();
