@@ -86,28 +86,13 @@ Here's a simple benchmark using `Hello.psgi`.
 This benchmark was processed with `ab -c 10 -t 1 -k` on MacBook Pro
 13" late 2009 model on Mac OS X 10.6.2 with perl 5.10.0. YMMV.
 
-# NAMING
+# NOTES
 
-## Starman?
-
-The name Starman is taken from the song (_Star na Otoko_) by the
-Japanese rock band Unicorn (yes, Unicorn!). It's also known as a song
-by David Bowie, a power-up from Super Mario Brothers and a character
-from Earthbound, all of which I love.
-
-## Why the cute name instead of more descriptive namespace? Are you on drugs?
-
-I'm sick of naming Perl software like
-HTTP::Server::PSGI::How::Its::Written::With::What::Module and people
-call it HSPHIWWWM on IRC. It's hard to say on speeches and newbies
-would ask questions what they stand for every day. That's crazy.
-
-This module actually includes the longer alias and an empty subclass
-[HTTP::Server::PSGI::Net::Server::PreFork](https://metacpan.org/pod/HTTP::Server::PSGI::Net::Server::PreFork) for those who like to type
-more ::'s. It would actually help you find this software by searching
-for _PSGI Server Prefork_ on CPAN, which i believe is a good thing.
-
-Yes, maybe I'm on drugs. We'll see.
+Because Starman runs as a preforking model, it is not recommended to
+serve the requests directly from the internet, especially when slow
+requesting clients are taken into consideration. It is suggested to
+put Starman workers behind the frontend servers such as nginx, and use
+HTTP proxy with TCP or UNIX sockets.
 
 # AUTHOR
 
