@@ -2,6 +2,10 @@ Revision history for Perl extension Starman
 
 {{$NEXT}}
 
+0.4012  2015-05-14 14:59:48 PDT
+        - Add --net_server-* options to pass directly to Net::Server backend (#109)
+        - Updated documentation
+
 0.4011  2014-11-11 08:07:43 PST
         - Move the app dispatch into a method #107
 
