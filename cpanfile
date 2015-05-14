@@ -8,6 +8,9 @@ requires 'Test::TCP', '2.00';
 requires 'parent';
 requires 'perl', '5.008001';
 
+suggests 'Server::Starter';
+suggests 'Net::Server::SS::Prefork';
+
 on test => sub {
     requires 'Test::More';
     requires 'Test::Requires';
