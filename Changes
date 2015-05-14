@@ -2,6 +2,9 @@ Revision history for Perl extension Starman
 
 {{$NEXT}}
 
+0.4013  2015-05-14 15:01:20 PDT
+        - Fixed some bad git merges.
+
 0.4012  2015-05-14 14:59:48 PDT
         - Add --net_server-* options to pass directly to Net::Server backend (#109)
         - Updated documentation
