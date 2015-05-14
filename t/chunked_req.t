@@ -10,6 +10,11 @@ $ENV{PLACK_SERVER} = 'Starman';
 
 my $file = File::ShareDir::dist_dir('Plack') . "/baybridge.jpg";
 
+open my $fh, "<", $file or die $!;
+my $md5 = Digest::MD5->new;
+$md5->addfile($fh);
+my $hex = $md5->hexdigest;
+
 my $app = sub {
     my $env = shift;
     my $body;
@@ -33,8 +38,8 @@ test_psgi $app, sub {
 
     my $res = $cb->($req);
 
-    is $res->header('X-Content-Length'), 79838;
-    is Digest::MD5::md5_hex($res->content), '983726ae0e4ce5081bef5fb2b7216950';
+    is $res->header('X-Content-Length'), -s $file;
+    is Digest::MD5::md5_hex($res->content), $hex;
 };
 
 done_testing;
