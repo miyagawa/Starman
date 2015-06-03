@@ -2,6 +2,9 @@ Revision history for Perl extension Starman
 
 {{$NEXT}}
 
+0.4014  2015-06-03 12:01:00 PDT
+        - Treat ECONNRESET like EPIPE (i.e. ignore), not as a fatal error #114 (Tim Bunce)
+
 0.4013  2015-05-14 15:01:20 PDT
         - Fixed some bad git merges.
 

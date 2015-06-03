@@ -72,7 +72,7 @@
          "web" : "https://github.com/miyagawa/Starman"
       }
    },
-   "version" : "0.4013",
+   "version" : "0.4014",
    "x_contributors" : [
       "Adam Guthrie <adam.guthrie@dvlgames.com>",
       "Alex Vandiver <alex@chmrr.net>",
@@ -96,7 +96,8 @@
       "Piotr Roszatycki <piotr.roszatycki@gmail.com>",
       "Robert Sedlacek <r.sedlacek@shadowcat.co.uk>",
       "Slobodan Mišković <slobodan@miskovic.ca>",
-      "spleenjack <spleenjack@gmail.com>"
+      "spleenjack <spleenjack@gmail.com>",
+      "Tim Bunce <Tim.Bunce@pobox.com>"
    ]
 }
 
