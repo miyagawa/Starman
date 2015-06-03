@@ -8,7 +8,7 @@ use IO::Socket qw(:crlf);
 use HTTP::Parser::XS qw(parse_http_request);
 use HTTP::Status qw(status_message);
 use HTTP::Date qw(time2str);
-use POSIX qw(EINTR EPIPE);
+use POSIX qw(EINTR EPIPE ECONNRESET);
 use Symbol;
 
 use Plack::Util;
@@ -567,6 +567,7 @@ sub _syswrite {
 
         if (not defined $len) {
             return if $! == EPIPE;
+            return if $! == ECONNRESET;
             redo if $! == EINTR;
             die "write error: $!";
         }
