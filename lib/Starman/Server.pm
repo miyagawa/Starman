@@ -404,7 +404,7 @@ sub _prepare_env {
     my($self, $env) = @_;
 
     my $get_chunk = sub {
-        if ($self->{client}->{inputbuf}) {
+        if (defined $self->{client}->{inputbuf}) {
             my $chunk = delete $self->{client}->{inputbuf};
             return ($chunk, length $chunk);
         }
