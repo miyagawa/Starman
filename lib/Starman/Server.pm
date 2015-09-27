@@ -171,7 +171,17 @@ sub child_init_hook {
     srand();
     if ($self->{options}->{psgi_app_builder}) {
         DEBUG && warn "[$$] Initializing the PSGI app\n";
-        $self->{app} = $self->{options}->{psgi_app_builder}->();
+        eval {
+            $self->{app} = $self->{options}->{psgi_app_builder}->();
+        };
+        if ($@) {
+            if ($@ =~ /Error while loading/) {
+                DEBUG && warn "[$$] Failed to load the app, will try again on request: $@\n";
+            }
+            else {
+                die $@;
+            }
+        }
     }
     $0 = "starman worker " . join(" ", @{$self->{options}{argv} || []})
         if $self->{options}{proctitle};
