@@ -173,8 +173,8 @@ sub child_init_hook {
         DEBUG && warn "[$$] Initializing the PSGI app\n";
         eval {
             $self->{app} = $self->{options}->{psgi_app_builder}->();
-        };
-        if ($@) {
+            1;
+        } or do {
             if ($@ =~ /Error while loading/) {
                 DEBUG && warn "[$$] Failed to load the app, will try again on request: $@\n";
             }
