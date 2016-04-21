@@ -47,6 +47,22 @@ sub run {
     }
     if ( $options->{error_log} ) {
         $extra{log_file} = $options->{error_log};
+
+        if ( $extra{log_file} == 'Log::Log4perl' ) {
+            if (! exists $options->{log4perl_conf}) {
+                die "log4perl_conf option must be provided";
+            } else {
+                $extra{log4perl_conf} = $options->{log4perl_conf};
+            }
+
+            if ( exists $options->{log4perl_poll}) {
+                $extra{log4perl_poll} = $options->{log4perl_poll};
+            }
+
+            if ( $options->{log4perl_logger} ) {
+                $extra{log4perl_logger} = $options->{log4perl_logger};
+            }
+        }
     }
     if ( DEBUG ) {
         $extra{log_level} = 4;
