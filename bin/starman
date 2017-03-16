@@ -37,7 +37,7 @@ starman - Starman launcher
 
   starman --listen :5001 --listen /tmp/starman.sock
   starman --workers 32 --port 8080
-  starman --min_spare_severs 2 --max_spare_servers 4 --max_servers 10
+  starman --min-spare-severs 2 --max-spare-servers 4 --max-servers 10
 
 =head1 OPTIONS
 
