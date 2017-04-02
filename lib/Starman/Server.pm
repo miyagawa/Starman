@@ -51,6 +51,18 @@ sub run {
     if ( DEBUG ) {
         $extra{log_level} = 4;
     }
+
+    # Options for Net::Server's Log4perl support
+    if ( $options->{log4perl_conf} ) {
+        $extra{log4perl_conf} = $options->{log4perl_conf};
+    }
+    if ( $options->{log4perl_logger} ) {
+        $extra{log4perl_logger} = $options->{log4perl_logger};
+    }
+    if ( $options->{log4perl_poll} ) {
+        $extra{log4perl_poll} = $options->{log4perl_poll};
+    }
+
     if ( $options->{ssl_cert} ) {
         $extra{SSL_cert_file} = $options->{ssl_cert};
     }
