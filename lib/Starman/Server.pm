@@ -210,6 +210,8 @@ sub process_request {
             or die $!;
     }
 
+    my $keepalive_requests = 0;
+
     while ( $self->{client}->{keepalive} ) {
         last if !$conn->connected;
 
@@ -300,6 +302,8 @@ sub process_request {
         DEBUG && warn "[$$] Request done\n";
 
         if ( $self->{client}->{keepalive} ) {
+	    $keepalive_requests++;
+
             # If we still have data in the input buffer it may be a pipelined request
             if ( $self->{client}->{inputbuf} ) {
                 if ( $self->{client}->{inputbuf} =~ /^(?:GET|HEAD)/ ) {
@@ -321,6 +325,10 @@ sub process_request {
                     $self->{client}->{inputbuf} = '';
                 }
             }
+
+	    if (exists $self->{options}->{max_keepalive_requests}) {
+		last if $keepalive_requests >= $self->{options}->{max_keepalive_requests};
+	    }
 
             DEBUG && warn "[$$] Waiting on previous connection for keep-alive request...\n";
 
