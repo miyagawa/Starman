@@ -234,8 +234,6 @@ sub process_request {
             'psgix.io'          => $conn,
             'psgix.input.buffered' => Plack::Util::TRUE,
             'psgix.harakiri' => Plack::Util::TRUE,
-            'psgix.cleanup'  => Plack::Util::TRUE,
-            'psgix.cleanup_handlers' => [],
         };
 
         # Parse headers
@@ -469,12 +467,6 @@ sub _prepare_env {
 sub _finalize_response {
     my($self, $env, $res) = @_;
 
-    if ( my @handlers = @{ $env->{'psgix.cleanup.handlers'} || [] } ) {
-        $self->{client}->{cleanup_handlers} = \@handlers;
-        # Gotta stash this so cleanup handlers can have access to it
-        $self->{client}->{cleanup_env} = $env;
-    }
-
     if ($env->{'psgix.harakiri.commit'}) {
         $self->{client}->{keepalive} = 0;
         $self->{client}->{harakiri} = 1;
@@ -589,12 +581,6 @@ sub _syswrite {
 
 sub post_client_connection_hook {
     my $self = shift;
-
-    if ( my @handlers = @{ $self->{client}->{cleanup_handlers} || [] } ) {
-        my $env = delete $self->{client}->{cleanup_env};
-        for my $handler ( @handlers ) { $handler->($env) }
-    }
-
     if ($self->{client}->{harakiri}) {
         exit;
     }
