@@ -481,6 +481,9 @@ sub _finalize_response {
             env => $env,
             cleanup_handlers => $env->{'psgix.cleanup.handlers'}
         };
+        # If keepalive stayed on, we could serve one or more requests
+        # before reaching post_client_connection_hook()
+        $self->{client}->{keepalive} = 0;
     }
 
     my $protocol = $env->{SERVER_PROTOCOL};
