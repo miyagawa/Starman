@@ -301,7 +301,7 @@ sub process_request {
 
         if ( $self->{client}->{keepalive} ) {
             # If we still have data in the input buffer it may be a pipelined request
-            if ( $self->{client}->{inputbuf} ) {
+            if ( defined $self->{client}->{inputbuf} ) {
                 if ( $self->{client}->{inputbuf} =~ /^(?:GET|HEAD)/ ) {
                     if ( DEBUG ) {
                         warn "Pipelined GET/HEAD request in input buffer: "
@@ -404,7 +404,7 @@ sub _prepare_env {
     my($self, $env) = @_;
 
     my $get_chunk = sub {
-        if (exists $self->{client}->{inputbuf}) {
+        if (defined $self->{client}->{inputbuf}) {
             my $chunk = delete $self->{client}->{inputbuf};
             return ($chunk, length $chunk);
         }
