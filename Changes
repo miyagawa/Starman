@@ -2,6 +2,9 @@ Revision history for Perl extension Starman
 
 {{$NEXT}}
 
+0.4015  2019-05-20 18:43:46 PDT
+        - Fixed a bug incorrectly handling content body of '0' (olsonanl) #133
+
 0.4014  2015-06-03 12:01:00 PDT
         - Treat ECONNRESET like EPIPE (i.e. ignore), not as a fatal error #114 (Tim Bunce)
 

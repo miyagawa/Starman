@@ -4,7 +4,7 @@
       "Tatsuhiko Miyagawa <miyagawa@bulknews.net>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 5.036, Dist::Milla version v1.0.15, CPAN::Meta::Converter version 2.150001",
+   "generated_by" : "Dist::Milla version v1.0.20, Dist::Zilla version 6.012, CPAN::Meta::Converter version 2.143240",
    "license" : [
       "perl_5"
    ],
@@ -15,23 +15,26 @@
    "name" : "Starman",
    "no_index" : {
       "directory" : [
-         "t",
-         "xt",
+         "eg",
+         "examples",
          "inc",
          "share",
-         "eg",
-         "examples"
+         "t",
+         "xt"
       ]
    },
    "prereqs" : {
       "configure" : {
          "requires" : {
-            "Module::Build::Tiny" : "0.039"
+            "Module::Build::Tiny" : "0.034"
+         },
+         "suggests" : {
+            "JSON::PP" : "2.27300"
          }
       },
       "develop" : {
          "requires" : {
-            "Dist::Milla" : "v1.0.15",
+            "Dist::Milla" : "v1.0.20",
             "Test::Pod" : "1.41"
          }
       },
@@ -72,7 +75,7 @@
          "web" : "https://github.com/miyagawa/Starman"
       }
    },
-   "version" : "0.4014",
+   "version" : "0.4015",
    "x_contributors" : [
       "Adam Guthrie <adam.guthrie@dvlgames.com>",
       "Alex Vandiver <alex@chmrr.net>",
@@ -81,6 +84,7 @@
       "Audrey Tang <audreyt@audreyt.org>",
       "Chia-liang Kao <clkao@clkao.org>",
       "cho45 <cho45@lowreal.net>",
+      "Damyan Ivanov <dmn@debian.org>",
       "David Steinbrunner <dsteinbrunner@pobox.com>",
       "Graham Barr <gbarr@pobox.com>",
       "Grant McLean <grant@catalyst.net.nz>",
@@ -94,10 +98,14 @@
       "Perlover <perlover@perlover.com>",
       "Peter Makholm <peter@makholm.net>",
       "Piotr Roszatycki <piotr.roszatycki@gmail.com>",
+      "Robert Olson <olson@mcs.anl.gov>",
       "Robert Sedlacek <r.sedlacek@shadowcat.co.uk>",
-      "Slobodan Mišković <slobodan@miskovic.ca>",
+      "Slobodan Mi\u0161kovi\u0107 <slobodan@miskovic.ca>",
       "spleenjack <spleenjack@gmail.com>",
       "Tim Bunce <Tim.Bunce@pobox.com>"
-   ]
+   ],
+   "x_generated_by_perl" : "v5.20.1",
+   "x_serialization_backend" : "Cpanel::JSON::XS version 4.09",
+   "x_static_install" : 1
 }
 
