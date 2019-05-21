@@ -301,7 +301,7 @@ sub process_request {
 
         if ( $self->{client}->{keepalive} ) {
             # If we still have data in the input buffer it may be a pipelined request
-            if ( $self->{client}->{inputbuf} ) {
+            if ( $self->{client}->{inputbuf} ne '' ) {
                 if ( $self->{client}->{inputbuf} =~ /^(?:GET|HEAD)/ ) {
                     if ( DEBUG ) {
                         warn "Pipelined GET/HEAD request in input buffer: "
@@ -344,7 +344,7 @@ sub _read_headers {
             # Do we have a full header in the buffer?
             # This is before sysread so we don't read if we have a pipelined request
             # waiting in the buffer
-            last if defined $self->{client}->{inputbuf} && $self->{client}->{inputbuf} =~ /$CR?$LF$CR?$LF/s;
+            last if $self->{client}->{inputbuf} ne '' && $self->{client}->{inputbuf} =~ /$CR?$LF$CR?$LF/s;
 
             # If not, read some data
             my $read = sysread $self->{server}->{client}, my $buf, CHUNKSIZE;
@@ -404,7 +404,7 @@ sub _prepare_env {
     my($self, $env) = @_;
 
     my $get_chunk = sub {
-        if ($self->{client}->{inputbuf}) {
+        if ($self->{client}->{inputbuf} ne '') {
             my $chunk = delete $self->{client}->{inputbuf};
             return ($chunk, length $chunk);
         }
