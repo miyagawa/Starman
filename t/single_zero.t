@@ -1,5 +1,6 @@
 use strict;
 use Plack::Test;
+use Plack::Request;
 use HTTP::Request;
 use Test::More;
 
@@ -8,6 +9,8 @@ $ENV{PLACK_SERVER} = 'Starman';
 
 my $app = sub {
     my $env = shift;
+    my $req = Plack::Request->new($env);
+    is $req->content, "0";
     return sub {
         my $response = shift;
         my $writer = $response->([ 200, [ 'Content-Type', 'text/plain' ]]);
