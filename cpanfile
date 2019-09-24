@@ -18,5 +18,5 @@ on test => sub {
 };
 
 on develop => sub {
-    requires 'LWP::UserAgent::https';
+    requires 'LWP::Protocol::https';
 };
