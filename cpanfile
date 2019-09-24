@@ -16,3 +16,7 @@ on test => sub {
     requires 'Test::Requires';
     requires 'LWP::UserAgent';
 };
+
+on develop => sub {
+    requires 'LWP::UserAgent::https';
+};

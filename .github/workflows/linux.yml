@@ -26,6 +26,6 @@ jobs:
       - uses: actions/checkout@v1
       - name: Install Dependencies
         run: |
-          curl -sL https://cpanmin.us/ | perl - -nq --installdeps .
+          curl -sL https://cpanmin.us/ | perl - -nq --with-develop --installdeps .
       - name: Run Tests
         run: prove -lr t
