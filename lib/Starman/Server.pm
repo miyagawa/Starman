@@ -423,6 +423,11 @@ sub _prepare_env {
                 die "Read error: $!\n";
             }
 
+            if ( $read > $cl ) {
+                $self->{client}->{inputbuf} .= substr $chunk, $cl;
+                $read = $cl;
+            }
+
             $cl -= $read;
             $buf->print($chunk);
         }
@@ -456,6 +461,7 @@ sub _prepare_env {
 
             last unless $read && $read > 0;
         }
+        $self->{client}->{inputbuf} .= $chunk_buffer;
 
         $env->{CONTENT_LENGTH} = $length;
         $env->{'psgi.input'}   = $buf->rewind;
