@@ -9,7 +9,7 @@ requires 'parent';
 requires 'perl', '5.008001';
 
 suggests 'Server::Starter';
-suggests 'Net::Server::SS::Prefork';
+suggests 'Net::Server::SS::PreFork';
 
 on test => sub {
     requires 'Test::More';
