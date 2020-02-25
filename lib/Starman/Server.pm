@@ -77,7 +77,7 @@ sub run {
             my($h, $p, $opt) = split /:/, $listen, 3;
             $listen{host} = $h if $h;
             $listen{port} = $p;
-            $listen{proto} = 'ssl' if 'ssl' eq lc $opt;
+            $listen{proto} = 'ssl' if defined $opt && lc $opt eq 'ssl';
         } else {
             %listen = (
                 host  => 'localhost',
