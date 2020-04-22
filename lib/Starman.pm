@@ -67,7 +67,11 @@ children (workers) is less than 3.0MB.
 
 =item PSGI compatible
 
-Can run any PSGI applications and frameworks
+Can run any PSGI applications and frameworks.
+
+It also supports the C<psgix.cleanup> and C<psgix.harakiri> as described in
+L<PSGI::Extensions>. Note that use of the cleanup handler will turn off HTTP
+keep-alive.
 
 =item HTTP/1.1 support
 

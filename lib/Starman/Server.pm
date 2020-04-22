@@ -234,6 +234,8 @@ sub process_request {
             'psgix.io'          => $conn,
             'psgix.input.buffered' => Plack::Util::TRUE,
             'psgix.harakiri' => Plack::Util::TRUE,
+            'psgix.cleanup' => Plack::Util::TRUE,
+            'psgix.cleanup.handlers' => [],
         };
 
         # Parse headers
@@ -467,9 +469,21 @@ sub _prepare_env {
 sub _finalize_response {
     my($self, $env, $res) = @_;
 
+    # We also check for harakiri in post_client_connection_hook()
+    # after the cleanup handlers have run.
     if ($env->{'psgix.harakiri.commit'}) {
         $self->{client}->{keepalive} = 0;
         $self->{client}->{harakiri} = 1;
+    }
+
+    if (@{$env->{'psgix.cleanup.handlers'}}) {
+        $self->{client}->{env_and_cleanup_handlers} = {
+            env => $env,
+            cleanup_handlers => $env->{'psgix.cleanup.handlers'}
+        };
+        # If keepalive stayed on, we could serve one or more requests
+        # before reaching post_client_connection_hook()
+        $self->{client}->{keepalive} = 0;
     }
 
     my $protocol = $env->{SERVER_PROTOCOL};
@@ -581,6 +595,21 @@ sub _syswrite {
 
 sub post_client_connection_hook {
     my $self = shift;
+
+   if ($self->{client}->{env_and_cleanup_handlers}) {
+        my ($env, $cleanup_handlers) = @{$self->{client}->{env_and_cleanup_handlers}}{qw(env cleanup_handlers)};
+
+        for my $cleanup_handler (@$cleanup_handlers) {
+            $cleanup_handler->($env);
+        }
+
+        # We also check for harakiri in _finalize_response()
+        # after the request has been completed.
+        if ($env->{'psgix.harakiri.commit'}) {
+            $self->{client}->{harakiri} = 1;
+        }
+    }
+
     if ($self->{client}->{harakiri}) {
         exit;
     }
