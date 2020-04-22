@@ -39,4 +39,23 @@ test_psgi
         is keys(%seen_pid), 23, 'In Harakiri mode, each pid only used once';
     };
 
+test_psgi
+    app => sub {
+        my $env = shift;
+        push @{$env->{'psgix.cleanup.handlers'}} => sub {
+            my ($cleanup_env) = @_;
+            $cleanup_env->{'psgix.harakiri.commit'} = 1;
+        };
+        return [ 200, [ 'Content-Type' => 'text/plain' ], [$$] ];
+    },
+    client => sub {
+        my %seen_pid;
+        my $cb = shift;
+        for (1..23) {
+            my $res = $cb->(GET "/");
+            $seen_pid{$res->content}++;
+        }
+        is keys(%seen_pid), 23, 'In Harakiri mode triggered by cleanup, each pid only used once';
+    };
+
 done_testing;
