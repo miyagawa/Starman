@@ -122,6 +122,18 @@ failover (see above).
 
 Number of the requests to process per one worker process. Defaults to 1000.
 
+Note that "requests" actually means "connections served by a worker".
+In presence of Keep-alive a worker process can actually serve more
+requests; this can only be limited with the
+C<--max-keepalive-requests> option.
+
+=item --max-keepalive-requests
+
+Maximum number of Keep-alive requests served for a connection. By
+default there's no limit.
+
+Note: multiple consecutive pipelined requests still count as one request.
+
 =item --preload-app
 
 This option lets Starman preload the specified PSGI application in the
