@@ -230,8 +230,12 @@ common backend that L<plackup> uses, so the most options explained in
 C<plackup -h> such as C<--access-log> or C<--daemonize> works fine in
 starman too.
 
-Setting the environment variable C<STARMAN_DEBUG> to 1 makes the
-Starman server running in the debug mode.
+Setting the environment variable C<STARMAN_DEBUG> to 1 or larger makes
+the Starman server running in the debug mode.
+
+Since version 0.4015, setting C<STARMAN_DEBUG> to 1 will not dump the
+content of the request buffer besides its size information. To get the
+full dump output, you have to set the value to 2 or larger.
 
 =cut
 
