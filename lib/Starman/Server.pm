@@ -110,8 +110,8 @@ sub run {
     );
 }
 
-# Called from Net::Server::SS::PreFork->pre_bind
-# when used under server_starter
+# When used under server_starter this is called from
+# Net::Server::SS::PreFork->pre_bind
 sub maybe_upgrade_to_ssl {
     my ($self, $sock, $ssl_this_port) = @_;
 
@@ -133,7 +133,7 @@ sub maybe_upgrade_to_ssl {
         # To pass them to starman use e.g. --net_server_SSL_cipher_list
        $options->{net_server_args} ? %{ $options->{net_server_args} } : (),
 
-       SSL_Server => 1,
+       SSL_server => 1,
     });
 
     $sock->NS_proto('SSL');
