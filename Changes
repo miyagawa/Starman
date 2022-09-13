@@ -2,6 +2,9 @@ Revision history for Perl extension Starman
 
 {{$NEXT}}
 
+0.4016  2022-09-13 10:11:34 PDT
+        - Add psgix.informational callback #146
+
 0.4015  2019-05-20 18:43:46 PDT
         - Fixed a bug incorrectly handling content body of '0' (olsonanl) #133
 
