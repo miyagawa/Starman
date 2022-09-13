@@ -271,7 +271,8 @@ sub process_request {
             # Do we need to send 100 Continue?
             if ( $env->{HTTP_EXPECT} ) {
                 if ( lc $env->{HTTP_EXPECT} eq '100-continue' ) {
-                   _write_informational($conn, 100, []);
+                    _syswrite($conn, \('HTTP/1.1 100 Continue' . $CRLF . $CRLF));
+                    DEBUG && warn "[$$] Sent 100 Continue response\n";
                 }
                 else {
                     DEBUG && warn "[$$] Invalid Expect header, returning 417\n";
