@@ -133,6 +133,10 @@ sub maybe_upgrade_to_ssl {
         # To pass them to starman use e.g. --net_server_SSL_cipher_list
        $options->{net_server_args} ? %{ $options->{net_server_args} } : (),
 
+       # Newer versions of Net::Server >= 2.011 need this to postpone the SSL
+       # handshake.  Older versions ignore it and don't need it.
+       SSL_startHandshake => 0,
+
        SSL_server => 1,
     });
 
