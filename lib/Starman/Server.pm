@@ -267,6 +267,7 @@ sub process_request {
             'psgix.io'          => $conn,
             'psgix.input.buffered' => Plack::Util::TRUE,
             'psgix.harakiri' => Plack::Util::TRUE,
+            'psgix.informational' => sub { _write_informational($conn, @_) },
         };
 
         # Parse headers
@@ -610,6 +611,20 @@ sub _syswrite {
 
         DEBUG && warn "[$$] Wrote $len byte", ($len == 1 ? '' : 's'), "\n";
     }
+}
+
+sub _write_informational {
+    my ($conn, $code, $headers) = @_;
+    my $message = HTTP::Status::status_message($code);
+    my @lines = "HTTP/1.1 $code $message";
+    for (my $i = 0; $i < @$headers; $i += 2) {
+        my $k = $headers->[$i];
+        my $v = $headers->[$i + 1];
+        push @lines, "$k: $v" ;
+    }
+    _syswrite($conn, \join($CRLF, @lines, $CRLF));
+
+    DEBUG && warn "[$$] Sent $code $message response\n";
 }
 
 sub post_client_connection_hook {

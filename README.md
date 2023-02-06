@@ -37,7 +37,7 @@ Starman is a PSGI perl web server that has unique features such as:
 
 - Superdaemon aware
 
-    Supports [Server::Starter](https://metacpan.org/pod/Server::Starter) for hot deploy and graceful restarts.
+    Supports [Server::Starter](https://metacpan.org/pod/Server%3A%3AStarter) for hot deploy and graceful restarts.
 
 - Multiple interfaces and UNIX Domain Socket support
 
@@ -94,15 +94,39 @@ requesting clients are taken into consideration. It is suggested to
 put Starman workers behind the frontend servers such as nginx, and use
 HTTP proxy with TCP or UNIX sockets.
 
+# PSGI EXTENSIONS
+
+## psgix.informational
+
+Starman exposes a callback named `psgix.informational` that can be
+used for sending an informational response. The callback accepts two
+arguments, the first argument being the status code and the second
+being an arrayref of the headers to be sent. Example below sends an
+103 Early Hints response before processing the request to build a
+final response.
+
+    sub {
+        my $env = shift;
+
+        $env->{'psgix.informational'}->( 103, [
+            "Link" => "</style.css>; rel=preload"
+        ] );
+
+        my $rest = ...
+        $resp;
+    }
+
 # AUTHOR
 
 Tatsuhiko Miyagawa <miyagawa@bulknews.net>
 
-Andy Grundman wrote [Catalyst::Engine::HTTP::Prefork](https://metacpan.org/pod/Catalyst::Engine::HTTP::Prefork), which this module
+Andy Grundman wrote [Catalyst::Engine::HTTP::Prefork](https://metacpan.org/pod/Catalyst%3A%3AEngine%3A%3AHTTP%3A%3APrefork), which this module
 is heavily based on.
 
-Kazuho Oku wrote [Net::Server::SS::PreFork](https://metacpan.org/pod/Net::Server::SS::PreFork) that makes it easy to add
-[Server::Starter](https://metacpan.org/pod/Server::Starter) support to this software.
+Kazuho Oku wrote [Net::Server::SS::PreFork](https://metacpan.org/pod/Net%3A%3AServer%3A%3ASS%3A%3APreFork) that makes it easy to add
+[Server::Starter](https://metacpan.org/pod/Server%3A%3AStarter) support to this software.
+
+The `psgix.informational` callback comes from [Starlet](https://metacpan.org/pod/Starlet) by Kazuho Oku.
 
 # COPYRIGHT
 
@@ -115,4 +139,4 @@ it under the same terms as Perl itself.
 
 # SEE ALSO
 
-[Plack](https://metacpan.org/pod/Plack) [Catalyst::Engine::HTTP::Prefork](https://metacpan.org/pod/Catalyst::Engine::HTTP::Prefork) [Net::Server::PreFork](https://metacpan.org/pod/Net::Server::PreFork)
+[Plack](https://metacpan.org/pod/Plack) [Catalyst::Engine::HTTP::Prefork](https://metacpan.org/pod/Catalyst%3A%3AEngine%3A%3AHTTP%3A%3APrefork) [Net::Server::PreFork](https://metacpan.org/pod/Net%3A%3AServer%3A%3APreFork)

@@ -2,7 +2,7 @@ package Starman;
 
 use strict;
 use 5.008_001;
-our $VERSION = '0.4015';
+our $VERSION = '0.4016';
 
 1;
 __END__
@@ -111,6 +111,28 @@ requesting clients are taken into consideration. It is suggested to
 put Starman workers behind the frontend servers such as nginx, and use
 HTTP proxy with TCP or UNIX sockets.
 
+=head1 PSGI EXTENSIONS
+
+=head2 psgix.informational
+
+Starman exposes a callback named C<psgix.informational> that can be
+used for sending an informational response. The callback accepts two
+arguments, the first argument being the status code and the second
+being an arrayref of the headers to be sent. Example below sends an
+103 Early Hints response before processing the request to build a
+final response.
+
+    sub {
+        my $env = shift;
+
+        $env->{'psgix.informational'}->( 103, [
+            "Link" => "</style.css>; rel=preload"
+        ] );
+
+        my $rest = ...
+        $resp;
+    }
+
 =head1 AUTHOR
 
 Tatsuhiko Miyagawa E<lt>miyagawa@bulknews.netE<gt>
@@ -121,6 +143,7 @@ is heavily based on.
 Kazuho Oku wrote L<Net::Server::SS::PreFork> that makes it easy to add
 L<Server::Starter> support to this software.
 
+The C<psgix.informational> callback comes from L<Starlet> by Kazuho Oku.
 
 =head1 COPYRIGHT
 
