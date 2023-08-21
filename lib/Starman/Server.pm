@@ -348,7 +348,7 @@ sub _read_headers {
             last if $self->{client}->{inputbuf} ne '' && $self->{client}->{inputbuf} =~ /$CR?$LF$CR?$LF/s;
 
             # If not, read some data
-            my $read = sysread $self->{server}->{client}, my $buf, CHUNKSIZE;
+            my $read = _sysread($self->{server}->{client}, my $buf, CHUNKSIZE);
 
             if ( !defined $read || $read == 0 ) {
                 die "Read error: $!\n";
@@ -409,7 +409,7 @@ sub _prepare_env {
             my $chunk = delete $self->{client}->{inputbuf};
             return ($chunk, length $chunk);
         }
-        my $read = sysread $self->{server}->{client}, my($chunk), CHUNKSIZE;
+        my $read = _sysread($self->{server}->{client}, my($chunk), CHUNKSIZE);
         return ($chunk, $read);
     };
 
@@ -577,6 +577,13 @@ sub _syswrite {
         $offset += $len;
 
         DEBUG && warn "[$$] Wrote $len byte", ($len == 1 ? '' : 's'), "\n";
+    }
+}
+
+sub _sysread {
+    while (1) {
+        my $len = sysread $_[0], $_[1], $_[2];
+        return $len if defined $len or $! != EINTR;
     }
 }
 
