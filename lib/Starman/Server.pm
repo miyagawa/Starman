@@ -583,7 +583,7 @@ sub _syswrite {
 sub _sysread {
     while (1) {
         my $len = sysread $_[0], $_[1], $_[2];
-        return $len if defined $len || $! != EINTR;
+        return $len if defined $len or $! != EINTR;
     }
 }
 
