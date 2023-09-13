@@ -2,7 +2,7 @@ package Starman::Server;
 use strict;
 use base 'Net::Server::PreFork';
 
-use Data::Dump qw(dump);
+use Data::Dump;
 use Socket qw(IPPROTO_TCP TCP_NODELAY);
 use IO::Socket qw(:crlf);
 use HTTP::Parser::XS qw(parse_http_request);
@@ -15,11 +15,20 @@ use Plack::Util;
 use Plack::TempBuffer;
 
 use constant DEBUG        => $ENV{STARMAN_DEBUG} || 0;
+use constant DEBUG_BUF    => (DEBUG >= 2);
 use constant CHUNKSIZE    => 64 * 1024;
 
 my $null_io = do { open my $io, "<", \""; $io };
 
 use Net::Server::SIG qw(register_sig);
+
+sub dump_buffer($) {
+    if (DEBUG_BUF) {
+        Data::Dump::dump($_[0]);
+    } else {
+        return "(" . length($_[0]) . " bytes of data)";
+    }
+}
 
 # Override Net::Server's HUP handling - just restart all the workers and that's about it
 sub sig_hup {
@@ -306,7 +315,7 @@ sub process_request {
                 if ( $self->{client}->{inputbuf} =~ /^(?:GET|HEAD)/ ) {
                     if ( DEBUG ) {
                         warn "Pipelined GET/HEAD request in input buffer: "
-                            . dump( $self->{client}->{inputbuf} ) . "\n";
+                            . dump_buffer( $self->{client}->{inputbuf} ) . "\n";
                     }
 
                     # Continue processing the input buffer
@@ -316,7 +325,7 @@ sub process_request {
                     # Input buffer just has junk, clear it
                     if ( DEBUG ) {
                         warn "Clearing junk from input buffer: "
-                            . dump( $self->{client}->{inputbuf} ) . "\n";
+                            . dump_buffer( $self->{client}->{inputbuf} ) . "\n";
                     }
 
                     $self->{client}->{inputbuf} = '';
@@ -355,7 +364,7 @@ sub _read_headers {
             }
 
             if ( DEBUG ) {
-                warn "[$$] Read $read bytes: " . dump($buf) . "\n";
+                warn "[$$] Read $read bytes: " . dump_buffer($buf) . "\n";
             }
 
             $self->{client}->{inputbuf} .= $buf;
