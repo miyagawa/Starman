@@ -2,6 +2,10 @@ Revision history for Perl extension Starman
 
 {{$NEXT}}
 
+0.4017  2023-09-13 13:27:02 PDT
+        - Handle EINTR when doing sysread calls (Rob Mueller) #148
+        - Requires perl 5.14
+
 0.4016  2022-09-13 10:11:34 PDT
         - Add psgix.informational callback #146
 
