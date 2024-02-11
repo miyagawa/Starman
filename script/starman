@@ -73,7 +73,7 @@ Defaults to any IP address and port 5000.
 
 Specifies the address to bind.
 
-This option is for a compatibility with L<plackup> and you're
+This option is for compatibility with L<plackup> and you're
 recommended to use C<--listen> instead.
 
 =item --port
@@ -82,7 +82,7 @@ recommended to use C<--listen> instead.
 
 Specifies the port to bind.
 
-This option is for a compatibility with L<plackup> and you're
+This option is for compatibility with L<plackup> and you're
 recommended to use C<--listen> instead.
 
 =item -S, --socket
@@ -91,12 +91,12 @@ recommended to use C<--listen> instead.
 
 Specifies the path to UNIX domain socket to bind.
 
-This option is for a compatibility with L<plackup> and you're
+This option is for compatibility with L<plackup> and you're
 recommended to use C<--listen> instead.
 
 =item --workers
 
-Specifies the number of worker pool. Defaults to 5.
+Specifies the size of the worker pool. Defaults to 5.
 
 Starman by default sets up other spare server configuration based on this
 workers value, making sure there are B<always only> C<N> worker
@@ -106,7 +106,7 @@ fine tuning the memory usage etc. in the production environment.
 
 =item --backlog
 
-Specifies the number of backlog (listen queue size) of listener sockets. Defaults to 1024.
+Specifies the backlog size (listen queue size) of listener sockets. Defaults to 1024.
 
 On production systems, setting a very low value can allow failover on
 frontend proxy (like nginx) to happen more quickly, if you have
@@ -115,21 +115,21 @@ multiple Starman clusters.
 If you're doing simple benchmarks and getting connection errors,
 increasing this parameter can help avoid them. You should also
 consider increasing C<net.core.somaxconn>. Note that this is not
-recommended for real production system if you have another cluster to
+recommended for real production systems if you have another cluster to
 failover (see above).
 
 =item --max-requests
 
-Number of the requests to process per one worker process. Defaults to 1000.
+Number of requests to process per one worker process. Defaults to 1000.
 
 =item --preload-app
 
 This option lets Starman preload the specified PSGI application in the
 master parent process before preforking children. This allows memory
 savings with copy-on-write memory management. When not set (default),
-forked children loads the application in the initialization hook.
+forked children load the application in the initialization hook.
 
-Enabling this option can cause bad things happen when resources like
+Enabling this option can cause bad things to happen when resources like
 sockets or database connections are opened at load time by the master
 process and shared by multiple children.
 
@@ -137,25 +137,25 @@ Since Starman 0.2000, this option defaults to false, and you should
 explicitly set this option to preload the application in the master
 process.
 
-Alternatively, you can use -M command line option (plackup's common
+Alternatively, you can use the C<-M> command line option (plackup's common
 option) to preload the I<modules> rather than the <application>
 itself.
 
   starman -MCatalyst -MDBIx::Class myapp.psgi
 
 will load the modules in the master process for memory savings with
-CoW, but the actual loading of C<myapp.psgi> is done per children,
-allowing resource managements such as database connection safer.
+CoW, but the actual loading of C<myapp.psgi> is done per child,
+making management of resources such as database connections safer.
 
-If you enable this option, sending C<HUP> signal to the master process
+If you enable this option, sending a C<HUP> signal to the master process
 I<will not> pick up any code changes you make. See L</SIGNALS> for
 details.
 
 =item --disable-keepalive
 
-Disable Keep-alive persistent connections. It is an useful workaround
+Disable Keep-alive persistent connections. It is a useful workaround
 if you run Starman behind a broken frontend proxy that tries to pool
-connections more than a number of backend workers (i.e. Apache
+more connections than there are backend workers (i.e. Apache
 mpm_prefork + mod_proxy).
 
 =item --keepalive-timeout
@@ -208,11 +208,11 @@ This enables you to still have access to the errors when using C<--daemonize>.
 
 =item --ssl-cert
 
-Specify the path to SSL certificate file.
+Specify the path to the SSL certificate file.
 
 =item --ssl-key
 
-Specify the path to SSL key file.
+Specify the path to the SSL key file.
 
 =item --enable-ssl
 
@@ -226,12 +226,12 @@ Disable the behavior to set proctitle to "starman (master)" and
 =back
 
 Starman passes through other options given to L<Plack::Runner>, the
-common backend that L<plackup> uses, so the most options explained in
-C<plackup -h> such as C<--access-log> or C<--daemonize> works fine in
-starman too.
+common backend that L<plackup> uses, so most options explained in
+C<plackup -h> (such as C<--access-log> or C<--daemonize>) work fine in
+starman, too.
 
 Setting the environment variable C<STARMAN_DEBUG> to 1 makes the
-Starman server running in the debug mode.
+Starman server run in debug mode.
 
 =cut
 
