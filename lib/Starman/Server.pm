@@ -185,6 +185,7 @@ sub post_accept_hook {
         headerbuf => '',
         inputbuf  => '',
         keepalive => 1,
+        keepalive_requests => 0,
     };
 }
 
@@ -215,6 +216,9 @@ sub process_request {
 
         # Read until we see all headers
         last if !$self->_read_headers;
+
+        $self->{client}->{keepalive_requests} += 1;
+        $self->{server}->{requests} += 1 if $self->{client}->{keepalive_requests} > 1;
 
         my $env = {
             REMOTE_ADDR     => $self->{server}->{peeraddr},
@@ -322,6 +326,8 @@ sub process_request {
                     $self->{client}->{inputbuf} = '';
                 }
             }
+
+            last if $self->max_requests_reached;
 
             DEBUG && warn "[$$] Waiting on previous connection for keep-alive request...\n";
 
@@ -517,7 +523,7 @@ sub _finalize_response {
     }
 
     # Should we keep the connection open?
-    if ( $self->{client}->{keepalive} ) {
+    if ( $self->{client}->{keepalive} && !$self->max_requests_reached ) {
         push @headers, 'Connection: keep-alive';
     } else {
         push @headers, 'Connection: close';
@@ -606,6 +612,11 @@ sub post_client_connection_hook {
     if ($self->{client}->{harakiri}) {
         exit;
     }
+}
+
+sub max_requests_reached {
+    my $self = shift;
+    return $self->{server}->{requests} >= $self->{server}->{max_requests};
 }
 
 1;
