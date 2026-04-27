@@ -1,6 +1,8 @@
 Revision history for Perl extension Starman
 
 {{$NEXT}}
+
+0.4018  2026-04-27 12:29:41 PDT
         - Fix HTTP request smuggling: Transfer-Encoding now takes precedence
           over Content-Length per RFC 7230 §3.3.3 (CVE-2026-40560)
 
