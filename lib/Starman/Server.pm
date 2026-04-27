@@ -415,20 +415,7 @@ sub _prepare_env {
 
     my $chunked = do { no warnings; lc delete $env->{HTTP_TRANSFER_ENCODING} eq 'chunked' };
 
-    if (my $cl = $env->{CONTENT_LENGTH}) {
-        my $buf = Plack::TempBuffer->new($cl);
-        while ($cl > 0) {
-            my($chunk, $read) = $get_chunk->();
-
-            if ( !defined $read || $read == 0 ) {
-                die "Read error: $!\n";
-            }
-
-            $cl -= $read;
-            $buf->print($chunk);
-        }
-        $env->{'psgi.input'} = $buf->rewind;
-    } elsif ($chunked) {
+    if ($chunked) {
         my $buf = Plack::TempBuffer->new;
         my $chunk_buffer = '';
         my $length;
@@ -460,6 +447,19 @@ sub _prepare_env {
 
         $env->{CONTENT_LENGTH} = $length;
         $env->{'psgi.input'}   = $buf->rewind;
+    } elsif (my $cl = $env->{CONTENT_LENGTH}) {
+        my $buf = Plack::TempBuffer->new($cl);
+        while ($cl > 0) {
+            my($chunk, $read) = $get_chunk->();
+
+            if ( !defined $read || $read == 0 ) {
+                die "Read error: $!\n";
+            }
+
+            $cl -= $read;
+            $buf->print($chunk);
+        }
+        $env->{'psgi.input'} = $buf->rewind;
     } else {
         $env->{'psgi.input'} = $null_io;
     }

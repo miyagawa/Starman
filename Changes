@@ -1,6 +1,8 @@
 Revision history for Perl extension Starman
 
 {{$NEXT}}
+        - Fix HTTP request smuggling: Transfer-Encoding now takes precedence
+          over Content-Length per RFC 7230 §3.3.3 (CVE-2026-40560)
 
 0.4017  2023-09-13 13:27:02 PDT
         - Handle EINTR when doing sysread calls (Rob Mueller) #148
