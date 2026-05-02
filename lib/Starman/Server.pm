@@ -110,6 +110,39 @@ sub run {
     );
 }
 
+# When used under server_starter this is called from
+# Net::Server::SS::PreFork->pre_bind
+sub maybe_upgrade_to_ssl {
+    my ($self, $sock, $ssl_this_port) = @_;
+
+    # $options->{ssl} is from starman's --enable-ssl
+    my $wants_ssl = $self->{options}{ssl} || $ssl_this_port;
+    return unless $wants_ssl;
+
+    require Net::Server::Proto::SSL;
+
+    bless($sock, 'Net::Server::Proto::SSL');
+
+    my $options = $self->{options};
+
+    $sock->configure_SSL({
+       $options->{ssl_cert} ? (SSL_cert_file => $options->{ssl_cert}) : (),
+       $options->{ssl_key}  ? (SSL_key_file  => $options->{ssl_key})  : (),
+
+        # For list of net_server_args, see Net::Server::Proto::SSL's @ssl_args.
+        # To pass them to starman use e.g. --net_server_SSL_cipher_list
+       $options->{net_server_args} ? %{ $options->{net_server_args} } : (),
+
+       # Newer versions of Net::Server >= 2.011 need this to postpone the SSL
+       # handshake.  Older versions ignore it and don't need it.
+       SSL_startHandshake => 0,
+
+       SSL_server => 1,
+    });
+
+    $sock->NS_proto('SSL');
+}
+
 sub pre_loop_hook {
     my $self = shift;
 
