@@ -113,17 +113,27 @@ sub run {
 sub pre_loop_hook {
     my $self = shift;
 
-    my $port = $self->{server}->{port}->[0];
-    my $proto = $port->{proto} eq 'ssl'  ? 'https' :
-                $port->{proto} eq 'unix' ? 'unix'  :
-                                           'http';
+    my %ready = (server_software => 'Starman');
 
-    $self->{options}{server_ready}->({
-        host => $port->{host},
-        port => $port->{port},
-        proto => $proto,
-        server_software => 'Starman',
-    }) if $self->{options}{server_ready};
+    # Since by this point the socket has been opened, we can look at what we
+    # actually did, instead of merely what the configure said we were supposed
+    # to do.
+    if (my $sock = ($self->{server}->{sock} && $self->{server}->{sock}->[0])) {
+        $ready{proto} = $sock->isa('Net::Server::Proto::SSL')    ? 'https' :
+                        $sock->isa('Net::Server::Proto::UNIX')   ? 'unix'  :
+                                                                    'http';
+    }
+
+    if ($self->{server}->{port} && @{$self->{server}->{port}}) {
+        my $port = $self->{server}->{port}->[0];
+        $ready{host} = $port->{host};
+        $ready{port} = $port->{port};
+    } else {
+        $self->log(2, "Using socket activation");
+    }
+
+    $self->{options}{server_ready}->(\%ready)
+        if $self->{options}{server_ready};
 
     register_sig(
         TTIN => sub { $self->{server}->{$_}++ for qw( min_servers max_servers ) },
