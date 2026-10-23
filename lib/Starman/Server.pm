@@ -247,9 +247,10 @@ sub process_request {
         }
 
         # Reject ambiguous message framing before we touch the body
-        if ( my $status = $self->_framing_error($env) ) {
-            DEBUG && warn "[$$] Invalid message framing, returning $status\n";
-            $self->_http_error( $status, $env );
+        my($framing_error, $close_after) = $self->_check_framing($env);
+        if ( $framing_error ) {
+            DEBUG && warn "[$$] Invalid message framing, returning $framing_error\n";
+            $self->_http_error( $framing_error, $env );
             last;
         }
 
@@ -298,6 +299,11 @@ sub process_request {
 
         unless ($self->{options}->{keepalive}) {
             DEBUG && warn "[$$] keep-alive is disabled. Closing the connection after this request\n";
+            $self->{client}->{keepalive} = 0;
+        }
+
+        if ($close_after) {
+            DEBUG && warn "[$$] Both Transfer-Encoding and Content-Length present. Closing the connection after this request\n";
             $self->{client}->{keepalive} = 0;
         }
 
@@ -392,8 +398,28 @@ sub _read_headers {
     return 1;
 }
 
-sub _framing_error {
+# Returns an error status if the request framing is invalid, and
+# whether the connection must be closed after this request.
+sub _check_framing {
     my($self, $env) = @_;
+
+    if ( defined $env->{HTTP_TRANSFER_ENCODING} ) {
+        # Only "chunked" is supported, and it must be the only coding
+        # (RFC 9112 section 6.1). HTTP/1.0 has no Transfer-Encoding.
+        return 400 if $env->{SERVER_PROTOCOL} ne 'HTTP/1.1';
+
+        my @codings = map { s/^[ \t]+|[ \t]+$//g; lc } split /,/, $env->{HTTP_TRANSFER_ENCODING}, -1;
+        return 400 unless @codings && $codings[-1] eq 'chunked';
+        return 400 if grep { $_ eq 'chunked' } @codings[0..$#codings-1];
+        return 501 if @codings > 1;
+
+        $env->{HTTP_TRANSFER_ENCODING} = 'chunked';
+
+        # Transfer-Encoding overrides Content-Length, but a message with
+        # both may be an attempt at request smuggling (RFC 9112 6.3).
+        my $close_after = defined delete $env->{CONTENT_LENGTH};
+        return (undef, $close_after);
+    }
 
     if ( defined $env->{CONTENT_LENGTH} ) {
         # Duplicate headers arrive joined with ",". They are only acceptable
