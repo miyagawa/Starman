@@ -477,13 +477,30 @@ sub _prepare_env {
         my $buf = Plack::TempBuffer->new;
         my $chunk_buffer = '';
         my $length;
+        my $remaining; # bytes left in the current chunk, undef while reading a size line
 
     DECHUNK:
         while (1) {
             my($chunk, $read) = $get_chunk->();
             $chunk_buffer .= $chunk;
 
-            while (1) {
+            while ($chunk_buffer ne '') {
+                if (defined $remaining) {
+                    if ($remaining > 0) {
+                        # Write chunk data out as it arrives
+                        my $data = substr $chunk_buffer, 0, $remaining, '';
+                        $buf->print($data);
+                        $remaining -= length $data;
+                        $length    += length $data;
+                        next;
+                    }
+
+                    last if length $chunk_buffer < 2;
+                    return 400 unless substr($chunk_buffer, 0, 2, '') eq "\015\012";
+                    undef $remaining;
+                    next;
+                }
+
                 my $eol = index $chunk_buffer, "\015\012";
                 if ($eol < 0) {
                     return 400 if length $chunk_buffer > MAX_CHUNK_LINE;
@@ -491,21 +508,11 @@ sub _prepare_env {
                 }
                 return 400 if $eol > MAX_CHUNK_LINE;
 
-                my $trailer   = substr $chunk_buffer, 0, $eol + 2, '';
-                my $chunk_len = _parse_chunk_size($trailer);
+                my $chunk_len = _parse_chunk_size(substr $chunk_buffer, 0, $eol + 2, '');
                 return 400 unless defined $chunk_len;
 
-                if ($chunk_len == 0) {
-                    last DECHUNK;
-                } elsif (length $chunk_buffer < $chunk_len + 2) {
-                    $chunk_buffer = $trailer . $chunk_buffer;
-                    last;
-                }
-
-                $buf->print(substr $chunk_buffer, 0, $chunk_len, '');
-                $chunk_buffer =~ s/^\015\012//;
-
-                $length += $chunk_len;
+                last DECHUNK if $chunk_len == 0;
+                $remaining = $chunk_len;
             }
 
             last unless $read && $read > 0;
