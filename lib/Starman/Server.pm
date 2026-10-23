@@ -18,6 +18,7 @@ use constant DEBUG        => $ENV{STARMAN_DEBUG} || 0;
 use constant CHUNKSIZE    => 64 * 1024;
 use constant MAX_CHUNK_LINE => 4096;
 use constant MAX_TRAILER_SIZE => 16 * 1024;
+use constant MAX_HEADER_SIZE  => 128 * 1024;
 
 my $null_io = do { open my $io, "<", \""; $io };
 
@@ -374,7 +375,11 @@ sub _read_headers {
             # Do we have a full header in the buffer?
             # This is before sysread so we don't read if we have a pipelined request
             # waiting in the buffer
-            last if $self->{client}->{inputbuf} ne '' && $self->{client}->{inputbuf} =~ /$CR?$LF$CR?$LF/s;
+            if ( $self->{client}->{inputbuf} ne '' && $self->{client}->{inputbuf} =~ /$CR?$LF$CR?$LF/s ) {
+                die "Header too large\n" if $-[0] > MAX_HEADER_SIZE;
+                last;
+            }
+            die "Header too large\n" if length $self->{client}->{inputbuf} > MAX_HEADER_SIZE;
 
             # If not, read some data
             my $read = _sysread($self->{server}->{client}, my $buf, CHUNKSIZE);
@@ -401,6 +406,12 @@ sub _read_headers {
 
         if ( $@ =~ /Read error/ ) {
             DEBUG && warn "[$$] Read error: $!\n";
+            return;
+        }
+
+        if ( $@ =~ /Header too large/ ) {
+            DEBUG && warn "[$$] Request header too large, returning 431\n";
+            $self->_http_error(431, { SERVER_PROTOCOL => "HTTP/1.0" });
             return;
         }
     }
