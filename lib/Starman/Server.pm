@@ -17,6 +17,7 @@ use Plack::TempBuffer;
 use constant DEBUG        => $ENV{STARMAN_DEBUG} || 0;
 use constant CHUNKSIZE    => 64 * 1024;
 use constant MAX_CHUNK_LINE => 4096;
+use constant MAX_TRAILER_SIZE => 16 * 1024;
 
 my $null_io = do { open my $io, "<", \""; $io };
 
@@ -320,25 +321,15 @@ sub process_request {
 
         if ( $self->{client}->{keepalive} ) {
             # If we still have data in the input buffer it may be a pipelined request
+            # The request body has been read exactly, so this is the next request
             if ( $self->{client}->{inputbuf} ne '' ) {
-                if ( $self->{client}->{inputbuf} =~ /^(?:GET|HEAD)/ ) {
-                    if ( DEBUG ) {
-                        warn "Pipelined GET/HEAD request in input buffer: "
-                            . dump( $self->{client}->{inputbuf} ) . "\n";
-                    }
-
-                    # Continue processing the input buffer
-                    next;
+                if ( DEBUG ) {
+                    warn "Pipelined request in input buffer: "
+                        . dump( $self->{client}->{inputbuf} ) . "\n";
                 }
-                else {
-                    # Input buffer just has junk, clear it
-                    if ( DEBUG ) {
-                        warn "Clearing junk from input buffer: "
-                            . dump( $self->{client}->{inputbuf} ) . "\n";
-                    }
 
-                    $self->{client}->{inputbuf} = '';
-                }
+                # Continue processing the input buffer
+                next;
             }
 
             DEBUG && warn "[$$] Waiting on previous connection for keep-alive request...\n";
@@ -462,60 +453,76 @@ sub _http_error {
 sub _prepare_env {
     my($self, $env) = @_;
 
-    my $get_chunk = sub {
-        if ($self->{client}->{inputbuf} ne '') {
-            my $chunk = delete $self->{client}->{inputbuf};
-            return ($chunk, length $chunk);
-        }
+    # Body bytes are taken from the input buffer, leaving anything after
+    # the body there for the next request on this connection.
+    my $input = \$self->{client}->{inputbuf};
+    my $read_more = sub {
         my $read = _sysread($self->{server}->{client}, my($chunk), CHUNKSIZE);
-        return ($chunk, $read);
+        $$input .= $chunk if $read;
+        return $read;
     };
 
-    my $chunked = do { no warnings; lc delete $env->{HTTP_TRANSFER_ENCODING} eq 'chunked' };
+    my $chunked = do { no warnings; delete $env->{HTTP_TRANSFER_ENCODING} eq 'chunked' };
 
     if ($chunked) {
         my $buf = Plack::TempBuffer->new;
-        my $chunk_buffer = '';
-        my $length;
-        my $remaining; # bytes left in the current chunk, undef while reading a size line
+        my $length = 0;
+        my $remaining;    # bytes left in the current chunk, undef while reading a size line
+        my $trailer_size; # defined once the last chunk has been read
 
     DECHUNK:
         while (1) {
-            my($chunk, $read) = $get_chunk->();
-            $chunk_buffer .= $chunk;
+            while ($$input ne '') {
+                if (defined $trailer_size) {
+                    my $eol = index $$input, "\015\012";
+                    if ($eol < 0) {
+                        return 400 if $trailer_size + length $$input > MAX_TRAILER_SIZE;
+                        last;
+                    }
+                    $trailer_size += $eol + 2;
+                    return 400 if $trailer_size > MAX_TRAILER_SIZE;
 
-            while ($chunk_buffer ne '') {
+                    my $line = substr $$input, 0, $eol + 2, '';
+                    last DECHUNK if $eol == 0;
+                    return 400 if $line =~ /[\015\012].*\015\012/s;
+                    next;
+                }
+
                 if (defined $remaining) {
                     if ($remaining > 0) {
                         # Write chunk data out as it arrives
-                        my $data = substr $chunk_buffer, 0, $remaining, '';
+                        my $data = substr $$input, 0, $remaining, '';
                         $buf->print($data);
                         $remaining -= length $data;
                         $length    += length $data;
                         next;
                     }
 
-                    last if length $chunk_buffer < 2;
-                    return 400 unless substr($chunk_buffer, 0, 2, '') eq "\015\012";
+                    last if length $$input < 2;
+                    return 400 unless substr($$input, 0, 2, '') eq "\015\012";
                     undef $remaining;
                     next;
                 }
 
-                my $eol = index $chunk_buffer, "\015\012";
+                my $eol = index $$input, "\015\012";
                 if ($eol < 0) {
-                    return 400 if length $chunk_buffer > MAX_CHUNK_LINE;
+                    return 400 if length $$input > MAX_CHUNK_LINE;
                     last;
                 }
                 return 400 if $eol > MAX_CHUNK_LINE;
 
-                my $chunk_len = _parse_chunk_size(substr $chunk_buffer, 0, $eol + 2, '');
+                my $chunk_len = _parse_chunk_size(substr $$input, 0, $eol + 2, '');
                 return 400 unless defined $chunk_len;
 
-                last DECHUNK if $chunk_len == 0;
-                $remaining = $chunk_len;
+                if ($chunk_len == 0) {
+                    $trailer_size = 0;
+                } else {
+                    $remaining = $chunk_len;
+                }
             }
 
-            last unless $read && $read > 0;
+            # The connection ended before the body did
+            return 400 unless $read_more->();
         }
 
         $env->{CONTENT_LENGTH} = $length;
@@ -523,14 +530,14 @@ sub _prepare_env {
     } elsif (my $cl = $env->{CONTENT_LENGTH}) {
         my $buf = Plack::TempBuffer->new($cl);
         while ($cl > 0) {
-            my($chunk, $read) = $get_chunk->();
-
-            if ( !defined $read || $read == 0 ) {
-                die "Read error: $!\n";
+            if ($$input eq '') {
+                # The connection ended before the body did
+                return 400 unless $read_more->();
             }
 
-            $cl -= $read;
-            $buf->print($chunk);
+            my $data = substr $$input, 0, $cl, '';
+            $cl -= length $data;
+            $buf->print($data);
         }
         $env->{'psgi.input'} = $buf->rewind;
     } else {

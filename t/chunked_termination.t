@@ -30,7 +30,7 @@ my $server = {
             "3\015\012foo\015\012", # Full chunk
             "3\015\012bar",         # Chunk missing terminating HTTP newline
             "\015\012",             # ... and then the termination
-            "0\015\012",            # Empty chunk to mark end of stream
+            "0\015\012\015\012",    # Empty chunk and empty trailer section to mark end of stream
         ],
     }
 };
