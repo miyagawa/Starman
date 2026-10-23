@@ -1,7 +1,7 @@
 package RawHTTP;
 use strict;
 use warnings;
-use Exporter 'import';
+use base 'Exporter';
 use IO::Socket::INET;
 use IO::Select;
 use Test::TCP;
