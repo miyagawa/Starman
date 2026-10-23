@@ -244,8 +244,9 @@ sub process_request {
         };
 
         # Parse headers
-        my $reqlen = parse_http_request(delete $self->{client}->{headerbuf}, $env);
-        if ( $reqlen == -1 ) {
+        my $headerbuf = delete $self->{client}->{headerbuf};
+        my $reqlen = parse_http_request($headerbuf, $env);
+        if ( $reqlen != length $headerbuf ) {
             # Bad request
             DEBUG && warn "[$$] Bad request\n";
             $self->_http_error(400, { SERVER_PROTOCOL => "HTTP/1.0" });
@@ -372,6 +373,9 @@ sub _read_headers {
         alarm( $self->{options}->{read_timeout} );
 
         while (1) {
+            # Ignore empty lines before the request line (RFC 9112 section 2.2)
+            $self->{client}->{inputbuf} =~ s/\A(?:$CR?$LF)+//;
+
             # Do we have a full header in the buffer?
             # This is before sysread so we don't read if we have a pipelined request
             # waiting in the buffer
@@ -416,11 +420,10 @@ sub _read_headers {
         }
     }
 
-    # Pull out the complete header into a new buffer
-    $self->{client}->{headerbuf} = $self->{client}->{inputbuf};
-
-    # Save any left-over data, possibly body data or pipelined requests
-    $self->{client}->{inputbuf} =~ s/.*?$CR?$LF$CR?$LF//s;
+    # Pull out the complete header into a new buffer, leaving any body data
+    # or pipelined requests in the input buffer
+    $self->{client}->{inputbuf} =~ /$CR?$LF$CR?$LF/;
+    $self->{client}->{headerbuf} = substr $self->{client}->{inputbuf}, 0, $+[0], '';
 
     return 1;
 }
