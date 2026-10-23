@@ -246,6 +246,13 @@ sub process_request {
             last;
         }
 
+        # Reject ambiguous message framing before we touch the body
+        if ( my $status = $self->_framing_error($env) ) {
+            DEBUG && warn "[$$] Invalid message framing, returning $status\n";
+            $self->_http_error( $status, $env );
+            last;
+        }
+
         # Initialize PSGI environment
         # Determine whether we will keep the connection open after the request
         my $connection = delete $env->{HTTP_CONNECTION};
@@ -383,6 +390,26 @@ sub _read_headers {
     $self->{client}->{inputbuf} =~ s/.*?$CR?$LF$CR?$LF//s;
 
     return 1;
+}
+
+sub _framing_error {
+    my($self, $env) = @_;
+
+    if ( defined $env->{CONTENT_LENGTH} ) {
+        # Duplicate headers arrive joined with ",". They are only acceptable
+        # if every value is the same valid length (RFC 9112 section 6.3).
+        my @values = split /\s*,\s*/, $env->{CONTENT_LENGTH}, -1;
+        my %seen;
+        for my $v (@values) {
+            $v =~ s/^[ \t]+|[ \t]+$//g;
+            return 400 unless $v =~ /\A[0-9]{1,18}\z/;
+            $seen{0 + $v}++;
+        }
+        return 400 unless keys %seen == 1;
+        ($env->{CONTENT_LENGTH}) = keys %seen;
+    }
+
+    return;
 }
 
 sub _http_error {
