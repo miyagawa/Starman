@@ -28,12 +28,14 @@ with_starman($app, sub {
         ''                 => 400,
     );
     for my $te (sort keys %expect) {
-        my $res = raw_request($port,
+        my($res, $eof) = raw_request($port,
             "POST /a HTTP/1.1\r\nHost: localhost\r\nTransfer-Encoding: $te\r\nContent-Length: 3\r\n\r\n"
-          . "$chunked_body");
+          . "$chunked_body",
+            keep_open => 1, timeout => 3);
         like $res, qr{\AHTTP/1\.1 $expect{$te} }, "Transfer-Encoding '$te' is rejected with $expect{$te}";
         unlike $res, qr{/a:}, "Transfer-Encoding '$te' does not dispatch the app";
         like $res, qr/^Connection: close\r$/m, "Transfer-Encoding '$te' closes the connection";
+        ok $eof, "... and the server closes it";
     }
 
     my $res = raw_request($port,
@@ -49,11 +51,14 @@ with_starman($app, sub {
         "POST /a HTTP/1.1\r\nHost: localhost\r\nTransfer-Encoding: Chunked \r\nConnection: close\r\n\r\n$chunked_body");
     like $res, qr{\r\n\r\n/a:HELLO\z}, 'Transfer-Encoding is case-insensitive and whitespace-trimmed';
 
-    $res = raw_request($port,
+    my $eof;
+    ($res, $eof) = raw_request($port,
         "POST /a HTTP/1.1\r\nHost: localhost\r\nTransfer-Encoding: chunked\r\nContent-Length: 3\r\n\r\n$chunked_body"
-      . "GET /b HTTP/1.1\r\nHost: localhost\r\n\r\n");
+      . "GET /b HTTP/1.1\r\nHost: localhost\r\n\r\n",
+        keep_open => 1, timeout => 3);
     like $res, qr{\r\n\r\n/a:HELLO\z}, 'Transfer-Encoding overrides Content-Length';
     like $res, qr/^Connection: close\r$/m, '... and the connection is closed after the response';
+    ok $eof, '... by the server';
     unlike $res, qr{/b:}, '... so no further request is read from it';
 });
 

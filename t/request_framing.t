@@ -43,10 +43,13 @@ with_starman($app, sub {
         "POST /a HTTP/1.1\r\nHost: localhost\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\n0\r\n\r\n");
     like $res, qr/\[POST \/a:0:\]/, 'empty chunked body has CONTENT_LENGTH 0';
 
-    $res = raw_request($port,
+    my $eof;
+    ($res, $eof) = raw_request($port,
         "POST /a HTTP/1.1\r\nHost: localhost\r\nTransfer-Encoding: chunked\r\n\r\n3\r\nabc\r\n0\r\n"
-      . ("X-Trailer: " . ("x" x 100) . "\r\n") x 200 . "\r\n");
+      . ("X-Trailer: " . ("x" x 100) . "\r\n") x 200 . "\r\n",
+        keep_open => 1, timeout => 3);
     like $res, qr{\AHTTP/1\.1 400 }, 'oversized trailer section is rejected';
+    ok $eof, '... and the server closes the connection';
     unlike $res, qr/\[POST/, '... without dispatching the app';
 
     my %truncated = (

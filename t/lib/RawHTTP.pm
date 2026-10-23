@@ -25,7 +25,9 @@ sub with_starman {
 
 # Send raw bytes (a string, or an arrayref of segments written with a
 # short pause between them) and return everything the server sends back
-# until it closes the connection or $opt{timeout} seconds pass.
+# until it closes the connection or $opt{timeout} seconds pass. In list
+# context, also return whether the server closed the connection.
+# With keep_open, our side is not shut down, so a close is the server's.
 sub raw_request {
     my($port, $data, %opt) = @_;
     my $timeout = $opt{timeout} || 5;
@@ -52,13 +54,17 @@ sub raw_request {
     my $sel = IO::Select->new($sock);
     my $deadline = Time::HiRes::time() + $timeout;
     my $res = '';
+    my $eof = 0;
     while ((my $left = $deadline - Time::HiRes::time()) > 0) {
         last unless $sel->can_read($left);
         my $n = sysread $sock, my $buf, 65536;
-        last unless $n;
+        unless ($n) {
+            $eof = 1;
+            last;
+        }
         $res .= $buf;
     }
-    return $res;
+    return wantarray ? ($res, $eof) : $res;
 }
 
 1;

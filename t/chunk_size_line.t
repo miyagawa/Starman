@@ -29,8 +29,10 @@ with_starman($app, sub {
     unlike $res, qr{/a:}, '... without dispatching the app';
 
     # An unterminated size line must not be buffered forever
-    $res = raw_request($port, $head . ("f" x 8192), keep_open => 1, timeout => 3);
+    my $eof;
+    ($res, $eof) = raw_request($port, $head . ("f" x 8192), keep_open => 1, timeout => 3);
     like $res, qr{\AHTTP/1\.1 400 }, 'size line over the length limit is rejected without waiting for CRLF';
+    ok $eof, '... and the server closes the connection';
 
     for my $line ("5 junk", "0x5", "-5", "+5", "", "5\r", "5;ext\rx", " 5", "fffffffffffffffffffff") {
         (my $esc = $line) =~ s/\r/\\r/g;

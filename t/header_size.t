@@ -14,11 +14,12 @@ my $field = "X-Big: " . ("a" x 1000) . "\r\n";
 with_starman($app, sub {
     my $port = shift;
 
-    my $res = raw_request($port,
+    my($res, $eof) = raw_request($port,
         "GET / HTTP/1.1\r\nHost: localhost\r\n" . $field x 200,
         keep_open => 1, timeout => 3);
     like $res, qr{\AHTTP/1\.[01] 431 }, 'unterminated oversized header is rejected without waiting for the end';
     like $res, qr/^Connection: close\r$/m, '... and the connection is closed';
+    ok $eof, '... by the server';
 
     $res = raw_request($port,
         "GET / HTTP/1.1\r\nHost: localhost\r\n" . $field x 200 . "\r\n");

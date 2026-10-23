@@ -18,12 +18,14 @@ with_starman($app, sub {
     my $port = shift;
 
     for my $cl ('-5', '5abc', '+5', '5, 9', '5,9', '', '0x5', '1e3', '99999999999999999999') {
-        my $res = raw_request($port,
+        my($res, $eof) = raw_request($port,
             "POST /a HTTP/1.1\r\nHost: localhost\r\nContent-Length: $cl\r\n\r\n"
-          . "HELLOGET /smuggled HTTP/1.1\r\nHost: localhost\r\n\r\n");
+          . "HELLOGET /smuggled HTTP/1.1\r\nHost: localhost\r\n\r\n",
+            keep_open => 1, timeout => 3);
         like $res, qr{\AHTTP/1\.1 400 }, "Content-Length '$cl' is rejected with 400";
         unlike $res, qr{/a:|/smuggled}, "Content-Length '$cl' does not dispatch the app";
         like $res, qr/^Connection: close\r$/m, "Content-Length '$cl' closes the connection";
+        ok $eof, "... and the server closes it";
     }
 
     my $res = raw_request($port,
