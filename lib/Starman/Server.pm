@@ -522,7 +522,7 @@ sub _prepare_env {
                 if (defined $remaining) {
                     if ($remaining > 0) {
                         # Write chunk data out as it arrives
-                        my $data = substr $$input, 0, $remaining, '';
+                        my $data = substr $$input, 0, _min($remaining, length $$input), '';
                         $buf->print($data);
                         $remaining -= length $data;
                         $length    += length $data;
@@ -566,7 +566,7 @@ sub _prepare_env {
                 return 400 unless $read_more->();
             }
 
-            my $data = substr $$input, 0, $cl, '';
+            my $data = substr $$input, 0, _min($cl, length $$input), '';
             $cl -= length $data;
             $buf->print($data);
         }
@@ -577,6 +577,10 @@ sub _prepare_env {
 
     return;
 }
+
+# Older perls truncate substr() lengths to 32 bits, so never pass more
+# than what is in the buffer.
+sub _min { $_[0] < $_[1] ? $_[0] : $_[1] }
 
 # chunk-size [ chunk-ext ] CRLF (RFC 9112 section 7.1). Returns undef if
 # the line is malformed or the size is too large to count exactly.
