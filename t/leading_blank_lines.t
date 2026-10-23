@@ -12,7 +12,7 @@ use Test::More;
 my $app = sub {
     my $env = shift;
     my $res = "[$env->{REQUEST_METHOD} $env->{PATH_INFO}]";
-    return [ 200, [ 'Content-Type' => 'text/plain', 'Content-Length' => length $res, 'X-Backend' => $HTTP::Parser::XS::BACKEND ], [ $res ] ];
+    return [ 200, [ 'Content-Type' => 'text/plain', 'Content-Length' => length $res, 'X-Backend' => do { no warnings 'once'; $HTTP::Parser::XS::BACKEND } ], [ $res ] ];
 };
 
 for my $env (parser_backends()) {
