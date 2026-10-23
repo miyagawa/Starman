@@ -646,6 +646,8 @@ sub _finalize_response {
         my $k = $headers->[$i];
         my $v = $headers->[$i + 1];
         next if $k eq 'Connection';
+        # 1xx and 204 responses must not have these (RFC 9110 8.6, RFC 9112 6.1)
+        next if $status =~ /^(?:1\d\d|204)$/ && $k =~ /^(?:Content-Length|Transfer-Encoding)$/i;
         push @headers, "$k: $v";
         $headers{lc $k} = $v;
     }

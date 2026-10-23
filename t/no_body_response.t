@@ -51,6 +51,7 @@ my $next = "GET /next HTTP/1.1\r\nHost: localhost\r\n\r\n";
 
 with_starman($app, sub {
     my $port = shift;
+    my $res;
 
     my @cases = (
         [ HEAD => '/' ],
@@ -68,19 +69,29 @@ with_starman($app, sub {
         [ GET  => '/te/204' ],
         [ GET  => '/te-only/304' ],
         [ GET  => '/object/s204/204' ],
+        [ GET  => '/103' ],
+        [ GET  => '/te/103' ],
     );
 
     for my $case (@cases) {
         my($method, $path) = @$case;
-        my $res = raw_request($port, "$method $path HTTP/1.1\r\nHost: localhost\r\n\r\n$next");
+        $res = raw_request($port, "$method $path HTTP/1.1\r\nHost: localhost\r\n\r\n$next");
         my($first, $rest) = split /\r\n\r\n/, $res, 2;
         $rest = '' unless defined $rest;
         like $first, qr{\AHTTP/1\.1 \d{3} }, "$method $path: response";
         like $rest, qr{\AHTTP/1\.1 200 OK\r\n}, "$method $path: no body bytes before the next response";
         like $rest, qr{\r\n\r\nHELLO\z}, "$method $path: the next response is intact";
+
+        # RFC 9112 6.1 and RFC 9110 8.6
+        if ($path =~ m{/(?:1\d\d|204)$}) {
+            unlike $first, qr/^(?:Content-Length|Transfer-Encoding):/mi, "$method $path: no Content-Length or Transfer-Encoding";
+        }
     }
 
-    my $res = raw_request($port, "HEAD / HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
+    $res = raw_request($port, "GET /304 HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
+    like $res, qr/^Content-Length: 5\r$/m, '304 keeps the Content-Length supplied by the app';
+
+    $res = raw_request($port, "HEAD / HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
     like $res, qr/^Content-Length: 5\r$/m, 'HEAD keeps the Content-Length supplied by the app';
 
     ok -e "$dir/head.close", 'HEAD: body object is closed';
