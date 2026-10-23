@@ -572,6 +572,9 @@ sub _finalize_response {
     my $status   = $res->[0];
     my $message  = status_message($status);
 
+    # These responses never have a body (RFC 9110 sections 6.4.1 and 9.3.2)
+    my $no_body = $env->{REQUEST_METHOD} eq 'HEAD' || $status =~ /^(?:1\d\d|204|304)$/;
+
     my(@headers, %headers);
     push @headers, "$protocol $status $message";
 
@@ -586,13 +589,14 @@ sub _finalize_response {
         $headers{lc $k} = $v;
     }
 
-    if ( $protocol eq 'HTTP/1.1' ) {
+    if ( $no_body ) {
+        # Do not frame (or send) a body, whatever the headers say
+    }
+    elsif ( $protocol eq 'HTTP/1.1' ) {
         if ( !exists $headers{'content-length'} ) {
-            if ( $status !~ /^1\d\d|[23]04$/ && $env->{REQUEST_METHOD} ne 'HEAD' ) {
-                DEBUG && warn "[$$] Using chunked transfer-encoding to send unknown length body\n";
-                push @headers, 'Transfer-Encoding: chunked';
-                $chunked = 1;
-            }
+            DEBUG && warn "[$$] Using chunked transfer-encoding to send unknown length body\n";
+            push @headers, 'Transfer-Encoding: chunked';
+            $chunked = 1;
         }
         elsif ( my $te = $headers{'transfer-encoding'} ) {
             if ( $te eq 'chunked' ) {
@@ -625,6 +629,11 @@ sub _finalize_response {
     _syswrite($conn, \(join( $CRLF, @headers, '' ) . $CRLF));
 
     if (defined $res->[2]) {
+        if ($no_body) {
+            # Release the body without reading it
+            $res->[2]->close if ref $res->[2] ne 'ARRAY';
+            return;
+        }
         Plack::Util::foreach($res->[2], sub {
             my $buffer = $_[0];
             if ($chunked) {
@@ -638,6 +647,7 @@ sub _finalize_response {
     } else {
         return Plack::Util::inline_object
             write => sub {
+                return if $no_body;
                 my $buffer = $_[0];
                 if ($chunked) {
                     my $len = length $buffer;
