@@ -8,7 +8,16 @@ use Test::TCP;
 use Plack::Loader;
 use Time::HiRes ();
 
-our @EXPORT = qw(with_starman raw_request);
+our @EXPORT = qw(with_starman raw_request parser_backends);
+
+# HTTP::Parser::XS backends to test with: the default one, and the
+# pure-Perl one too if this version of HTTP::Parser::XS has it. The
+# returned values are for $ENV{PERL_HTTP_PARSER_XS}.
+sub parser_backends {
+    my @backends = ('');
+    push @backends, 'pp' if grep { !ref && -e "$_/HTTP/Parser/XS/PP.pm" } @INC;
+    return @backends;
+}
 
 # Run $client->($port) against a Starman server listening on 127.0.0.1
 sub with_starman {

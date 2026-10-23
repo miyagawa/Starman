@@ -6,8 +6,8 @@ use RawHTTP;
 use Test::More;
 
 # Empty lines before a request line are ignored (RFC 9112 section 2.2),
-# and each request is parsed and dispatched exactly once, with both the
-# XS and the pure-Perl HTTP::Parser::XS backends.
+# and each request is parsed and dispatched exactly once, with the default
+# and (if available) the pure-Perl HTTP::Parser::XS backend.
 
 my $app = sub {
     my $env = shift;
@@ -15,13 +15,14 @@ my $app = sub {
     return [ 200, [ 'Content-Type' => 'text/plain', 'Content-Length' => length $res, 'X-Backend' => $HTTP::Parser::XS::BACKEND ], [ $res ] ];
 };
 
-for my $backend (qw(xs pp)) {
-    local $ENV{PERL_HTTP_PARSER_XS} = $backend;
+for my $env (parser_backends()) {
+    local $ENV{PERL_HTTP_PARSER_XS} = $env;
+    my $backend = $env || 'default';
     with_starman($app, sub {
         my $port = shift;
 
         my $res = raw_request($port, "GET / HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
-        like $res, qr/^X-Backend: $backend\r$/m, "$backend: server uses the $backend parser";
+        like $res, qr/^X-Backend: $env\r$/m, "$backend: server uses the $env parser" if $env;
 
         $res = raw_request($port,
             "\r\n\r\nPOST /charge HTTP/1.1\r\nHost: localhost\r\nContent-Length: 0\r\n\r\n");

@@ -20,8 +20,9 @@ my $app = sub {
 
 my $next = "GET /smuggled HTTP/1.1\r\nHost: localhost\r\n\r\n";
 
-for my $backend (qw(xs pp)) {
-    local $ENV{PERL_HTTP_PARSER_XS} = $backend;
+for my $env (parser_backends()) {
+    local $ENV{PERL_HTTP_PARSER_XS} = $env;
+    my $backend = $env || 'default';
     with_starman($app, sub {
         my $port = shift;
 
