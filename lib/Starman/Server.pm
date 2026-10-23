@@ -246,7 +246,7 @@ sub process_request {
         # Parse headers
         my $headerbuf = delete $self->{client}->{headerbuf};
         my $reqlen = parse_http_request($headerbuf, $env);
-        if ( $reqlen != length $headerbuf ) {
+        if ( $reqlen != length $headerbuf || !_valid_header_names($headerbuf) ) {
             # Bad request
             DEBUG && warn "[$$] Bad request\n";
             $self->_http_error(400, { SERVER_PROTOCOL => "HTTP/1.0" });
@@ -424,6 +424,22 @@ sub _read_headers {
     # or pipelined requests in the input buffer
     $self->{client}->{inputbuf} =~ /$CR?$LF$CR?$LF/;
     $self->{client}->{headerbuf} = substr $self->{client}->{inputbuf}, 0, $+[0], '';
+
+    return 1;
+}
+
+# Field names must be tokens directly followed by ":" and must not use
+# obs-fold (RFC 9112 section 5). The parser maps "_" to "-", so
+# Content-Length and Transfer-Encoding spelled with "_" are rejected too.
+sub _valid_header_names {
+    my $header = shift;
+
+    my @lines = split /$CR?$LF/, $header;
+    shift @lines; # request line
+    for my $line (@lines) {
+        my($name) = $line =~ /\A([!#\$%&'*+\-.^_`|~0-9A-Za-z]+):/ or return;
+        return if $name =~ /_/ && $name =~ /\A(?:content[-_]length|transfer[-_]encoding)\z/i;
+    }
 
     return 1;
 }
