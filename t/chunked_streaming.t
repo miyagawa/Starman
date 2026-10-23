@@ -29,6 +29,7 @@ my($fed, $written, $max_held) = (0, 0, 0);
     package CountingBuffer;
     sub new { bless { ctx => Digest::MD5->new, len => 0 }, shift }
     sub print { my $self = shift; $written += length $_[0]; $self->{len} += length $_[0]; $self->{ctx}->add($_[0]) }
+    sub size { $_[0]{len} }
     sub rewind { $_[0] }
 }
 

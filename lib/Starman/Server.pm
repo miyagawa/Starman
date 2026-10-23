@@ -575,6 +575,9 @@ sub _prepare_env {
             return 400 unless $read_more->();
         }
 
+        # The buffer could not store the whole body, e.g. the disk is full
+        return 500 unless $buf->size == $length;
+
         $env->{CONTENT_LENGTH} = $length;
         $env->{'psgi.input'}   = $buf->rewind;
     } elsif (my $cl = $env->{CONTENT_LENGTH}) {
@@ -589,6 +592,10 @@ sub _prepare_env {
             $cl -= length $data;
             $buf->print($data);
         }
+
+        # The buffer could not store the whole body, e.g. the disk is full
+        return 500 unless $buf->size == $env->{CONTENT_LENGTH};
+
         $env->{'psgi.input'} = $buf->rewind;
     } else {
         $env->{'psgi.input'} = $null_io;
