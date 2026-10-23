@@ -16,6 +16,7 @@ use Plack::TempBuffer;
 
 use constant DEBUG        => $ENV{STARMAN_DEBUG} || 0;
 use constant CHUNKSIZE    => 64 * 1024;
+use constant MAX_CHUNK_LINE => 4096;
 
 my $null_io = do { open my $io, "<", \""; $io };
 
@@ -307,7 +308,11 @@ sub process_request {
             $self->{client}->{keepalive} = 0;
         }
 
-        $self->_prepare_env($env);
+        if ( my $status = $self->_prepare_env($env) ) {
+            DEBUG && warn "[$$] Bad request body, returning $status\n";
+            $self->_http_error( $status, $env );
+            last;
+        }
 
         $self->dispatch_request($env);
 
@@ -478,9 +483,17 @@ sub _prepare_env {
             my($chunk, $read) = $get_chunk->();
             $chunk_buffer .= $chunk;
 
-            while ( $chunk_buffer =~ s/^(([0-9a-fA-F]+).*\015\012)// ) {
-                my $trailer   = $1;
-                my $chunk_len = hex $2;
+            while (1) {
+                my $eol = index $chunk_buffer, "\015\012";
+                if ($eol < 0) {
+                    return 400 if length $chunk_buffer > MAX_CHUNK_LINE;
+                    last;
+                }
+                return 400 if $eol > MAX_CHUNK_LINE;
+
+                my $trailer   = substr $chunk_buffer, 0, $eol + 2, '';
+                my $chunk_len = _parse_chunk_size($trailer);
+                return 400 unless defined $chunk_len;
 
                 if ($chunk_len == 0) {
                     last DECHUNK;
@@ -516,6 +529,21 @@ sub _prepare_env {
     } else {
         $env->{'psgi.input'} = $null_io;
     }
+
+    return;
+}
+
+# chunk-size [ chunk-ext ] CRLF (RFC 9112 section 7.1). Returns undef if
+# the line is malformed or the size is too large to count exactly.
+sub _parse_chunk_size {
+    my $line = shift;
+
+    $line =~ /\A([0-9A-Fa-f]+)(?:[ \t]*;[^\015\012]*)?\015\012\z/
+        or return;
+    (my $size = $1) =~ s/\A0+(?=.)//;
+    return if length $size > 13;
+
+    return hex $size;
 }
 
 sub _finalize_response {
