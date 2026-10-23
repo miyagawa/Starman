@@ -180,6 +180,19 @@ keep a pool of open connections while waiting for clients (eg. Amazon ELB).
 
 Defaults to 5.
 
+=item --body-timeout
+
+The number of seconds Starman will wait, in total, to receive the whole
+body of a request. If the body has not arrived by then, Starman responds
+with C<408 Request Timeout> and closes the connection without running the
+application. This keeps slow clients from holding on to backend workers;
+the time spent in the application is not counted. Set it to 0 to disable
+the limit, or raise it if clients upload large bodies over slow links
+directly to Starman. A reverse proxy that buffers request bodies is still
+recommended.
+
+Defaults to 300.
+
 =item --user
 
 To listen on a low-numbered (E<lt>1024) port, it will be necessary to

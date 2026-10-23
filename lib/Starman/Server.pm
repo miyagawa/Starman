@@ -68,6 +68,9 @@ sub run {
     if (! exists $options->{read_timeout}) {
         $options->{read_timeout} = 5;
     }
+    if (! exists $options->{body_timeout}) {
+        $options->{body_timeout} = 300;
+    }
     if (! exists $options->{proctitle}) {
         $options->{proctitle} = 1;
     }
@@ -309,7 +312,24 @@ sub process_request {
             $self->{client}->{keepalive} = 0;
         }
 
-        if ( my $status = $self->_prepare_env($env) ) {
+        # Read the whole request body within body_timeout seconds, so that a
+        # slow client cannot hold on to a worker. The app is run outside it.
+        my $status = eval {
+            local $SIG{ALRM} = sub { die "Timed out\n"; };
+            alarm( $self->{options}->{body_timeout} || 0 );
+            my $status = $self->_prepare_env($env);
+            alarm(0);
+            $status;
+        };
+        alarm(0);
+
+        if ( $@ ) {
+            die $@ unless $@ eq "Timed out\n";
+            DEBUG && warn "[$$] Timed out reading the request body\n";
+            $status = 408;
+        }
+
+        if ( $status ) {
             DEBUG && warn "[$$] Bad request body, returning $status\n";
             $self->_http_error( $status, $env );
             last;
