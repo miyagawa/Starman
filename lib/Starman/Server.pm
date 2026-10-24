@@ -10,6 +10,7 @@ use HTTP::Status qw(status_message);
 use HTTP::Date qw(time2str);
 use POSIX qw(EINTR EPIPE ECONNRESET);
 use Symbol;
+use Time::HiRes ();
 
 use Plack::Util;
 use Plack::TempBuffer;
@@ -314,15 +315,9 @@ sub process_request {
             $self->{client}->{keepalive} = 0;
         }
 
-        # Read the whole request body within body_timeout seconds, so that a
-        # slow client cannot hold on to a worker. The app is run outside it.
-        my $status = eval {
-            local $SIG{ALRM} = sub { die "Timed out\n"; };
-            alarm( $self->{options}->{body_timeout} || 0 );
-            my $status = $self->_prepare_env($env);
-            alarm(0);
-            $status;
-        };
+        # Read the request body. _prepare_env dies with "Timed out" if the
+        # client is too slow; the app is run after that, outside any alarm.
+        my $status = eval { $self->_prepare_env($env) };
         alarm(0);
 
         if ( $@ ) {
@@ -506,8 +501,28 @@ sub _prepare_env {
     # Body bytes are taken from the input buffer, leaving anything after
     # the body there for the next request on this connection.
     my $input = \$self->{client}->{inputbuf};
+
+    # Wait at most read_timeout seconds for each read, and body_timeout
+    # seconds in total, so a slow client cannot hold on to a worker.
+    my $idle_timeout = $self->{options}->{read_timeout} || 0;
+    my $deadline = $self->{options}->{body_timeout}
+        ? Time::HiRes::time() + $self->{options}->{body_timeout} : 0;
+
     my $read_more = sub {
+        my $timeout = $idle_timeout;
+        if ($deadline) {
+            my $left = $deadline - Time::HiRes::time();
+            die "Timed out\n" if $left <= 0;
+            $timeout = $left if !$timeout || $left < $timeout;
+        }
+
+        # Time::HiRes::alarm, because alarm() would truncate a fraction of a
+        # second left to 0, which disables the alarm
+        local $SIG{ALRM} = sub { die "Timed out\n"; };
+        Time::HiRes::alarm($timeout);
         my $read = _sysread($self->{server}->{client}, my($chunk), CHUNKSIZE);
+        alarm(0);
+
         $$input .= $chunk if $read;
         return $read;
     };

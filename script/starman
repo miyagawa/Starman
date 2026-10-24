@@ -172,7 +172,10 @@ Defaults to 1.
 =item --read-timeout
 
 The number of seconds Starman will wait for a request on a new connection
-before closing it. Setting this to a high value may cause performance
+before closing it. It also limits how long Starman waits for each read of
+a request body: if no more of the body arrives within this time, Starman
+responds with C<408 Request Timeout> and closes the connection without
+running the application. Setting this to a high value may cause performance
 problems in heavily loaded servers. The higher the timeout, the
 more backend workers will be kept occupied waiting on connections
 with idle clients. You may need this if your proxy / load balancer likes to
@@ -185,11 +188,12 @@ Defaults to 5.
 The number of seconds Starman will wait, in total, to receive the whole
 body of a request. If the body has not arrived by then, Starman responds
 with C<408 Request Timeout> and closes the connection without running the
-application. This keeps slow clients from holding on to backend workers;
-the time spent in the application is not counted. Set it to 0 to disable
-the limit, or raise it if clients upload large bodies over slow links
-directly to Starman. A reverse proxy that buffers request bodies is still
-recommended.
+application. Unlike C<--read-timeout>, which only limits the wait for each
+read, this also stops clients that keep sending a few bytes at a time.
+Both keep slow clients from holding on to backend workers; the time spent
+in the application is not counted. Set it to 0 to disable the limit, or
+raise it if clients upload large bodies over slow links directly to
+Starman. A reverse proxy that buffers request bodies is still recommended.
 
 Defaults to 300.
 
