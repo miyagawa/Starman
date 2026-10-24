@@ -58,6 +58,7 @@
       },
       "test" : {
          "requires" : {
+            "HTTP::Tiny" : "0.064",
             "LWP::UserAgent" : "0",
             "Test::More" : "0",
             "Test::Requires" : "0"
@@ -76,7 +77,7 @@
          "web" : "https://github.com/miyagawa/Starman"
       }
    },
-   "version" : "0.4018",
+   "version" : "0.4019",
    "x_contributors" : [
       "Adam Guthrie <adam.guthrie@dvlgames.com>",
       "Alex Vandiver <alex@chmrr.net>",

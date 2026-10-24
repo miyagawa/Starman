@@ -2,6 +2,48 @@ Revision history for Perl extension Starman
 
 {{$NEXT}}
 
+0.4019  2026-10-24 02:02:21 PDT
+        [SECURITY]
+        - Stream chunked request bodies to the temporary buffer instead of
+          holding whole chunks in memory (CVE-2026-115824)
+        - Parse chunk-size lines in linear time with a 4 KiB length limit and
+          strict syntax; malformed lines get 400 (CVE-2026-115822)
+        - Do not send a response body for HEAD requests or 1xx, 204 and 304
+          responses, on both the array and streaming paths (CVE-2026-115823)
+        - Limit how long a request body may take to arrive: --read-timeout
+          (default 5 seconds) now also applies to each wait for more of the
+          body, and the new --body-timeout option limits the total time
+          (default 300 seconds; raise it or set it to 0 for slower uploads).
+          Expiry gets 408 (CVE-2026-115817)
+        - Reject Transfer-Encoding other than "chunked" (400/501) and close
+          the connection after a request with both Transfer-Encoding and
+          Content-Length. Completes the fix for CVE-2026-40560
+        - Reject malformed, negative and conflicting Content-Length headers
+          with 400
+        - Reject malformed header field names: whitespace before the colon,
+          obs-fold, and Content-Length/Transfer-Encoding spelled with "_"
+        - Read request bodies with exact framing: keep the bytes after a body
+          for the next pipelined request, consume chunked trailers (up to
+          16 KiB), and reject bodies cut short by EOF with 400 instead of
+          dispatching a partial body
+        - Parse each request header exactly once and skip empty lines before
+          the request line (a request could be dispatched twice with the
+          pure-Perl HTTP::Parser::XS backend)
+        - Respond with 500 instead of dispatching a truncated body when the
+          request body cannot be stored (e.g. disk full)
+        - Do not send Content-Length or Transfer-Encoding in 1xx and 204
+          responses
+        - Limit request headers to 128 KiB (431)
+        [BEHAVIOUR CHANGES]
+        - Requests with Transfer-Encoding in HTTP/1.0, or with obs-fold header
+          lines, now get 400
+        - Pipelined requests of any method are served (previously anything
+          but GET/HEAD after a request was silently dropped)
+        - A chunked body must end with the empty line after the last chunk
+          (RFC 9112); "0\r\n" alone no longer completes the request. Clients
+          using HTTP::Tiny older than 0.064 (bundled with perl 5.24 and
+          older) send chunked bodies that way and now get 408
+
 0.4018  2026-04-27 12:29:41 PDT
         - Fix HTTP request smuggling: Transfer-Encoding now takes precedence
           over Content-Length per RFC 7230 §3.3.3 (CVE-2026-40560)
