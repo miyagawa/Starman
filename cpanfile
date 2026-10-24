@@ -15,6 +15,8 @@ on test => sub {
     requires 'Test::More';
     requires 'Test::Requires';
     requires 'LWP::UserAgent';
+    # Older versions end chunked request bodies without the final CRLF
+    requires 'HTTP::Tiny', '0.064';
 };
 
 on develop => sub {
