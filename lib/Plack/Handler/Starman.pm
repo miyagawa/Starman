@@ -13,6 +13,9 @@ sub run {
     if ($ENV{SERVER_STARTER_PORT}) {
         require Net::Server::SS::PreFork;
         @Starman::Server::ISA = qw(Net::Server::SS::PreFork); # Yikes.
+    } elsif ($ENV{LISTEN_FDS}) {
+        require Net::Server::Systemd::PreFork;
+        @Starman::Server::ISA = qw(Net::Server::Systemd::PreFork);
     }
 
     my %nsa;
